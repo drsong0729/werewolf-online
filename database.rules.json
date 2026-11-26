@@ -1,0 +1,43 @@
+{
+  "rules": {
+    "users": {
+      "$u": {
+        ".read": "auth != null && auth.uid === $u",
+        ".write": "auth != null && auth.uid === $u"
+      }
+    },
+    "lobby": {
+      ".read": "auth != null",
+      ".indexOn": ["st"],
+      "$r": {
+        ".write": "auth != null && (!data.exists() || data.child('host').val() === auth.uid || (!newData.exists() && data.child('hb').val() < now - 300000))",
+        "host": {
+          ".write": "auth != null && data.exists() && !root.child('rooms/'+$r+'/players/'+data.val()).exists() && root.child('rooms/'+$r+'/players/'+newData.val()).exists()"
+        }
+      }
+    },
+    "rooms": {
+      "$r": {
+        ".write": "auth != null && (root.child('lobby/'+$r+'/host').val() === auth.uid || !root.child('lobby/'+$r).exists() || root.child('lobby/'+$r+'/hb').val() < now - 300000)",
+        "secret": { ".read": "root.child('lobby/'+$r+'/host').val() === auth.uid" },
+        "banned": { ".read": "auth != null" },
+        "players": {
+          ".read": "auth != null",
+          "$u": {
+            ".write": "auth != null && auth.uid === $u && (!newData.exists() || data.exists() || (!root.child('rooms/'+$r+'/banned/'+$u).exists() && (!root.child('rooms/'+$r+'/secret').exists() || newData.child('pw').val() === root.child('rooms/'+$r+'/secret').val())))"
+          }
+        },
+        "actions": {
+          ".read": "root.child('lobby/'+$r+'/host').val() === auth.uid",
+          "$a": { ".write": "auth != null && newData.child('u').val() === auth.uid && root.child('rooms/'+$r+'/players/'+auth.uid).exists()" }
+        },
+        "chat": {
+          ".read": "auth != null",
+          "$m": { ".write": "auth != null && !data.exists() && newData.child('u').val() === auth.uid && root.child('rooms/'+$r+'/players/'+auth.uid).exists()" }
+        },
+        "views": { "$u": { ".read": "auth != null && auth.uid === $u" } },
+        "state": { ".read": "root.child('lobby/'+$r+'/host').val() === auth.uid" }
+      }
+    }
+  }
+}

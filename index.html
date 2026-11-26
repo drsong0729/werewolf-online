@@ -10,77 +10,95 @@
 <style>
 /* VOICE: 2010 年代台港網頁派對遊戲——熱鬧、俏皮，夜裡帶點懸疑
    IDEA: 奇樂式教室殺局：Q 版角色兩排站位、中央描邊大字公告、底部黑色聊天框
-   PICTURE: 舞台本身就是畫面：教室背景、夜晚藍色濾鏡、倒地的出局者、紅色遺言橫幅
-   COLOUR and TYPE: 深夜藍、亮橘／綠的光澤按鈕、金色號碼牌；Noto Sans TC 900 描邊字、Noto Serif TC 寫遺言
-   LAYOUT: 上方 HUD、16:8 舞台、下方聊天＋行動面板；手機改直排 */
+   PICTURE: 登入後左邊是站在聚光燈下的自己，右邊是房間列表；進房是空房間，開局換成教室
+   COLOUR and TYPE: 深夜藍、亮橘／綠的光澤按鈕、金色號碼牌與金幣；Noto Sans TC 900 描邊字
+   LAYOUT: 大廳 1/3 角色＋2/3 房間；遊戲 HUD＋16:8 舞台＋聊天／行動面板；手機改直排 */
 :root{color-scheme:dark;--bg:#0c1022;--panel:#141419;--edge:#3a3f4c;--ink:#f4f1e8;--mute:#a9adb8;--gold:#ffd34d;--org:#ff9d1c;--grn:#35c159;--red:#e2453c;--blu:#2f7de1}
 *{box-sizing:border-box;min-width:0}
 html,body{margin:0;background:var(--bg) radial-gradient(1200px 600px at 50% -10%,#24306a 0,transparent 70%);color:var(--ink);font:15px/1.55 "Noto Sans TC",system-ui,sans-serif;overflow-x:clip;min-height:100vh}
-button{font:inherit;cursor:pointer}
+button{font:inherit;cursor:pointer;color:inherit}
 [hidden]{display:none!important}
-.btn{border:2px solid #7a3d00;border-radius:10px;background:linear-gradient(#ffbe55,#f07c00);color:#fff;font-weight:900;padding:8px 16px;min-height:40px;text-shadow:0 1px 0 #00000070;box-shadow:inset 0 2px 0 #ffffff80,0 3px 0 #00000080;transition:transform .08s,filter .15s;white-space:nowrap}
+.btn{border:2px solid #7a3d00;border-radius:10px;background:linear-gradient(#ffbe55,#f07c00);color:#fff;font-weight:900;padding:8px 16px;min-height:42px;text-shadow:0 1px 0 #00000070;box-shadow:inset 0 2px 0 #ffffff80,0 3px 0 #00000080;transition:transform .08s,filter .15s;white-space:nowrap}
 .btn:hover{filter:brightness(1.08)}.btn:active{transform:translateY(2px);box-shadow:inset 0 2px 0 #ffffff60,0 1px 0 #00000080}
-.btn:focus-visible,.chip:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,.item:focus-visible,.sw:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .btn.g{background:linear-gradient(#6ee08a,#22a447);border-color:#0d5a24}
 .btn.b{background:linear-gradient(#6fb1ff,#1f66d1);border-color:#0b3a85}
 .btn.r{background:linear-gradient(#ff8076,#cc2a22);border-color:#6e0d08}
 .btn.k{background:linear-gradient(#8d93a1,#555b68);border-color:#2a2d35}
-.btn.big{font-size:18px;padding:12px 28px;min-height:52px}
+.btn.big{font-size:18px;padding:12px 24px;min-height:52px}
 .btn:disabled{filter:grayscale(1) brightness(.7);cursor:not-allowed}
-.chip{border:2px solid var(--edge);background:#1d2030;color:var(--ink);border-radius:999px;padding:6px 14px;min-height:38px;font-weight:700}
+.chip{border:2px solid var(--edge);background:#1d2030;color:var(--ink);border-radius:999px;padding:6px 14px;min-height:40px;font-weight:700}
 .chip.on{background:linear-gradient(#ffd96b,#f0a800);color:#3a2600;border-color:#8a5a00}
-input[type=text]{font:inherit;font-size:16px;background:#0b0c10;color:var(--ink);border:2px solid var(--edge);border-radius:8px;padding:8px 10px;min-height:42px;width:100%}
+input[type=text],input[type=password]{font:inherit;font-size:16px;background:#0b0c10;color:var(--ink);border:2px solid var(--edge);border-radius:8px;padding:8px 10px;min-height:44px;width:100%}
+label.f{display:block;font-weight:700;font-size:13px;color:var(--mute);margin:10px 0 4px;text-align:left}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.card{background:linear-gradient(#1b1e2c,#13151f);border:2px solid var(--edge);border-radius:14px;padding:16px;box-shadow:inset 0 1px 0 #ffffff14}
+.card h2{margin:0 0 10px;font-size:19px;font-weight:900;color:var(--gold);text-shadow:0 2px 0 #000}
+.coin{width:22px;height:22px;flex:none;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3a0,#f0b400 55%,#b07800);border:2px solid #7a5200;display:inline-grid;place-items:center;font-size:11px;color:#7a5200;font-weight:900;line-height:1}
+.coins{display:inline-flex;align-items:center;gap:6px;background:#0b0c10;border:2px solid #5a4a1a;border-radius:999px;padding:3px 12px 3px 4px;font-weight:900;color:var(--gold);font-variant-numeric:tabular-nums}
 
-/* ---------- 共用背景 ---------- */
+/* 背景 */
 .bg{position:absolute;inset:0;width:100%;height:100%}
-.bg .nsky,.bg .moon,.bg .stars{opacity:0;transition:opacity 1.2s}
-.bg .veil{opacity:0;transition:opacity 1.2s}
+.bg .nsky,.bg .moon,.bg .stars,.bg .veil{opacity:0;transition:opacity 1.2s}
 .night .bg .nsky,.night .bg .moon,.night .bg .stars{opacity:1}
 .night .bg .veil{opacity:.55}
+.stage .bg-room{display:none}.stage.inroom .bg-room{display:block}.stage.inroom .bg-class{display:none}
 
-/* ---------- 大廳 ---------- */
-#lobby{max-width:1180px;margin:0 auto;padding:16px max(3vw,12px) 40px}
+/* 登入 */
+#login{max-width:1000px;margin:0 auto;padding:16px max(3vw,12px) 40px}
 .hero{position:relative;height:clamp(220px,34vw,360px);border-radius:16px;overflow:hidden;border:3px solid #2b3150;box-shadow:0 10px 40px #0008}
 .hero .crowd{position:absolute;left:0;right:0;bottom:4%;display:flex;justify-content:center;gap:1.5%;padding:0 4%}
-.hero .crowd .av{width:clamp(48px,9vw,104px)}
+.hero .crowd .av{width:clamp(46px,9vw,104px)}
 .hero .crowd .av:nth-child(odd){transform:translateY(-6%)}
 .logo{position:absolute;left:0;right:0;top:10%;text-align:center;pointer-events:none}
 .logo h1{margin:0;font-size:clamp(38px,7.5vw,84px);line-height:1.05;font-weight:900;color:#fff7d6;-webkit-text-stroke:clamp(6px,1vw,12px) #2a0f40;paint-order:stroke fill;text-shadow:0 6px 0 #1a0628;letter-spacing:.04em}
-.logo h1 em{font-style:normal;color:#ff6b5b}
+.logo h1 em,.brand em{font-style:normal;color:#ff6b5b}
 .logo p{margin:4px 0 0;font-weight:900;font-size:clamp(13px,1.8vw,18px);color:#fff;-webkit-text-stroke:4px #1b1f3a;paint-order:stroke fill;letter-spacing:.3em}
-.lgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:16px;margin-top:16px}
-.card{background:linear-gradient(#1b1e2c,#13151f);border:2px solid var(--edge);border-radius:14px;padding:16px;box-shadow:inset 0 1px 0 #ffffff14}
-.card h2{margin:0 0 10px;font-size:18px;font-weight:900;color:var(--gold);text-shadow:0 2px 0 #000}
-.card h2 small{color:var(--mute);font-weight:500;font-size:13px;margin-left:6px;text-shadow:none}
-.mebox{display:grid;grid-template-columns:120px minmax(0,1fr);gap:14px;align-items:start}
-.pv{background:radial-gradient(#3a4a8a,#1a1f3a);border-radius:12px;border:2px solid #2e3660;padding:6px 8px 0}
-.cust{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.cust .chip{padding:4px 10px;min-height:34px;font-size:13px}
-.modes{display:grid;gap:14px}
-.legend{display:grid;gap:8px}.legend div{display:flex;gap:10px;align-items:center;font-size:13.5px;color:var(--mute)}.legend .glyph{width:34px;height:34px;font-size:16px;border-width:2px}.legend b{color:var(--ink)}
-.mode{background:#0e1018;border:2px solid #262a38;border-radius:12px;padding:14px}
-.mode p{margin:0 0 10px;color:var(--mute)}
-.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.rooms{margin-top:10px;display:grid;gap:6px;max-height:220px;overflow:auto}
-.room{display:flex;gap:10px;align-items:center;background:#181b27;border:1px solid #2c3142;border-radius:10px;padding:8px 10px}
-.room b{color:var(--gold)}.room span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.note{background:#1d1a10;border:1px solid #5a4a1a;color:#f2e3b0;border-radius:10px;padding:10px 12px;font-size:14px}
-details{margin-top:8px}summary{cursor:pointer;color:var(--gold);font-weight:700}
-pre{background:#08090d;border:1px solid #2a2e3a;border-radius:8px;padding:10px;font-size:12px;overflow-x:auto;color:#cfe3ff}
+.lbox{margin:18px auto 0;max-width:460px;text-align:center}
+.lbox p{color:var(--mute);margin:0 0 16px}
+.gbtn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#1f1f1f;border:2px solid #dadce0;border-radius:12px;padding:12px 26px;font-weight:900;font-size:17px;min-height:54px;box-shadow:0 3px 0 #0006;width:100%}
+.gbtn:disabled{opacity:.5;cursor:wait}
+.gbtn i{font-style:normal;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#ea4335 0 25%,#fbbc05 0 50%,#34a853 0 75%,#4285f4 0);color:#fff;font-weight:900;font-size:15px}
+.linkbtn{background:none;border:0;color:var(--mute);text-decoration:underline;margin-top:10px;min-height:44px}
+.err{color:#ff9a90;font-weight:700;min-height:1.5em;margin-top:8px}
 
-/* ---------- 等待室 ---------- */
-#wait{max-width:900px;margin:30px auto;padding:0 12px}
-.wseats{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;margin:14px 0}
-.wseat{background:#0e1018;border:2px dashed #30364a;border-radius:12px;text-align:center;padding:6px 4px 8px;font-size:13px;min-height:132px;color:var(--mute);display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
-.wseat.f{border-style:solid;border-color:#3d4a7a;color:var(--ink)}
-.wseat .av{width:62px}
+/* 大廳 */
+#home{max-width:1240px;margin:0 auto;padding:12px max(2vw,10px) 30px}
+.topbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:linear-gradient(#2b2f3c,#16181f);border:2px solid #3a3f4c;border-radius:12px;padding:8px 12px}
+.brand{font-weight:900;font-size:24px;color:#fff7d6;-webkit-text-stroke:5px #2a0f40;paint-order:stroke fill;line-height:1.2}
+.uname{color:var(--mute);font-weight:700;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:14px;margin-top:14px;align-items:start}
+.charp{display:flex;flex-direction:column;gap:12px}
+.pedestal{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:4/4.4;border:2px solid #2e3660;background:radial-gradient(ellipse 55% 30% at 50% 88%,#ffe9a855,transparent 70%),linear-gradient(#26305e,#141a36 62%,#3b2a1e 62%,#2a1d14)}
+.pedestal::before{content:"";position:absolute;left:18%;right:18%;top:-10%;bottom:8%;background:linear-gradient(#fff5c022,#fff5c000);clip-path:polygon(40% 0,60% 0,100% 100%,0 100%)}
+.pedestal .av{position:absolute;left:50%;bottom:6%;width:min(54%,230px);transform:translateX(-50%)}
+.pedestal.small{aspect-ratio:auto;height:260px}
+.pedestal.small .av{width:150px}
+.cname{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.cname b{font-size:22px;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;text-align:center}
+.stats div{background:#0e1018;border:1px solid #2a2e3a;border-radius:10px;padding:6px 4px}
+.stats b{display:block;font-size:20px;color:var(--gold);font-variant-numeric:tabular-nums}.stats small{color:var(--mute);font-size:12.5px}
+.cbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rhead,.rrow{display:grid;grid-template-columns:62px minmax(0,1fr) 86px 40px 84px 92px;align-items:center;gap:10px}
+.rhead{color:var(--mute);font-size:13px;font-weight:700;padding:8px 12px 4px}
+.rlist{display:grid;gap:8px;max-height:min(70vh,640px);min-height:320px;overflow:auto;align-content:start;padding:2px}
+.rrow{background:linear-gradient(#1d2131,#151826);border:2px solid #2c3142;border-radius:12px;padding:8px 12px}
+.rrow .no{background:linear-gradient(#6fb1ff,#1f66d1);border:2px solid #0b3a85;border-radius:8px;text-align:center;font-weight:900;color:#fff}
+.rrow .nm{font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rrow .cnt{font-weight:900;text-align:center;font-variant-numeric:tabular-nums}
+.rrow .cnt.full{color:#ff9a90}
+.rrow .lk{display:grid;place-items:center}.rrow .lk svg{width:24px;height:24px}
+.st{font-size:12.5px;border-radius:999px;padding:3px 8px;text-align:center;font-weight:700}
+.st.w{background:#143a22;color:#7ee2a0}.st.p{background:#3a1616;color:#ff9a90}
+.empty-list{color:var(--mute);text-align:center;padding:40px 10px;border:2px dashed #2c3142;border-radius:12px}
 
-/* ---------- 遊戲 ---------- */
+/* 遊戲 */
 #game{max-width:1240px;margin:0 auto;padding:8px max(1.5vw,6px) 16px}
 .hud{display:flex;align-items:center;gap:10px;background:linear-gradient(#2b2f3c,#16181f);border:2px solid #3a3f4c;border-bottom:0;border-radius:12px 12px 0 0;padding:6px 10px;flex-wrap:wrap}
 .rno{display:flex;align-items:center;gap:6px;font-weight:900}
 .rno b{background:linear-gradient(#6fb1ff,#1f66d1);border:2px solid #0b3a85;border-radius:6px;padding:0 8px;color:#fff}
-.rno span{color:var(--mute);font-size:13px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rno span{color:var(--mute);font-size:13px;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .clock{flex:1;display:flex;align-items:center;gap:8px;min-width:200px}
 .clock .ph{font-weight:900;white-space:nowrap;color:#fff}
 .clock .sec{font-weight:900;font-size:20px;min-width:2.2em;text-align:center;color:var(--gold);font-variant-numeric:tabular-nums}
@@ -88,12 +106,10 @@ pre{background:#08090d;border:1px solid #2a2e3a;border-radius:8px;padding:10px;f
 .bar{flex:1;height:12px;background:#0a0b10;border:2px solid #4a5060;border-radius:999px;overflow:hidden}
 .bar i{display:block;height:100%;background:linear-gradient(#8fd0ff,#2f7de1);border-radius:999px;transition:width .25s linear}
 .hex{display:flex;gap:6px}
-.hex span{width:38px;height:34px;display:grid;place-items:center;font-weight:900;color:#fff;clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);font-size:15px;line-height:1;text-shadow:0 1px 0 #000}
-.hex span small{display:block;font-size:10px;opacity:.85}
+.hex>span{width:38px;height:34px;display:grid;place-items:center;font-weight:900;color:#fff;clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);font-size:15px;line-height:1;text-shadow:0 1px 0 #000;text-align:center}
+.hex small{display:block;font-size:10px;opacity:.85}
 .hex .w{background:linear-gradient(#ff6e64,#b3261e)}.hex .g{background:linear-gradient(#69a8ff,#1f5fcf)}.hex .v{background:linear-gradient(#a7acb6,#5c616c)}
-.tools{display:flex;gap:6px}
-.tools .btn{min-height:34px;padding:4px 10px;font-size:13px}
-
+.tools{display:flex;gap:6px}.tools .btn{min-height:36px;padding:4px 10px;font-size:13px}
 .stage{position:relative;aspect-ratio:16/8;container-type:inline-size;overflow:hidden;border:2px solid #3a3f4c;background:#222;--k:1}
 .seats{position:absolute;inset:0;transition:filter 1.2s}
 .night .seats{filter:brightness(.7) saturate(.75) hue-rotate(-8deg)}
@@ -102,16 +118,20 @@ pre{background:#08090d;border:1px solid #2a2e3a;border-radius:8px;padding:10px;f
 .av svg{display:block;width:100%;height:auto;overflow:visible}
 .seat .av svg{transition:transform .6s,filter .6s;transform-origin:50% 90%}
 .seat.dead .av svg{transform:translate(58%,4%) rotate(-86deg);filter:grayscale(.8) brightness(.7)}
+.seat.empty .av{opacity:.55}
 .seat .nm{font-weight:900;font-size:max(10px,1.15cqw);color:#fff;-webkit-text-stroke:3px #111;paint-order:stroke fill;white-space:nowrap;max-width:170%;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
-.seat.me .nm{color:var(--gold)}
-.seat.mate .nm{color:#ff8a80}
+.seat.empty .nm{color:#c9cdd8}
+.seat.me .nm{color:var(--gold)}.seat.mate .nm{color:#ff8a80}
 .seat .num{margin-top:-.2cqw;min-width:max(20px,2.3cqw);height:max(20px,2.3cqw);padding:0 .3cqw;border-radius:999px;background:radial-gradient(circle at 40% 30%,#7db7ff,#1f5fcf);border:2px solid #fff;font-weight:900;font-size:max(11px,1.25cqw);display:grid;place-items:center;color:#fff;box-shadow:0 2px 3px #0009;line-height:1}
 .seat.dead .num{background:radial-gradient(circle at 40% 30%,#ff8a80,#b3261e)}
 .seat.me .num{background:radial-gradient(circle at 40% 30%,#ffe993,#e09b00);color:#3a2600}
+.seat.empty .num{background:#555b68}
 .seat .rt,.seat .vc,.seat .kn{position:absolute;display:grid;place-items:center;font-weight:900;color:#fff;border:2px solid #fff;box-shadow:0 2px 4px #0008;line-height:1}
 .seat .rt{left:-8%;top:18%;width:max(18px,2cqw);height:max(18px,2cqw);border-radius:50%;font-size:max(10px,1.05cqw)}
 .seat .vc{right:-10%;top:30%;min-width:max(22px,2.4cqw);height:max(22px,2.4cqw);border-radius:999px;background:#e2453c;font-size:max(12px,1.3cqw);padding:0 .3cqw}
 .seat .kn{right:-12%;top:8%;border-radius:6px;background:#7a0d0d;font-size:max(10px,1cqw);padding:2px 4px}
+.seat .crown{position:absolute;left:50%;top:-14%;width:42%;transform:translateX(-50%);filter:drop-shadow(0 2px 2px #0008)}
+.seat .kick{position:absolute;right:-8%;top:10%;width:max(26px,2.6cqw);height:max(26px,2.6cqw);border-radius:50%;border:2px solid #fff;background:#cc2a22;color:#fff;font-weight:900;font-size:max(14px,1.4cqw);line-height:1;display:grid;place-items:center;box-shadow:0 2px 4px #0008;padding:0}
 .seat.tgt{cursor:pointer}
 .seat.tgt .av::before{content:"";position:absolute;left:8%;right:8%;bottom:-2%;height:16%;border-radius:50%;border:3px solid var(--gold);box-shadow:0 0 14px var(--gold),inset 0 0 10px var(--gold);animation:ring 1s ease-in-out infinite alternate}
 .seat.tgt:hover .av svg{transform:translateY(-4%)}
@@ -124,24 +144,24 @@ pre{background:#08090d;border:1px solid #2a2e3a;border-radius:8px;padding:10px;f
 .banner.on{animation:pop 3.8s ease forwards}
 .banner h3{margin:0;font-size:clamp(20px,3.8cqw,52px);font-weight:900;color:#fff;-webkit-text-stroke:clamp(5px,.7cqw,9px) #15172a;paint-order:stroke fill;text-shadow:0 4px 0 #0007;line-height:1.15;padding:0 4%}
 .banner p{margin:.3em 0 0;font-size:clamp(13px,1.8cqw,24px);font-weight:900;color:var(--gold);-webkit-text-stroke:4px #15172a;paint-order:stroke fill}
+.roomtag{position:absolute;left:50%;top:8%;transform:translateX(-50%);z-index:5;text-align:center;pointer-events:none}
+.roomtag h3{margin:0;font-size:clamp(18px,3cqw,40px);font-weight:900;color:#fff;-webkit-text-stroke:6px #3a2a1a;paint-order:stroke fill}
+.roomtag p{margin:0;font-weight:900;color:#5a3d22;font-size:clamp(12px,1.5cqw,18px)}
 .lw{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:min(64%,560px);background:linear-gradient(90deg,#5c0707,#b71c1c 15%,#c62828 50%,#b71c1c 85%,#5c0707);border:3px solid #2a0303;border-radius:6px;padding:.6cqw 2cqw 1.2cqw;z-index:19;box-shadow:0 8px 24px #000a;text-align:center}
 .lw h4{margin:0;font-family:"Noto Serif TC",serif;font-size:clamp(22px,3.6cqw,46px);color:#fff;-webkit-text-stroke:4px #3a0000;paint-order:stroke fill;letter-spacing:.3em;line-height:1.2}
 .lw .who{font-weight:900;color:var(--gold);font-size:max(12px,1.3cqw)}
 .lw .say{margin-top:.4cqw;background:#00000055;border-radius:6px;padding:.4cqw 1cqw;min-height:2.6cqw;font-weight:700;font-size:max(12px,1.3cqw)}
-
-.bottom{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:0;background:#0a0a0d;border:2px solid #3a3f4c;border-top:0;border-radius:0 0 12px 12px}
-.chat{display:flex;flex-direction:column;border-right:2px solid #2a2e3a;min-height:0}
+.bottom{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);background:#0a0a0d;border:2px solid #3a3f4c;border-top:0;border-radius:0 0 12px 12px}
+.chat{display:flex;flex-direction:column;border-right:2px solid #2a2e3a}
 .tabs{display:flex;gap:4px;padding:6px 6px 0;background:#15171e}
-.tabs button{border:2px solid #333846;border-bottom:0;background:#1f2230;color:var(--mute);border-radius:8px 8px 0 0;padding:4px 12px;font-weight:700;font-size:13px;min-height:32px}
+.tabs button{border:2px solid #333846;border-bottom:0;background:#1f2230;color:var(--mute);border-radius:8px 8px 0 0;padding:4px 12px;font-weight:700;font-size:13px;min-height:34px}
 .tabs button.on{background:linear-gradient(#ffd96b,#f0a800);color:#3a2600;border-color:#8a5a00}
 .log{height:190px;overflow-y:auto;padding:6px 10px;font-size:14px;line-height:1.5;background:#060608;scrollbar-color:#444 #111}
 .m{padding:1px 0;overflow-wrap:anywhere}
-.m.sys{color:var(--gold)}
-.m.wolf{color:#ff9a90}.m.dead{color:#9aa0aa}
+.m.sys{color:var(--gold)}.m.wolf{color:#ff9a90}.m.dead{color:#9aa0aa}
 .m .who{color:#7fc4ff;font-weight:700}.m.mine .who{color:#ffb347}
 .log.f-chat .m.sys{display:none}.log.f-sys .m:not(.sys){display:none}
 .say{display:flex;gap:6px;padding:6px;background:#15171e}
-.say input{min-height:40px}
 .act{padding:10px 12px;display:flex;flex-direction:column;gap:10px;background:linear-gradient(#171a24,#0f1016)}
 .rolemini{display:flex;align-items:center;gap:10px}
 .glyph{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;border:3px solid #fff;color:#fff;font-weight:900;font-size:22px;box-shadow:0 3px 0 #0008,inset 0 -4px 0 #0003;text-shadow:0 1px 0 #0006}
@@ -150,82 +170,89 @@ pre{background:#08090d;border:1px solid #2a2e3a;border-radius:8px;padding:10px;f
 .tip em{font-style:normal;color:var(--gold)}
 .acts{display:flex;flex-wrap:wrap;gap:8px}
 
-.modal{position:fixed;inset:0;background:#000b;display:grid;place-items:center;z-index:100;padding:16px}
+/* 視窗 */
+.modal{position:fixed;inset:0;background:#000b;display:grid;place-items:center;z-index:100;padding:16px;overflow:auto}
 .mcard{width:min(440px,100%);background:linear-gradient(#262a3a,#14161f);border:3px solid #4a5068;border-radius:16px;padding:20px;text-align:center;box-shadow:0 20px 60px #000;animation:rise .35s ease}
-.mcard.wide{width:min(760px,100%)}
+.mcard.wide{width:min(900px,100%)}
 .mcard h2{margin:0 0 6px;font-size:28px;font-weight:900;color:#fff;-webkit-text-stroke:6px #15172a;paint-order:stroke fill}
 .bigglyph{width:120px;height:120px;font-size:62px;margin:10px auto;border-width:5px}
 .endgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:14px 0;max-height:50vh;overflow:auto}
 .endp{background:#0e1018;border:2px solid #2b3042;border-radius:10px;padding:6px;font-size:13px}
-.endp.win{border-color:var(--gold)}
-.endp .av{width:56px;margin:0 auto}
-.endp.x .av{filter:grayscale(1) brightness(.6)}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#222838;border:2px solid var(--gold);border-radius:10px;padding:10px 16px;z-index:200;font-weight:700}
+.endp.win{border-color:var(--gold)}.endp .av{width:56px;margin:0 auto}.endp.x .av{filter:grayscale(1) brightness(.6)}
+.tabbar{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0;justify-content:center}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px;max-height:54vh;overflow:auto;padding:4px}
+.item{background:#0e1018;border:2px solid #2b3042;border-radius:12px;padding:8px;text-align:center;display:flex;flex-direction:column;gap:4px;align-items:center;color:var(--ink)}
+button.item{cursor:pointer}
+.item.on{border-color:var(--gold);box-shadow:0 0 0 2px #ffd34d44}
+.item .av{width:86px;background:radial-gradient(#2b3460,#151a33);border-radius:10px;padding:4px 6px 0}
+.item b{font-size:14px}.item .own{color:#7ee2a0;font-weight:700;font-size:13px}
+.price{display:flex;align-items:center;gap:4px;color:var(--gold);font-weight:900}
+.wgrid{display:grid;grid-template-columns:220px minmax(0,1fr);gap:14px;text-align:left}
+.swatches{display:flex;flex-wrap:wrap;gap:10px;padding:6px}
+.sw{width:42px;height:42px;border-radius:50%;border:3px solid #ffffff33;padding:0}
+.sw.on{border-color:var(--gold);box-shadow:0 0 0 2px #000,0 0 12px var(--gold)}
+.sizes{display:flex;gap:8px;justify-content:center}
+#toasts{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:max-content;max-width:90vw}
+.toast{background:#222838;border:2px solid var(--gold);border-radius:10px;padding:10px 16px;font-weight:700;box-shadow:0 6px 20px #000a;animation:rise .25s ease}
+.note{background:#1d1a10;border:1px solid #5a4a1a;color:#f2e3b0;border-radius:10px;padding:10px 12px;font-size:14px}
 
 @keyframes pop{0%{opacity:0;transform:translateY(-50%) scale(.6)}10%{opacity:1;transform:translateY(-50%) scale(1.08)}16%{transform:translateY(-50%) scale(1)}82%{opacity:1}100%{opacity:0}}
 @keyframes ring{from{transform:scale(.92)}to{transform:scale(1.06)}}
 @keyframes beat{to{transform:scale(1.15)}}
 @keyframes rise{from{transform:translateY(20px);opacity:0}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}.banner.on{opacity:1;animation:none}}
-@media(max-width:820px){.lgrid{grid-template-columns:minmax(0,1fr)}}
-@media(max-width:700px){.bottom{grid-template-columns:minmax(0,1fr)}.chat{border-right:0;border-bottom:2px solid #2a2e3a}.log{height:150px}.stage{aspect-ratio:4/3;--k:1.3}.hex span{width:32px;height:30px;font-size:13px}.rno span{display:none}}
+@media(max-width:860px){.hgrid{grid-template-columns:minmax(0,1fr)}.pedestal{aspect-ratio:16/10}.pedestal .av{width:min(34%,200px)}}
+@media(max-width:700px){.bottom{grid-template-columns:minmax(0,1fr)}.chat{border-right:0;border-bottom:2px solid #2a2e3a}.log{height:150px}.stage{aspect-ratio:4/3;--k:1.3}.hex>span{width:32px;height:30px;font-size:13px}.rno span{display:none}
+ .rhead{display:none}.rrow{grid-template-columns:50px minmax(0,1fr) 54px 28px;grid-template-areas:"no nm cnt lk" "st st bt bt"}.rrow .no{grid-area:no}.rrow .nm{grid-area:nm}.rrow .cnt{grid-area:cnt}.rrow .lk{grid-area:lk}.rrow .st{grid-area:st;justify-self:start}.rrow .btn{grid-area:bt}
+ .wgrid{grid-template-columns:minmax(0,1fr)}.pedestal.small{height:200px}.pedestal.small .av{width:110px}}
 </style>
 </head>
 <body>
 
-<section id="lobby">
+<section id="login" hidden>
   <div class="hero night" id="hero"><div class="crowd" id="crowd"></div><div class="logo"><h1>夜<em>狼</em>派對</h1><p>ONLINE・線上狼人殺</p></div></div>
-  <div class="lgrid">
-    <div class="card">
-      <h2>我的角色<small>Q 版造型</small></h2>
-      <div class="mebox">
-        <div class="pv"><div class="av" id="pv"></div></div>
-        <div>
-          <label for="nick" style="font-weight:700;font-size:13px;color:var(--mute)">暱稱</label>
-          <input type="text" id="nick" maxlength="10" placeholder="輸入暱稱（最多 10 字）">
-          <div class="cust" id="cust">
-            <button class="chip" data-k="hs">髮型</button><button class="chip" data-k="h">髮色</button><button class="chip" data-k="c">服裝</button>
-            <button class="chip" data-k="e">瞳色</button><button class="chip" data-k="es">表情</button><button class="chip" data-k="a">配件</button>
-            <button class="chip" data-k="sk">膚色</button><button class="chip on" data-k="rand">隨機</button>
-          </div>
-        </div>
-      </div>
-      <h2 style="margin-top:18px">角色一覽</h2>
-      <div class="legend" id="legend"></div>
-    </div>
-    <div class="card modes">
-      <div class="mode">
-        <h2>單機練習<small>和 AI 玩家對戰</small></h2>
-        <p>AI 會發言、跳預言家、悍跳、投票，適合熟悉規則或一個人殺時間。</p>
-        <div class="row" id="sizes"><span style="font-weight:700">人數</span><button class="chip" data-n="6">6 人</button><button class="chip on" data-n="9">9 人</button><button class="chip" data-n="12">12 人</button></div>
-        <div class="row" style="margin-top:12px"><button class="btn big" id="playBot">開始遊戲</button></div>
-      </div>
-      <div class="mode">
-        <h2>線上配對<small>和陌生人一起玩</small></h2>
-        <div id="online"></div>
-      </div>
-    </div>
+  <div class="card lbox">
+    <h2>歡迎來到夜狼派對</h2>
+    <p>用 Google 帳號登入，角色造型、金幣和戰績都會綁在你的帳號上，手機、電腦都能接著玩。</p>
+    <button class="gbtn" id="gLogin" disabled><i>G</i>以 Google 帳號登入</button>
+    <div class="err" id="lErr" aria-live="polite">連線中……</div>
+    <button class="linkbtn" id="guest">先不登入，單機試玩</button>
   </div>
 </section>
 
-<section id="wait" hidden>
-  <div class="card">
-    <h2 id="wTitle">等待室</h2>
-    <p id="wInfo" style="margin:0;color:var(--mute)"></p>
-    <div class="wseats" id="wSeats"></div>
-    <div class="row"><button class="btn g" id="wStart">立即開始（空位補 AI）</button><button class="btn k" id="wLeave">離開房間</button></div>
+<section id="home" hidden>
+  <div class="topbar">
+    <span class="brand">夜<em>狼</em>派對</span><span style="flex:1"></span>
+    <span class="coins" title="金幣"><span class="coin">$</span><b id="hCoins">0</b></span>
+    <span class="uname" id="hUser"></span>
+    <button class="btn k" id="logout">登出</button>
+  </div>
+  <div class="hgrid">
+    <div class="card charp">
+      <div class="pedestal"><div class="av" id="myAv"></div></div>
+      <div class="cname"><b id="myName"></b><button class="chip" id="rename">改名</button></div>
+      <div class="stats" id="myStats"></div>
+      <div class="cbtns"><button class="btn big" id="openShop">商城</button><button class="btn b big" id="openWard">更衣室</button></div>
+    </div>
+    <div class="card">
+      <div class="row" style="justify-content:space-between"><h2 style="margin:0">房間列表</h2>
+        <div class="row"><button class="btn g" id="mkRoom">建立房間</button><button class="btn b" id="quick">快速加入</button><button class="btn k" id="practice">單機練習</button></div></div>
+      <div class="rhead"><span>房號</span><span>房名</span><span style="text-align:center">人數</span><span style="text-align:center">鎖</span><span style="text-align:center">狀態</span><span></span></div>
+      <div class="rlist" id="rlist"></div>
+    </div>
   </div>
 </section>
 
 <section id="game" hidden>
   <div class="hud">
     <div class="rno"><b id="rNo">000</b><span id="rName">練習房</span></div>
-    <div class="clock"><span class="ph" id="phName">—</span><span class="sec" id="sec">0</span><div class="bar"><i id="barI"></i></div></div>
-    <div class="hex" title="存活人數"><span class="w"><span><small>狼</small><b id="cW">0</b></span></span><span class="g"><span><small>神</small><b id="cG">0</b></span></span><span class="v"><span><small>民</small><b id="cV">0</b></span></span></div>
+    <div class="clock"><span class="ph" id="phName">—</span><span class="sec" id="sec"></span><div class="bar"><i id="barI"></i></div></div>
+    <div class="hex" title="存活人數"><span class="w"><span><small>狼</small><b id="cW">-</b></span></span><span class="g"><span><small>神</small><b id="cG">-</b></span></span><span class="v"><span><small>民</small><b id="cV">-</b></span></span></div>
     <div class="tools"><button class="btn b" id="bRole">身份</button><button class="btn k" id="bRule">規則</button><button class="btn k" id="bSnd">音效</button><button class="btn r" id="bExit">離開</button></div>
   </div>
   <div class="stage" id="stage">
     <div id="bgHost"></div>
+    <div class="roomtag" id="roomTag" hidden><h3>等待開始</h3><p id="roomTagS"></p></div>
     <div class="seats" id="seats"></div>
     <div class="banner" id="banner"><h3 id="bnT"></h3><p id="bnS"></p></div>
     <div class="lw" id="lw" hidden><h4>遺言</h4><div class="who" id="lwWho"></div><div class="say" id="lwSay">……</div></div>
@@ -236,14 +263,11 @@ pre{background:#08090d;border:1px solid #2a2e3a;border-radius:8px;padding:10px;f
       <div class="log" id="log" aria-live="polite"></div>
       <form class="say" id="sayF"><input type="text" id="sayI" maxlength="80" autocomplete="off" placeholder="輸入訊息，按 Enter 送出"><button class="btn" id="sayB">送出</button></form>
     </div>
-    <div class="act">
-      <div class="rolemini" id="roleMini"></div>
-      <div class="tip" id="tip"></div>
-      <div class="acts" id="acts"></div>
-    </div>
+    <div class="act"><div class="rolemini" id="roleMini"></div><div class="tip" id="tip"></div><div class="acts" id="acts"></div></div>
   </div>
 </section>
 
+<div class="modal" id="modal" hidden><div class="mcard" id="modalC"></div></div>
 <div class="modal" id="mRole" hidden><div class="mcard" id="mRoleC"></div></div>
 <div class="modal" id="mEnd" hidden><div class="mcard wide" id="mEndC"></div></div>
 <div class="modal" id="mRule" hidden><div class="mcard wide" style="text-align:left">
@@ -252,7 +276,7 @@ pre{background:#08090d;border:1px solid #2a2e3a;border-radius:8px;padding:10px;f
   <p><b>夜晚</b>：守衛守人 → 狼人討論並選擇獵殺目標 → 女巫決定救人或毒人 → 預言家查驗身份。</p>
   <p><b>白天</b>：公布昨晚死者 → 自由發言 → 投票放逐（平票則無人出局）→ 被放逐者發表遺言。</p>
   <p><b>角色</b>：6 人局 狼×2、預言家、女巫、平民×2；9 人局 狼×3、預言家、女巫、獵人、平民×3；12 人局 再加狼、守衛、平民。</p>
-  <p><b>小技巧</b>：在聊天裡打「我是預言家，查殺 5 號」或「3 號很可疑」，AI 玩家會聽進去。出局後可在亡者頻道聊天並看到所有身份。</p>
+  <p><b>金幣</b>：線上對戰贏 100、輸 40；單機練習贏 30、輸 10。金幣可以到商城買髮型、服裝、表情、配件。</p>
   <div style="text-align:center"><button class="btn" data-close>知道了</button></div>
 </div></div>
 
@@ -308,6 +332,7 @@ class Game{
     this.sys(`遊戲開始！本局 ${this.n} 人：`+Object.keys(ROLES).filter(r=>cnt[r]).map(r=>ROLES[r].n+'×'+cnt[r]).join('、'));
     const wolves=this.P.filter(p=>p.role==='wolf');
     wolves.forEach(w=>this.sys('你的狼隊友：'+wolves.filter(x=>x!==w).map(x=>x.seat+'號 '+x.name).join('、'),w.seat));
+    this.gid=Date.now().toString(36)+Math.random().toString(36).slice(2,7);
     this.steps=['night_guard','night_wolf','night_witch','night_seer'].filter(s=>roles.includes(STEP_ROLE[s]));
     this.set('deal',7,'身份牌已發放','記住你的身份，不要告訴別人！');
   }
@@ -337,15 +362,15 @@ class Game{
       case 'deal':return this.nightStart();
       case 'nightfall':case 'night_guard':case 'night_witch':case 'night_seer':return this.nextStep();
       case 'night_wolf':this.resolveWolf();return this.nextStep();
-      case 'dawn':return this.afterDeaths(()=>this.dayStart());
+      case 'dawn':return this.afterDeaths('day');
       case 'hunter':return this.resolveHunter();
-      case 'shot':{const w=this.checkWin();if(w)return this.end(w);const f=this.afterHunter;this.afterHunter=null;return f()}
+      case 'shot':{const w=this.checkWin();if(w)return this.end(w);return this.go(this.afterTag)}
       case 'day':return this.voteStart();
       case 'vote':return this.voteResolve();
       case 'voteResult':
         if(this.exiled){const e=this.exiled;this.kill(e,'vote');this.lw=e;this.brain[e].lw=false;return this.set('lastwords',this.p(e).bot?8:15,'遺言',`${e}號 ${this.p(e).name} 發表遺言`)}
-        return this.afterDeaths(()=>this.nightStart());
-      case 'lastwords':this.lw=0;return this.afterDeaths(()=>this.nightStart());
+        return this.afterDeaths('night');
+      case 'lastwords':this.lw=0;return this.afterDeaths('night');
     }
   }
   nightStart(){
@@ -379,16 +404,19 @@ class Game{
     this.sys(txt);this.set('dawn',5,txt,d.length?'願逝者安息……':'沒有人死亡');
   }
   kill(s,c){const p=this.p(s);if(!p||!p.alive)return;p.alive=false;p.cause=c;if(p.role==='hunter'&&c!=='poison')this.hunterPending=s}
-  afterDeaths(fn){
+  go(tag){return tag==='day'?this.dayStart():this.nightStart()}
+  afterDeaths(tag){
     const w=this.checkWin();if(w)return this.end(w);
-    if(this.hunterPending){this.hunterSeat=this.hunterPending;this.hunterPending=0;this.shot=undefined;this.afterHunter=fn;return this.set('hunter',15,'等待技能發動…','倒下的人似乎握緊了什麼')}
-    fn();
+    if(this.hunterPending){this.hunterSeat=this.hunterPending;this.hunterPending=0;this.shot=undefined;this.afterTag=tag;return this.set('hunter',15,'等待技能發動…','倒下的人似乎握緊了什麼')}
+    this.go(tag);
   }
+  save(){const o={};for(const k of Object.keys(this)){if(k!=='dirty')o[k]=this[k]}o.msgs=this.msgs.slice(-120);o.done=[...this.done];o.shot=this.shot===undefined?-1:this.shot;return JSON.stringify(o)}
+  static load(str){const o=JSON.parse(str),g=new Game([]);Object.assign(g,o);g.done=new Set(o.done||[]);g.shot=o.shot===-1?undefined:o.shot;g.dirty=true;return g}
   resolveHunter(){
     const h=this.hunterSeat,t=this.shot;this.hunterSeat=0;
     if(t){this.kill(t,'shot');const txt=`砰！獵人 ${h}號 開槍帶走了 ${t}號！`;this.sys(txt);return this.set('shot',4,txt,'')}
     this.sys('沒有人發動技能。');
-    const w=this.checkWin();if(w)return this.end(w);const f=this.afterHunter;this.afterHunter=null;f();
+    const w=this.checkWin();if(w)return this.end(w);this.go(this.afterTag);
   }
   dayStart(){
     this.done=new Set();for(const p of this.P){const b=this.brain[p.seat];b.spoke=0;b.max=Math.random()<.45?2:1}
@@ -587,7 +615,7 @@ class Game{
     const vis=m=>m.ch==='sys'?(!m.to||m.to===s):m.ch==='all'?true:m.ch==='wolf'?(iw||seeAll):m.ch==='dead'?seeAll:false;
     const al=this.alive();
     const v={now:Date.now(),ph,pe:this.phaseEnd,ps:this.phaseStart,day:this.day,n:this.n,me:s,role:me?me.role:null,alive:me?me.alive:false,pl,
-      msgs:this.msgs.filter(vis).slice(-90),bn:this.banner,sb:this.sub,ch:this.chatCh(s),winner:this.winner,lw:this.lw,
+      msgs:this.msgs.filter(vis).slice(-70),gid:this.gid,bn:this.banner,sb:this.sub,ch:this.chatCh(s),winner:this.winner,lw:this.lw,
       cnt:{w:al.filter(p=>p.role==='wolf').length,g:al.filter(p=>ROLES[p.role].team==='god').length,v:al.filter(p=>p.role==='villager').length}};
     if(ph==='vote'||ph==='voteResult')v.votes=this.votes;
     if(iw&&ph==='night_wolf')v.wp=n.wolf;
@@ -602,7 +630,7 @@ G.WolfEngine={Game,ROLES,SETUPS,PH,shuffle,pick,tune(r,b){READ=r;BAND=b}};
 
 <script>
 {
-/* ================= 線上設定：部署到 GitHub Pages 時填入 ================= */
+/* ================= Firebase 設定 ================= */
 const FIREBASE_CONFIG={apiKey:"AIzaSyC7ZYD4DPNyOZxAvGPetC1hK0QRdb2NfWs",authDomain:"werewolf-online-b76ac.firebaseapp.com",databaseURL:"https://werewolf-online-b76ac-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"werewolf-online-b76ac",appId:"1:800470510403:web:32106f38e0b96440781df6"};
 
 const {Game,ROLES,PH,shuffle,pick}=window.WolfEngine;
@@ -612,46 +640,88 @@ const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const BOT_NAMES=['小熊軟糖','阿Ken','月光喵','咖哩飯','黑糖珍奶','小雨','霸氣阿伯','草莓牛奶','夜貓子','阿宅','鹹酥雞','雷神索爾','Momo','小綠','芒果冰','阿翔','Yuki','奶茶控','包子','蘿蔔糕','大俠','飛天豬','檸檬塔','阿嬤的滷肉','布丁','Leo','小魚乾','天然呆'];
 
-/* ---------- Q 版角色 ---------- */
-const AVP={sk:['#ffe3cf','#fcd5b8','#f3c39e','#e0a57c'],h:['#2b2b3a','#5a3825','#c9853b','#f2d36b','#e86a8a','#6a8cff','#9b6ad8','#e9eef5','#d64545','#3aa58a'],c:['#e85a5a','#4a7fe0','#46b37a','#f0a83a','#8f63d6','#2f3a4f','#ff8fb1','#36b5c9'],e:['#4a2f1a','#2e6fd8','#c0392b','#2e9e5e','#8e44ad','#d4a017']};
-const AVN={sk:4,h:10,hs:6,c:8,e:6,es:3,a:7};
-const randAv=()=>({sk:ri(0,3),h:ri(0,9),hs:ri(0,5),c:ri(0,7),e:ri(0,5),es:ri(0,2),a:ri(0,6)});
-const ix=(o,k)=>((Math.floor(+((o||{})[k]))||0)%AVN[k]+AVN[k])%AVN[k];
-function shade(hex,f){const n=parseInt(hex.slice(1),16);const c=[n>>16,n>>8&255,n&255].map(x=>Math.max(0,Math.min(255,Math.round(x*f))));return'#'+c.map(x=>x.toString(16).padStart(2,'0')).join('')}
-function avSvg(o){
-  const sk=AVP.sk[ix(o,'sk')],h=AVP.h[ix(o,'h')],hs=ix(o,'hs'),c=AVP.c[ix(o,'c')],e=AVP.e[ix(o,'e')],es=ix(o,'es'),a=ix(o,'a');
-  const hd=shade(h,.72),cd=shade(c,.75);
-  const backs=['<path d="M17 62Q13 13 50 13Q87 13 83 62Z"/>','<path d="M16 52Q14 11 50 11Q86 11 84 52L90 106Q73 113 61 104L50 110L39 104Q27 113 10 106Z"/>','<path d="M17 62Q13 13 50 13Q87 13 83 62Z"/><ellipse cx="12" cy="76" rx="9" ry="25"/><ellipse cx="88" cy="76" rx="9" ry="25"/>','<path d="M17 62Q13 13 50 13Q87 13 83 62Z"/>','<path d="M15 54Q12 13 50 13Q88 13 85 54L86 76Q78 82 72 74L72 54H28V74Q22 82 14 76Z"/>','<path d="M17 62Q13 13 50 13Q87 13 83 62Z"/><circle cx="50" cy="11" r="12"/>'];
-  const bangs=hs===3?'<path d="M18 56L20 30L28 34L30 15L40 28L48 8L56 26L66 11L68 30L78 23L82 56Q76 39 62 37Q52 45 46 37Q34 43 24 41Z"/>':hs===4?'<path d="M19 54Q17 15 52 15Q83 17 81 54Q75 35 58 31Q44 43 25 45Z"/>':'<path d="M19 52Q19 17 50 17Q81 17 81 52Q77 39 69 36Q64 45 56 34Q50 45 42 34Q36 45 30 38Q23 41 19 52Z"/>';
-  const ears={1:`<path d="M22 32L24 6L42 22Z" fill="${h}"/><path d="M78 32L76 6L58 22Z" fill="${h}"/><path d="M26 25L27 13L35 21Z M74 25L73 13L65 21Z" fill="#ffb3c4"/>`,2:`<path d="M20 34L18 2L44 22Z" fill="#f08a3c"/><path d="M80 34L82 2L56 22Z" fill="#f08a3c"/><path d="M19 10L18 2L26 8Z M81 10L82 2L74 8Z" fill="#fff"/>`}[a]||'';
-  const tops={3:'<path d="M71 22L58 13L60 31Z M71 22L84 13L82 31Z" fill="#ff4d7a"/><circle cx="71" cy="22" r="4" fill="#ff86a2"/>',4:'<ellipse cx="50" cy="27" rx="38" ry="7" fill="#2e2147"/><path d="M28 26L57 -14L72 25Z" fill="#4a3570"/><path d="M33 22Q50 17 69 21L70 26Q50 21 31 27Z" fill="#e0b84a"/>',5:`<path d="M19 38Q19 11 50 11Q81 11 81 38Z" fill="${c}"/><path d="M46 36Q70 31 93 40L89 44Q68 37 46 40Z" fill="${cd}"/>`,6:'<ellipse cx="50" cy="1" rx="19" ry="5" fill="none" stroke="#ffd84d" stroke-width="3.5"/>'}[a]||'';
-  const eye=x=>es===1?`<path d="M${x-5.5} 60Q${x} 53 ${x+5.5} 60" stroke="#3a2a22" stroke-width="2.4" fill="none" stroke-linecap="round"/>`
-    :es===2?`<ellipse cx="${x}" cy="60" rx="5.6" ry="5.5" fill="#fff"/><ellipse cx="${x}" cy="61" rx="4.3" ry="4.6" fill="${e}"/><circle cx="${x}" cy="61.5" r="2.1" fill="#111"/><path d="M${x-6.5} 56.5H${x+6.5}" stroke="#2a1f1a" stroke-width="2.4" stroke-linecap="round"/>`
-    :`<ellipse cx="${x}" cy="59" rx="6.2" ry="7.8" fill="#fff"/><ellipse cx="${x}" cy="60" rx="4.9" ry="6.4" fill="${e}"/><ellipse cx="${x}" cy="61" rx="2.5" ry="3.3" fill="#111"/><circle cx="${x-1.9}" cy="56.6" r="1.9" fill="#fff"/><circle cx="${x+1.8}" cy="63" r=".9" fill="#fff"/><path d="M${x-7} 53.5Q${x} 49 ${x+7} 53.5" stroke="#2a1f1a" stroke-width="1.8" fill="none" stroke-linecap="round"/>`;
+/* ================= 造型目錄 ================= */
+const SKIN=['#ffe3cf','#fcd5b8','#f3c39e','#e0a57c','#b97a56'];
+const HAIRC=['#2b2b3a','#5a3825','#8a5a35','#c9853b','#f2d36b','#e86a8a','#ff9a5a','#6a8cff','#9b6ad8','#e9eef5','#d64545','#3aa58a'];
+const EYEC=['#4a2f1a','#2e6fd8','#c0392b','#2e9e5e','#8e44ad','#d4a017','#e0507a','#3fb8c8'];
+const HAIR=[{n:'清爽短髮',p:0},{n:'長直髮',p:0},{n:'雙馬尾',p:150},{n:'刺蝟頭',p:150},{n:'鮑伯頭',p:200},{n:'丸子頭',p:200},{n:'高馬尾',p:300},{n:'側分長髮',p:300},{n:'爆炸頭',p:400}];
+const OUTFIT=[{n:'紅色T恤',st:'tee',col:'#e85a5a',p:0},{n:'藍色T恤',st:'tee',col:'#4a7fe0',p:0},{n:'學生制服',st:'uniform',col:'#2f3a4f',p:200},{n:'連帽外套',st:'hoodie',col:'#46b37a',p:200},{n:'粉紅洋裝',st:'dress',col:'#ff8fb1',p:300},{n:'黑色西裝',st:'suit',col:'#23242e',p:400},{n:'和風浴衣',st:'kimono',col:'#36b5c9',p:450},{n:'巫師長袍',st:'robe',col:'#5b3f99',p:500},{n:'偵探風衣',st:'coat',col:'#b88a4f',p:500},{n:'騎士盔甲',st:'armor',col:'#aab3c4',p:800}];
+const EXPR=[{n:'微笑',p:0},{n:'瞇眼笑',p:0},{n:'酷酷',p:100},{n:'眨眼',p:150},{n:'生氣',p:150},{n:'驚訝',p:200},{n:'星星眼',p:300}];
+const ACC=[{n:'無配件',p:0},{n:'貓耳',p:200},{n:'狐狸耳',p:250},{n:'蝴蝶結',p:150},{n:'巫師帽',p:300},{n:'棒球帽',p:150},{n:'天使光環',p:400},{n:'圓框眼鏡',p:150},{n:'皇冠',p:600},{n:'耳機',p:250},{n:'小花',p:100}];
+const CAT={hs:{n:'髮型',list:HAIR},c:{n:'服裝',list:OUTFIT},es:{n:'表情',list:EXPR},a:{n:'配件',list:ACC}};
+const OWN0={hs:[0,1],c:[0,1],es:[0,1],a:[0]};
+const DEF_AV={sk:1,h:1,hs:0,c:0,e:0,es:0,a:0};
+const idx=(v,n)=>{v=Math.floor(+v)||0;return((v%n)+n)%n};
+const clampAv=o=>{o=o||{};return{sk:idx(o.sk,SKIN.length),h:idx(o.h,HAIRC.length),hs:idx(o.hs,HAIR.length),c:idx(o.c,OUTFIT.length),e:idx(o.e,EYEC.length),es:idx(o.es,EXPR.length),a:idx(o.a,ACC.length)}};
+const randAv=()=>({sk:ri(0,3),h:ri(0,HAIRC.length-1),hs:ri(0,HAIR.length-1),c:ri(0,OUTFIT.length-1),e:ri(0,EYEC.length-1),es:ri(0,EXPR.length-1),a:ri(0,ACC.length-1)});
+function shade(hex,f){const n=parseInt(hex.slice(1),16);return'#'+[n>>16,n>>8&255,n&255].map(x=>Math.max(0,Math.min(255,Math.round(x*f))).toString(16).padStart(2,'0')).join('')}
+
+/* ================= Q 版角色繪製 ================= */
+function avSvg(o0){
+  const o=clampAv(o0),sk=SKIN[o.sk],h=HAIRC[o.h],e=EYEC[o.e],O=OUTFIT[o.c],c=O.col,cd=shade(c,.72),hs=o.hs,es=o.es,a=o.a;
+  const cap='<path d="M17 62Q13 13 50 13Q87 13 83 62Z"/>',long='<path d="M16 52Q14 11 50 11Q86 11 84 52L90 106Q73 113 61 104L50 110L39 104Q27 113 10 106Z"/>';
+  const BACK=[cap,long,cap+'<ellipse cx="12" cy="76" rx="9" ry="25"/><ellipse cx="88" cy="76" rx="9" ry="25"/>',cap,'<path d="M15 54Q12 13 50 13Q88 13 85 54L86 76Q78 82 72 74L72 54H28V74Q22 82 14 76Z"/>',cap+'<circle cx="50" cy="11" r="12"/>',cap+'<path d="M70 22Q98 26 93 62Q90 88 79 102Q84 78 78 58Q74 44 66 34Z"/>',long,'<circle cx="50" cy="42" r="40"/>'];
+  const bDef='<path d="M19 52Q19 17 50 17Q81 17 81 52Q77 39 69 36Q64 45 56 34Q50 45 42 34Q36 45 30 38Q23 41 19 52Z"/>';
+  const bSide='<path d="M19 54Q17 15 52 15Q83 17 81 54Q75 35 58 31Q44 43 25 45Z"/>';
+  const BANGS=[bDef,bDef,bDef,'<path d="M18 56L20 30L28 34L30 15L40 28L48 8L56 26L66 11L68 30L78 23L82 56Q76 39 62 37Q52 45 46 37Q34 43 24 41Z"/>',bSide,bDef,bDef,bSide,'<path d="M15 52Q10 32 22 26Q24 12 38 13Q46 4 58 11Q72 7 78 21Q91 28 85 52Q80 38 70 40Q60 33 50 39Q40 33 30 40Q20 38 15 52Z"/>'];
+  const ears={1:`<path d="M22 32L24 6L42 22Z" fill="${h}"/><path d="M78 32L76 6L58 22Z" fill="${h}"/><path d="M26 25L27 13L35 21Z M74 25L73 13L65 21Z" fill="#ffb3c4"/>`,2:'<path d="M20 34L18 2L44 22Z" fill="#f08a3c"/><path d="M80 34L82 2L56 22Z" fill="#f08a3c"/><path d="M19 10L18 2L26 8Z M81 10L82 2L74 8Z" fill="#fff"/>'}[a]||'';
+  const tops={3:'<path d="M71 22L58 13L60 31Z M71 22L84 13L82 31Z" fill="#ff4d7a"/><circle cx="71" cy="22" r="4" fill="#ff86a2"/>',
+    4:'<ellipse cx="50" cy="27" rx="38" ry="7" fill="#2e2147"/><path d="M28 26L57 -14L72 25Z" fill="#4a3570"/><path d="M33 22Q50 17 69 21L70 26Q50 21 31 27Z" fill="#e0b84a"/>',
+    5:'<path d="M19 38Q19 11 50 11Q81 11 81 38Z" fill="#e85a5a"/><path d="M46 36Q70 31 93 40L89 44Q68 37 46 40Z" fill="#b83a3a"/><circle cx="50" cy="12" r="3" fill="#fff"/>',
+    6:'<ellipse cx="50" cy="1" rx="19" ry="5" fill="none" stroke="#ffd84d" stroke-width="3.5"/>',
+    8:'<path d="M31 24L35 6L43 16L50 1L57 16L65 6L69 24Z" fill="#ffd84d" stroke="#c99a00" stroke-width="1.5"/><circle cx="50" cy="13" r="2.6" fill="#e53935"/><circle cx="36" cy="18" r="1.8" fill="#2e6fd8"/><circle cx="64" cy="18" r="1.8" fill="#2e6fd8"/>',
+    9:'<path d="M19 56Q17 13 50 13Q83 13 81 56" fill="none" stroke="#2a2a35" stroke-width="5"/><rect x="13" y="47" width="11" height="19" rx="4" fill="#e53935"/><rect x="76" y="47" width="11" height="19" rx="4" fill="#e53935"/>',
+    10:'<g transform="translate(26 27)"><circle cy="-5" r="4.6" fill="#ff8fb1"/><circle cx="5" cy="-1" r="4.6" fill="#ff8fb1"/><circle cx="3" cy="5" r="4.6" fill="#ff8fb1"/><circle cx="-3" cy="5" r="4.6" fill="#ff8fb1"/><circle cx="-5" cy="-1" r="4.6" fill="#ff8fb1"/><circle r="3.2" fill="#ffd84d"/></g>'}[a]||'';
+  const glasses=a===7?'<g fill="#bfe3ff" fill-opacity=".25" stroke="#2a2a2a" stroke-width="1.9"><circle cx="39" cy="59" r="8.2"/><circle cx="61" cy="59" r="8.2"/></g><path d="M47.2 58H52.8M30.8 57L22 55M69.2 57L78 55" stroke="#2a2a2a" stroke-width="1.9"/>':'';
+  const eN=x=>`<ellipse cx="${x}" cy="59" rx="6.2" ry="7.8" fill="#fff"/><ellipse cx="${x}" cy="60" rx="4.9" ry="6.4" fill="${e}"/><ellipse cx="${x}" cy="61" rx="2.5" ry="3.3" fill="#111"/><circle cx="${x-1.9}" cy="56.6" r="1.9" fill="#fff"/><circle cx="${x+1.8}" cy="63" r=".9" fill="#fff"/><path d="M${x-7} 53.5Q${x} 49 ${x+7} 53.5" stroke="#2a1f1a" stroke-width="1.8" fill="none" stroke-linecap="round"/>`;
+  const eH=x=>`<path d="M${x-5.5} 60Q${x} 53 ${x+5.5} 60" stroke="#3a2a22" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  const eC=x=>`<ellipse cx="${x}" cy="60" rx="5.6" ry="5.5" fill="#fff"/><ellipse cx="${x}" cy="61" rx="4.3" ry="4.6" fill="${e}"/><circle cx="${x}" cy="61.5" r="2.1" fill="#111"/><path d="M${x-6.5} 56.5H${x+6.5}" stroke="#2a1f1a" stroke-width="2.4" stroke-linecap="round"/>`;
+  const eO=x=>`<circle cx="${x}" cy="59" r="6.4" fill="#fff" stroke="#2a1f1a" stroke-width="1.2"/><circle cx="${x}" cy="59.5" r="3" fill="${e}"/><circle cx="${x}" cy="59.5" r="1.4" fill="#111"/>`;
+  const eS=x=>`<ellipse cx="${x}" cy="59" rx="6.2" ry="7.8" fill="${e}"/><path d="M${x} 52.5l1.9 4.2 4.6.5-3.4 3.1 1 4.5-4.1-2.3-4.1 2.3 1-4.5-3.4-3.1 4.6-.5Z" fill="#ffe46b"/>`;
+  const smile='<path d="M46 71Q50 74.5 54 71" stroke="#b3473f" stroke-width="1.8" fill="none" stroke-linecap="round"/>',open='<path d="M45 70Q50 77 55 70Z" fill="#b3473f"/>';
+  const face=[eN(39)+eN(61)+smile,eH(39)+eH(61)+open,eC(39)+eC(61)+'<path d="M46.5 72H53.5" stroke="#b3473f" stroke-width="1.8" stroke-linecap="round"/>',eN(39)+eH(61)+open,
+    eN(39)+eN(61)+'<path d="M31 50L45 54.5M69 50L55 54.5" stroke="#2a1f1a" stroke-width="2.8" stroke-linecap="round"/><path d="M45.5 73.5Q50 69.5 54.5 73.5" stroke="#b3473f" stroke-width="1.8" fill="none" stroke-linecap="round"/>',
+    eO(39)+eO(61)+'<ellipse cx="50" cy="72.5" rx="3" ry="3.8" fill="#b3473f"/>',eS(39)+eS(61)+open][es];
+  const leg=O.st==='dress'?sk:'#363a52';
+  let behind='',torso='',arm=cd,legs=true,shoesY=122;
+  switch(O.st){
+    case 'tee':torso=`<path d="M32 80Q50 75 68 80L73 111Q50 117 27 111Z" fill="${c}"/><path d="M43 78.6Q50 85 57 78.6Z" fill="${sk}"/>`;arm=c;break;
+    case 'uniform':torso=`<path d="M32 80Q50 75 68 80L73 111Q50 117 27 111Z" fill="${c}"/><path d="M40 79L50 89L60 79Z" fill="#fff"/><path d="M46 84L50 87L54 84L52 95H48Z" fill="#d63b3b"/><circle cx="50" cy="101" r="1.4" fill="#d9c27a"/><circle cx="50" cy="107" r="1.4" fill="#d9c27a"/>`;arm=c;break;
+    case 'hoodie':behind=`<path d="M28 84Q50 66 72 84Q50 92 28 84Z" fill="${cd}"/>`;torso=`<path d="M32 80Q50 75 68 80L73 111Q50 117 27 111Z" fill="${c}"/><path d="M38 100H62L60 110H40Z" fill="${cd}"/><path d="M46 81V92M54 81V92" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>`;arm=c;break;
+    case 'dress':torso=`<path d="M35 80Q50 76 65 80L66 97H34Z" fill="${c}"/><path d="M34 96H66L80 116Q50 122 20 116Z" fill="${c}"/><rect x="33" y="94" width="34" height="4.5" rx="2" fill="${cd}"/><path d="M43 79Q50 85 57 79Z" fill="${sk}"/>`;arm=sk;break;
+    case 'suit':torso=`<path d="M32 80Q50 75 68 80L73 111Q50 117 27 111Z" fill="${c}"/><path d="M42 79L50 97L58 79Z" fill="#fff"/><path d="M48.5 82H51.5L53 95L50 99L47 95Z" fill="#c62828"/><path d="M42 79L48 92M58 79L52 92" stroke="#000" stroke-width="1" opacity=".5"/>`;arm=c;break;
+    case 'kimono':torso=`<path d="M32 80Q50 75 68 80L74 118Q50 123 26 118Z" fill="${c}"/><path d="M41 79L56 101M59 79L47 93" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/><rect x="28" y="98" width="44" height="7" fill="#e85a5a"/><circle cx="35" cy="112" r="2" fill="#fff" opacity=".6"/><circle cx="62" cy="110" r="2" fill="#fff" opacity=".6"/>`;arm=c;shoesY=124;break;
+    case 'robe':torso=`<path d="M31 80Q50 74 69 80L79 123Q50 128 21 123Z" fill="${c}"/><path d="M40 103l2 4 4 .5-3 3 1 4-4-2-4 2 1-4-3-3 4-.5Z M60 92l1.4 2.8 3 .4-2.2 2 .7 3-2.9-1.5-2.9 1.5.7-3-2.2-2 3-.4Z" fill="#ffd84d"/><path d="M43 79L50 86L57 79" fill="none" stroke="#ffd84d" stroke-width="1.6"/>`;arm=c;legs=false;shoesY=125;break;
+    case 'coat':torso=`<path d="M31 80Q50 75 69 80L75 119Q50 124 25 119Z" fill="${c}"/><path d="M41 79L50 93L59 79L57 79L50 89L43 79Z" fill="${cd}"/><rect x="29" y="99" width="42" height="4" fill="${cd}"/><rect x="47" y="98" width="6" height="6" rx="1" fill="#d9c27a"/>`;arm=c;break;
+    case 'armor':torso=`<path d="M32 80Q50 75 68 80L72 111Q50 117 28 111Z" fill="${c}" stroke="#5c6475" stroke-width="1.5"/><path d="M36 92H64M35 102H65" stroke="#5c6475" stroke-width="1.5"/><path d="M50 84L54 90L50 96L46 90Z" fill="#d63b3b"/><circle cx="30" cy="83" r="7.5" fill="${shade(c,1.12)}" stroke="#5c6475" stroke-width="1.5"/><circle cx="70" cy="83" r="7.5" fill="${shade(c,1.12)}" stroke="#5c6475" stroke-width="1.5"/>`;arm=shade(c,.85);break;
+  }
+  const armW=O.st==='robe'?7:5;
   return `<svg viewBox="0 -16 100 146" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 <ellipse cx="50" cy="126" rx="25" ry="4.5" fill="#000" opacity=".28"/>
-<g fill="${h}">${backs[hs]}</g>${ears}
-<rect x="39" y="108" width="8.5" height="13" rx="2" fill="#363a52"/><rect x="52.5" y="108" width="8.5" height="13" rx="2" fill="#363a52"/>
-<ellipse cx="43" cy="122" rx="6.5" ry="3.4" fill="#2a1f1a"/><ellipse cx="57" cy="122" rx="6.5" ry="3.4" fill="#2a1f1a"/>
-<ellipse cx="28" cy="94" rx="5" ry="11.5" transform="rotate(14 28 94)" fill="${cd}"/><ellipse cx="72" cy="94" rx="5" ry="11.5" transform="rotate(-14 72 94)" fill="${cd}"/>
+<g fill="${h}">${BACK[hs]}</g>${ears}${behind}
+${legs?`<rect x="39" y="108" width="8.5" height="13" rx="2" fill="${leg}"/><rect x="52.5" y="108" width="8.5" height="13" rx="2" fill="${leg}"/>`:''}
+<ellipse cx="43" cy="${shoesY}" rx="6.5" ry="3.4" fill="#2a1f1a"/><ellipse cx="57" cy="${shoesY}" rx="6.5" ry="3.4" fill="#2a1f1a"/>
+<ellipse cx="28" cy="94" rx="${armW}" ry="11.5" transform="rotate(14 28 94)" fill="${arm}"/><ellipse cx="72" cy="94" rx="${armW}" ry="11.5" transform="rotate(-14 72 94)" fill="${arm}"/>
 <circle cx="25.5" cy="104.5" r="4.3" fill="${sk}"/><circle cx="74.5" cy="104.5" r="4.3" fill="${sk}"/>
-<path d="M32 80Q50 75 68 80L73 111Q50 117 27 111Z" fill="${c}"/><path d="M41 79L50 89L59 79Z" fill="#fff"/><path d="M47 86H53L51 96H49Z" fill="${cd}"/>
+${torso}
 <circle cx="22" cy="57" r="5" fill="${sk}"/><circle cx="78" cy="57" r="5" fill="${sk}"/>
 <circle cx="50" cy="54" r="28.5" fill="${sk}"/>
-${eye(39)}${eye(61)}
+${face}
 <ellipse cx="30" cy="68" rx="4.6" ry="2.6" fill="#ff7f93" opacity=".5"/><ellipse cx="70" cy="68" rx="4.6" ry="2.6" fill="#ff7f93" opacity=".5"/>
-<path d="M46 71Q50 74.5 54 71" stroke="#b3473f" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-<g fill="${h}">${bangs}</g><path d="M32 27Q44 20 60 22" stroke="#fff" stroke-width="2.5" opacity=".35" fill="none" stroke-linecap="round"/>
-${hs===2?`<circle cx="17" cy="51" r="3.5" fill="${c}"/><circle cx="83" cy="51" r="3.5" fill="${c}"/>`:''}${tops}
+${glasses}<g fill="${h}">${BANGS[hs]}</g><path d="M32 27Q44 20 60 22" stroke="#fff" stroke-width="2.5" opacity=".35" fill="none" stroke-linecap="round"/>
+${hs===2?'<circle cx="17" cy="51" r="3.5" fill="#ff5a7a"/><circle cx="83" cy="51" r="3.5" fill="#ff5a7a"/>':''}${hs===6?'<circle cx="74" cy="29" r="3.6" fill="#ff5a7a"/>':''}${tops}
 </svg>`;
 }
+const CROWN='<svg viewBox="0 0 40 26"><path d="M3 24L6 6L14 14L20 2L26 14L34 6L37 24Z" fill="#ffd84d" stroke="#8a5a00" stroke-width="2"/><circle cx="20" cy="16" r="2.6" fill="#e53935"/></svg>';
+const LOCK='<svg viewBox="0 0 24 24" role="img" aria-label="已上鎖"><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="#ffd34d" stroke-width="2.6"/><rect x="5" y="10" width="14" height="11" rx="2.5" fill="#ffd34d" stroke="#7a5200" stroke-width="1.5"/><circle cx="12" cy="15.5" r="1.8" fill="#7a5200"/></svg>';
+const UNLOCK='<svg viewBox="0 0 24 24" role="img" aria-label="未上鎖"><path d="M8 10V7a4 4 0 0 1 7.5-2" fill="none" stroke="#5c6475" stroke-width="2.4"/><rect x="5" y="10" width="14" height="11" rx="2.5" fill="none" stroke="#5c6475" stroke-width="2"/></svg>';
 
-/* ---------- 教室背景 ---------- */
+/* ================= 背景：教室／空房間 ================= */
 function backdrop(){
   const win=(x,moon)=>`<g transform="translate(${x} 78)"><rect width="150" height="212" rx="4" fill="#3d6fa8"/><rect x="10" y="10" width="130" height="192" fill="url(#gsky)"/><path d="M24 70q14-10 28 0q12-8 22 2q-14 6-50-2Z" fill="#fff" opacity=".8"/><rect class="nsky" x="10" y="10" width="130" height="192" fill="url(#gnsky)"/><g class="stars" fill="#fff"><circle cx="30" cy="40" r="1.6"/><circle cx="112" cy="58" r="1.3"/><circle cx="62" cy="150" r="1.2"/><circle cx="120" cy="170" r="1.5"/></g>${moon?'<g class="moon"><circle cx="98" cy="52" r="20" fill="#fff4c2"/><circle cx="108" cy="46" r="17" fill="#1a2659"/></g>':''}<path d="M75 10V202M10 106H140" stroke="#3d6fa8" stroke-width="8"/><rect x="-8" y="208" width="166" height="10" fill="#e9e4d6"/></g>`;
-  const desk=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 40L18 0H142L160 40Z" fill="#c8945a"/><path d="M0 40H160V50H0Z" fill="#8a5a2e"/><rect x="8" y="50" width="8" height="58" fill="#5a5f6b"/><rect x="144" y="50" width="8" height="58" fill="#5a5f6b"/><rect x="40" y="-30" width="80" height="34" rx="4" fill="#d9a066" opacity=".0"/></g>`;
+  const desk=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 40L18 0H142L160 40Z" fill="#c8945a"/><path d="M0 40H160V50H0Z" fill="#8a5a2e"/><rect x="8" y="50" width="8" height="58" fill="#5a5f6b"/><rect x="144" y="50" width="8" height="58" fill="#5a5f6b"/></g>`;
   const papers=[[690,560,-18],[760,590,12],[840,555,-6],[905,600,24],[720,625,30],[820,640,-28],[880,570,40],[650,610,6]].map(([x,y,r])=>`<g transform="translate(${x} ${y}) rotate(${r})"><rect x="-26" y="-18" width="52" height="36" fill="#f4f6fb" stroke="#c9cfdd"/><path d="M-18 -8H18M-18 0H14M-18 8H8" stroke="#9aa3b8" stroke-width="2"/></g>`).join('');
-  return `<svg class="bg" viewBox="0 0 1600 850" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  return `<svg class="bg bg-class" viewBox="0 0 1600 850" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
 <defs><linearGradient id="gw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6dcc8"/><stop offset="1" stop-color="#b5bfa6"/></linearGradient>
 <linearGradient id="gsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6cbcff"/><stop offset="1" stop-color="#d8f1ff"/></linearGradient>
 <linearGradient id="gnsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1238"/><stop offset="1" stop-color="#26397a"/></linearGradient>
@@ -664,114 +734,375 @@ ${win(60,0)}${win(270,0)}${win(1180,1)}${win(1390,0)}
 <rect x="545" y="80" width="510" height="236" rx="6" fill="#7a5230"/><rect x="559" y="94" width="482" height="208" fill="#2f5b45"/>
 <text x="800" y="180" text-anchor="middle" fill="#eaf2ec" opacity=".75" font-size="44" font-weight="900" font-family="Noto Sans TC,sans-serif">今晚，誰是狼？</text>
 <path d="M610 240q30-16 60 0t60 0M900 230l60 20M930 220l-10 40" stroke="#eaf2ec" stroke-width="4" opacity=".45" fill="none"/>
-<rect x="545" y="314" width="510" height="12" fill="#5c3d22"/>
-<rect y="418" width="1600" height="16" fill="#5c3d22"/>
+<rect x="545" y="314" width="510" height="12" fill="#5c3d22"/><rect y="418" width="1600" height="16" fill="#5c3d22"/>
 <rect y="432" width="1600" height="418" fill="url(#pl)"/><rect y="432" width="1600" height="418" fill="url(#gfl)"/>
 ${desk(30,436,1)}${desk(1410,436,1)}${desk(200,448,.8)}${desk(1270,448,.8)}
 <ellipse cx="800" cy="598" rx="300" ry="78" fill="url(#grug)" opacity=".55"/>${papers}
-<rect class="veil" width="1600" height="850" fill="#0a1650"/>
-</svg>`;
+<rect class="veil" width="1600" height="850" fill="#0a1650"/></svg>`;
+}
+function emptyRoom(){
+  return `<svg class="bg bg-room" viewBox="0 0 1600 850" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+<defs><linearGradient id="ew" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3ecdc"/><stop offset="1" stop-color="#e2d6bd"/></linearGradient>
+<pattern id="epl" width="220" height="60" patternUnits="userSpaceOnUse"><rect width="220" height="60" fill="#c79a66"/><rect width="220" height="29" fill="#bd8f5b"/><path d="M0 29.5H220M0 59.5H220M90 0V29M30 30V60M170 30V60" stroke="#9a7044" stroke-width="2"/></pattern>
+<linearGradient id="efl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".25"/><stop offset=".3" stop-color="#000" stop-opacity="0"/></linearGradient>
+<radialGradient id="elight" cx="50%" cy="0%" r="70%"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>
+<rect width="1600" height="430" fill="url(#ew)"/><rect y="300" width="1600" height="118" fill="#d9c9a8"/><path d="M0 300H1600" stroke="#bfa984" stroke-width="6"/>
+<rect y="418" width="1600" height="16" fill="#8a6a44"/><rect y="432" width="1600" height="418" fill="url(#epl)"/><rect y="432" width="1600" height="418" fill="url(#efl)"/>
+<g transform="translate(1340 150)"><rect width="150" height="270" rx="4" fill="#9a7044"/><rect x="12" y="12" width="126" height="258" fill="#b8865a"/><rect x="26" y="28" width="98" height="96" rx="4" fill="#a87a4e"/><rect x="26" y="140" width="98" height="110" rx="4" fill="#a87a4e"/><circle cx="120" cy="150" r="6" fill="#ffd34d"/></g>
+<rect width="1600" height="850" fill="url(#elight)"/></svg>`;
 }
 
-/* ---------- 音效 ---------- */
+/* ================= 音效 ================= */
 const SND={ctx:null,on:store.get('wolf_snd',true),
   tone(f,d,type,v,slide){if(!this.on)return;try{this.ctx=this.ctx||new AudioContext();const c=this.ctx,o=c.createOscillator(),g=c.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,c.currentTime);if(slide)o.frequency.exponentialRampToValueAtTime(slide,c.currentTime+d);g.gain.setValueAtTime(v||.06,c.currentTime);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+d);o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+d)}catch(e){}},
   night(){this.tone(220,1.2,'triangle',.09,110);setTimeout(()=>this.tone(165,1.4,'triangle',.07,82),300)},
   day(){[523,659,784].forEach((f,i)=>setTimeout(()=>this.tone(f,.35,'square',.035),i*120))},
   click(){this.tone(880,.06,'square',.03)},tick(){this.tone(1300,.05,'square',.02)},
   death(){this.tone(150,.7,'sawtooth',.05,55)},msg(){this.tone(700,.05,'sine',.03)},
+  coin(){[988,1319].forEach((f,i)=>setTimeout(()=>this.tone(f,.12,'square',.04),i*90))},
   win(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>this.tone(f,.32,'square',.045),i*140))}};
 
-/* ---------- 狀態 ---------- */
-const S={mode:null,game:null,seat:0,view:null,off:0,poison:false,seatsKey:'',lastMsg:0,lastPh:'',bnKey:'',size:9,roomNo:'',roomName:'',ptot:1,lastTick:-1,aliveN:0,exitArm:0};
-let me=store.get('wolf_me',null);if(!me||!me.av)me={name:'',av:randAv()};
+/* ================= 狀態 ================= */
+const S={screen:'',mode:null,game:null,seat:0,view:null,off:0,poison:false,seatsKey:'',lastMsg:0,lastPh:'',bnKey:'',ptot:1,lastTick:-1,aliveN:0,exitArm:0,seatOf:{},roomNo:'',roomName:'',guest:false,modalRefresh:null,draft:null};
+function show(id){S.screen=id==='game'?S.screen:id;['login','home','game'].forEach(x=>$('#'+x).hidden=x!==id);window.scrollTo(0,0)}
+function toast(t){let box=$('#toasts');if(!box){box=document.createElement('div');box.id='toasts';box.setAttribute('aria-live','polite');document.body.append(box)}const d=document.createElement('div');d.className='toast';d.textContent=t;box.append(d);while(box.children.length>3)box.firstChild.remove();setTimeout(()=>d.remove(),3200)}
 
-/* ---------- 大廳 ---------- */
+/* ================= Firebase ================= */
+const FB={ok:false,db:null,user:null,off:0,
+  async load(){const base='https://www.gstatic.com/firebasejs/10.12.2/';
+    for(const f of['firebase-app-compat.js','firebase-auth-compat.js','firebase-database-compat.js'])await new Promise((res,rej)=>{const s=document.createElement('script');s.src=base+f;s.onload=res;s.onerror=rej;document.head.append(s)});
+    firebase.initializeApp(FIREBASE_CONFIG);this.db=firebase.database();this.db.ref('.info/serverTimeOffset').on('value',s=>this.off=+s.val()||0);this.ok=true},
+  now(){return Date.now()+this.off}};
+
+/* ================= 玩家資料（綁定 Google 帳號） ================= */
+const PROF={data:null,ref:null,online:false,
+  base(name){return{name:String(name||'玩家'+ri(100,999)).trim().slice(0,10)||'玩家',av:{...DEF_AV},coins:300,owned:JSON.parse(JSON.stringify(OWN0)),games:0,wins:0,rewarded:''}},
+  fix(d){const b=this.base(d&&d.name);const o={...b,...(d||{})};o.av=clampAv(o.av);const ow={};for(const k in OWN0){const lim=CAT[k].list.length;ow[k]=[...new Set([...OWN0[k],...(((o.owned||{})[k])||[]).map(Number).filter(i=>i>=0&&i<lim)])].sort((x,y)=>x-y)}o.owned=ow;o.coins=Math.max(0,Math.floor(+o.coins)||0);o.games=Math.floor(+o.games)||0;o.wins=Math.floor(+o.wins)||0;return o},
+  async loadOnline(u){this.online=true;if(this.ref)this.ref.off();this.ref=FB.db.ref('users/'+u.uid+'/p');
+    const s=await this.ref.get();if(!s.exists())await this.ref.set(JSON.stringify(this.base(u.displayName)));
+    await new Promise(res=>{let first=true;this.ref.on('value',x=>{try{this.data=this.fix(JSON.parse(x.val()))}catch(e){this.data=this.base(u.displayName)}renderHome();if(first){first=false;res()}})})},
+  loadGuest(){this.online=false;if(this.ref)this.ref.off();this.ref=null;this.data=this.fix(store.get('wolf_guest',null)||this.base(''))},
+  async update(fn){
+    if(this.online){let ok=false;await this.ref.transaction(cur=>{let d;try{d=this.fix(JSON.parse(cur))}catch(e){d=this.fix(this.data)}ok=fn(d)!==false;if(!ok)return;return JSON.stringify(d)});return ok}
+    const d=this.fix(this.data);if(fn(d)===false)return false;this.data=d;store.set('wolf_guest',d);renderHome();return true},
+  has(k,i){return(this.data.owned[k]||[]).includes(i)}};
+
+/* ================= 登入畫面 ================= */
 $('#crowd').innerHTML=Array.from({length:7},()=>`<div class="av">${avSvg(randAv())}</div>`).join('');
 $('#hero').insertAdjacentHTML('afterbegin',backdrop());
-$('#bgHost').outerHTML=backdrop();
-const nick=$('#nick');nick.value=me.name||'';
-nick.addEventListener('input',()=>{me.name=nick.value.trim().slice(0,10);store.set('wolf_me',me)});
-$('#legend').innerHTML=Object.values(ROLES).map(R=>`<div><span class="glyph" style="background:${R.c}">${R.g}</span><span><b>${R.n}</b>　${R.d}</span></div>`).join('');
-function drawMe(){$('#pv').innerHTML=avSvg(me.av)}drawMe();
-$('#cust').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;const k=b.dataset.k;
-  if(k==='rand')me.av=randAv();else me.av[k]=(ix(me.av,k)+1)%AVN[k];store.set('wolf_me',me);drawMe();SND.click()});
-$('#sizes').addEventListener('click',e=>{const b=e.target.closest('[data-n]');if(!b)return;S.size=+b.dataset.n;document.querySelectorAll('#sizes .chip').forEach(x=>x.classList.toggle('on',x===b))});
-function myName(){if(!me.name){me.name='玩家'+ri(100,999);nick.value=me.name;store.set('wolf_me',me)}return me.name}
-$('#playBot').addEventListener('click',()=>startBot(S.size));
-function show(id){['lobby','wait','game'].forEach(x=>$('#'+x).hidden=x!==id);window.scrollTo(0,0)}
-function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.append(d);setTimeout(()=>d.remove(),3000)}
+$('#bgHost').outerHTML=backdrop()+emptyRoom();
+const lErr=t=>$('#lErr').textContent=t;
+async function boot(){
+  show('login');
+  try{await FB.load()}catch(e){lErr('這裡連不到登入服務（預覽環境不支援），請到正式網址登入，或先單機試玩。');return}
+  $('#gLogin').disabled=false;lErr('');
+  firebase.auth().getRedirectResult().catch(loginErr);
+  firebase.auth().onAuthStateChanged(async u=>{
+    if(u&&!u.isAnonymous){FB.user=u;S.guest=false;$('#gLogin').disabled=true;lErr('讀取角色資料中……');
+      try{await PROF.loadOnline(u)}catch(e){lErr('讀取角色資料失敗，請重新整理。');$('#gLogin').disabled=false;return}
+      lErr('');$('#gLogin').disabled=false;NET.watchLobby();showHome()}
+    else{FB.user=null;NET.unwatchLobby();if(!S.guest)show('login')}
+  });
+}
+function loginErr(e){if(!e||e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request')return;
+  lErr({'auth/unauthorized-domain':'這個網址還沒有被授權登入。','auth/network-request-failed':'網路連線失敗，請再試一次。'}[e.code]||('登入失敗：'+(e.code||e.message)))}
+$('#gLogin').addEventListener('click',async()=>{if(!FB.ok)return;const p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
+  try{await firebase.auth().signInWithPopup(p)}catch(e){if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment'].includes(e.code))return firebase.auth().signInWithRedirect(p);loginErr(e)}});
+$('#guest').addEventListener('click',()=>{S.guest=true;PROF.loadGuest();showHome()});
+$('#logout').addEventListener('click',async()=>{if(S.guest){S.guest=false;show('login');return}await NET.leave();NET.unwatchLobby();if(PROF.ref)PROF.ref.off();PROF.data=null;await firebase.auth().signOut();show('login')});
 
+/* ================= 大廳 ================= */
+function showHome(){S.screen='home';show('home');renderHome();renderRooms()}
+function renderHome(){
+  const d=PROF.data;if(!d)return;
+  $('#myAv').innerHTML=avSvg(d.av);$('#myName').textContent=d.name;$('#hCoins').textContent=d.coins.toLocaleString();
+  $('#hUser').textContent=S.guest?'訪客（資料只存在這台裝置）':(FB.user&&(FB.user.email||FB.user.displayName))||'';
+  $('#myStats').innerHTML=`<div><b>${d.games}</b><small>場次</small></div><div><b>${d.wins}</b><small>勝場</small></div><div><b>${d.games?Math.round(d.wins/d.games*100):0}%</b><small>勝率</small></div>`;
+  if(S.modalRefresh&&!$('#modal').hidden)S.modalRefresh();
+}
+function renderRooms(){
+  const box=$('#rlist');
+  if(S.guest||!FB.user){box.innerHTML='<div class="empty-list">登入 Google 帳號後就能建立房間、和其他玩家線上對戰。<br>現在可以先按「單機練習」和 AI 玩。</div>';$('#mkRoom').disabled=$('#quick').disabled=true;return}
+  $('#mkRoom').disabled=$('#quick').disabled=false;
+  const L=[...NET.list].sort((a,b)=>(a.st==='wait'?0:1)-(b.st==='wait'?0:1)||(+b.t||0)-(+a.t||0));
+  if(!L.length){box.innerHTML='<div class="empty-list">目前沒有房間，按「建立房間」開一間吧！</div>';return}
+  box.innerHTML='';
+  for(const r of L){const full=(+r.count||0)>=(+r.size||0),wait=r.st==='wait';const d=document.createElement('div');d.className='rrow';
+    d.innerHTML=`<span class="no"></span><span class="nm"></span><span class="cnt ${full?'full':''}">${+r.count||0}/${+r.size||0}</span><span class="lk">${r.lock?LOCK:UNLOCK}</span><span class="st ${wait?'w':'p'}">${wait?'等待中':'遊戲中'}</span>`;
+    d.querySelector('.no').textContent=r.no;d.querySelector('.nm').textContent=r.name;
+    const b=document.createElement('button');b.className='btn '+(wait&&!full?'g':'k');b.textContent=!wait?'遊戲中':full?'已滿':'加入';b.disabled=!wait||full;
+    b.onclick=()=>r.lock?askPw(r):NET.join(r.id,'');d.append(b);box.append(d)}
+}
+$('#rename').addEventListener('click',()=>{
+  openModal(`<h2>修改暱稱</h2><label class="f" for="rnI">新的暱稱（最多 10 字）</label><input type="text" id="rnI" maxlength="10"><div class="row" style="justify-content:center;margin-top:14px"><button class="btn g" data-do="rn">儲存</button><button class="btn k" data-close>取消</button></div>`);
+  const i=$('#rnI');i.value=PROF.data.name;i.focus();i.select();
+});
+$('#practice').addEventListener('click',()=>openModal(`<h2>單機練習</h2><p style="color:var(--mute)">和 AI 玩家對戰：贏 30、輸 10 金幣。</p><div class="sizes"><button class="btn" data-bot="6">6 人局</button><button class="btn" data-bot="9">9 人局</button><button class="btn" data-bot="12">12 人局</button></div><div style="margin-top:12px"><button class="btn k" data-close>取消</button></div>`));
+$('#mkRoom').addEventListener('click',()=>{
+  openModal(`<h2>建立房間</h2><label class="f" for="crN">房間名稱</label><input type="text" id="crN" maxlength="16">
+  <label class="f">人數</label><div class="sizes" id="crS"><button class="chip" data-n="6">6 人</button><button class="chip on" data-n="9">9 人</button><button class="chip" data-n="12">12 人</button></div>
+  <label class="f" for="crP">房間密碼（選填，留空就是公開房）</label><input type="password" id="crP" maxlength="12" autocomplete="new-password">
+  <div class="row" style="justify-content:center;margin-top:14px"><button class="btn g big" data-do="create">建立</button><button class="btn k" data-close>取消</button></div>`);
+  $('#crN').value=PROF.data.name+' 的房間';
+});
+$('#quick').addEventListener('click',()=>{const r=NET.list.find(r=>r.st==='wait'&&!r.lock&&(+r.count||0)<(+r.size||0));if(r)NET.join(r.id,'');else{toast('目前沒有空位的公開房，幫你開一間新的');$('#mkRoom').click()}});
+function askPw(r){openModal(`<h2>輸入房間密碼</h2><p style="color:var(--mute)"></p><input type="password" id="pwI" maxlength="12" autocomplete="off"><div class="row" style="justify-content:center;margin-top:14px"><button class="btn g" data-do="pw">加入</button><button class="btn k" data-close>取消</button></div>`);
+  $('#modalC p').textContent=`房號 ${r.no}｜${r.name}`;$('#pwI').dataset.rid=r.id;$('#pwI').focus()}
+
+/* ---------- 通用視窗 ---------- */
+function openModal(html,wide,refresh){const c=$('#modalC');c.className='mcard'+(wide?' wide':'');c.innerHTML=html;S.modalRefresh=refresh||null;$('#modal').hidden=false}
+function closeModal(){$('#modal').hidden=true;S.modalRefresh=null}
+function confirmBox(text,yes,label){openModal(`<h2>確認</h2><p></p><div class="row" style="justify-content:center"><button class="btn r" data-do="yes">${esc(label||'確定')}</button><button class="btn k" data-close>取消</button></div>`);$('#modalC p').textContent=text;S.onYes=yes}
+document.addEventListener('click',e=>{const c=e.target.closest('[data-close]');if(c){const m=c.closest('.modal');if(m){m.hidden=true;if(m.id==='modal')S.modalRefresh=null}}});
+$('#modal').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('input')){const b=$('#modalC [data-do]');if(b)b.click()}});
+$('#modalC').addEventListener('click',async e=>{
+  const t=e.target.closest('button');if(!t)return;const D=t.dataset;
+  if(D.bot){closeModal();return startBot(+D.bot)}
+  if(D.tab){S.shopTab=D.tab;return renderShop()}
+  if(D.wt){S.wardTab=D.wt;return renderWard()}
+  if(D.buy!==undefined)return buy(+D.buy);
+  if(D.sw!==undefined){S.draft[S.wardTab]=+D.sw;return renderWard()}
+  if(D.pick!==undefined){S.draft[S.wardTab]=+D.pick;return renderWard()}
+  if(D.go==='ward')return openWard();if(D.go==='shop')return openShop();
+  if(t.parentElement&&t.parentElement.id==='crS'){document.querySelectorAll('#crS .chip').forEach(x=>x.classList.toggle('on',x===t));return}
+  switch(D.do){
+    case 'save':{const a=clampAv(S.draft);const ok=await PROF.update(d=>{for(const k in OWN0)if(!d.owned[k].includes(a[k]))return false;d.av=a});toast(ok?'新造型已儲存！':'有沒擁有的單品，無法儲存');if(ok){closeModal();NET.updateMe()}return}
+    case 'rn':{const v=$('#rnI').value.trim().slice(0,10);if(!v)return toast('暱稱不能是空白');await PROF.update(d=>{d.name=v});closeModal();NET.updateMe();return}
+    case 'create':{const name=$('#crN').value.trim().slice(0,16)||PROF.data.name+' 的房間',size=+(document.querySelector('#crS .on')||{}).dataset.n||9,pw=$('#crP').value.trim().slice(0,12);closeModal();return NET.create(name,size,pw).catch(err=>toast('建立房間失敗：'+(err.code||err.message)))}
+    case 'pw':{const rid=$('#pwI').dataset.rid,pw=$('#pwI').value.trim();closeModal();return NET.join(rid,pw)}
+    case 'setpw':{const pw=$('#spI').value.trim().slice(0,12);closeModal();return NET.setPw(pw)}
+    case 'clearpw':closeModal();return NET.setPw('');
+    case 'yes':{const f=S.onYes;S.onYes=null;closeModal();return f&&f()}
+  }
+});
+
+/* ---------- 商城 ---------- */
+S.shopTab='hs';S.wardTab='hs';
+function openShop(){openModal('',true,renderShop);renderShop()}
+function renderShop(){
+  const d=PROF.data,k=S.shopTab,C=CAT[k];
+  $('#modalC').innerHTML=`<h2>商城</h2><div class="row" style="justify-content:center"><span class="coins"><span class="coin">$</span><b>${d.coins.toLocaleString()}</b></span><small style="color:var(--mute)">線上對戰贏 100、輸 40；單機練習贏 30、輸 10</small></div>
+  <div class="tabbar">${Object.entries(CAT).map(([kk,c])=>`<button class="chip ${kk===k?'on':''}" data-tab="${kk}">${c.n}</button>`).join('')}</div>
+  <div class="items">${C.list.map((it,i)=>{const own=PROF.has(k,i),can=d.coins>=it.p;return`<div class="item ${own?'on':''}"><div class="av">${avSvg({...d.av,[k]:i})}</div><b>${it.n}</b>${own?'<span class="own">已擁有</span>':`<span class="price"><span class="coin">$</span>${it.p}</span><button class="btn ${can?'g':'k'}" data-buy="${i}" ${can?'':'disabled'}>${can?'購買':'金幣不足'}</button>`}</div>`}).join('')}</div>
+  <div class="row" style="justify-content:center;margin-top:12px"><button class="btn b" data-go="ward">去更衣室換裝</button><button class="btn k" data-close>關閉</button></div>`;
+}
+async function buy(i){const k=S.shopTab,it=CAT[k].list[i];
+  const ok=await PROF.update(d=>{if(d.owned[k].includes(i)||d.coins<it.p)return false;d.coins-=it.p;d.owned[k].push(i)});
+  if(ok){SND.coin();toast(`購買成功：${it.n}，已經放進更衣室`)}else toast('金幣不足，或已經擁有了');if(!PROF.online)renderShop()}
+
+/* ---------- 更衣室 ---------- */
+const WTABS=[['hs','髮型'],['h','髮色'],['e','瞳色'],['sk','膚色'],['c','服裝'],['es','表情'],['a','配件']];
+function openWard(){S.draft={...PROF.data.av};openModal('',true,renderWard);renderWard()}
+function renderWard(){
+  const d=S.draft,k=S.wardTab;let body;
+  if(k==='h'||k==='e'||k==='sk'){const pal={h:HAIRC,e:EYEC,sk:SKIN}[k];body=`<div class="swatches">${pal.map((c,i)=>`<button class="sw ${d[k]===i?'on':''}" style="background:${c}" data-sw="${i}" aria-label="顏色 ${i+1}"></button>`).join('')}</div><p style="color:var(--mute);margin:6px">顏色可以免費自由更換。</p>`}
+  else{const list=CAT[k].list,own=PROF.data.owned[k];body=`<div class="items" style="max-height:46vh">${own.map(i=>`<button class="item ${d[k]===i?'on':''}" data-pick="${i}"><div class="av">${avSvg({...d,[k]:i})}</div><b>${list[i].n}</b></button>`).join('')}</div>${own.length<list.length?`<p style="color:var(--mute);margin:6px">還有 ${list.length-own.length} 款${CAT[k].n}可以到商城購買。</p>`:''}`}
+  $('#modalC').innerHTML=`<h2>更衣室</h2><div class="wgrid"><div class="pedestal small"><div class="av">${avSvg(d)}</div></div><div><div class="tabbar" style="justify-content:flex-start">${WTABS.map(([kk,n])=>`<button class="chip ${kk===k?'on':''}" data-wt="${kk}">${n}</button>`).join('')}</div>${body}</div></div>
+  <div class="row" style="justify-content:center;margin-top:12px"><button class="btn g big" data-do="save">儲存造型</button><button class="btn" data-go="shop">去商城</button><button class="btn k" data-close>取消</button></div>`;
+}
+$('#openShop').addEventListener('click',openShop);$('#openWard').addEventListener('click',openWard);
+
+/* ================= 線上房間 ================= */
+const NET={rid:null,lob:null,players:[],offs:[],isHost:false,leaving:false,list:[],chat:[],lastPush:0,pushT:0,lastState:0,stateT:0,hbT:0,actOff:null,lobbyFn:null,
+  ref(p){return FB.db.ref(p)},TS(){return firebase.database.ServerValue.TIMESTAMP},me(){return FB.user&&FB.user.uid},
+  on(r,ev,fn){r.on(ev,fn);this.offs.push(()=>r.off(ev,fn))},
+  watchLobby(){if(this.lobbyFn)return;this.lobbyFn=s=>{const L=[],now=FB.now();s.forEach(c=>{const v=c.val();if(!v||!v.name)return;if((+v.hb||0)<now-300000){this.cleanup(c.key);return}L.push({id:c.key,...v})});this.list=L;if(S.screen==='home')renderRooms()};this.ref('lobby').on('value',this.lobbyFn)},
+  unwatchLobby(){if(this.lobbyFn&&FB.ok){this.ref('lobby').off('value',this.lobbyFn)}this.lobbyFn=null;this.list=[]},
+  cleanup(id){this.ref('rooms/'+id).remove().then(()=>this.ref('lobby/'+id).remove()).catch(()=>{})},
+  async create(name,size,pw){
+    if(this.rid)return;const rid=this.ref('lobby').push().key;
+    await this.ref('lobby/'+rid).set({name,no:String(ri(100,999)),size,count:0,lock:!!pw,st:'wait',host:this.me(),hb:this.TS(),t:this.TS()});
+    if(pw)await this.ref(`rooms/${rid}/secret`).set(pw);
+    return this.join(rid,pw,true);
+  },
+  async join(rid,pw,own){
+    if(this.rid||S.guest)return;const me=this.me();
+    const L=(await this.ref('lobby/'+rid).get()).val();
+    if(!L)return toast('這個房間已經不存在了');
+    if(!own){if(L.st!=='wait')return toast('遊戲已經開始了');if((+L.count||0)>=(+L.size||0))return toast('房間已滿')}
+    const pr=this.ref(`rooms/${rid}/players/${me}`);
+    try{await pr.set({n:PROF.data.name,av:PROF.data.av,t:this.TS(),...(pw?{pw}:{})})}catch(e){return toast(L.lock?'密碼錯誤，或你已被移出這個房間':'無法加入這個房間')}
+    pr.onDisconnect().remove();
+    this.rid=rid;this.lob=L;this.leaving=false;this.chat=[];this.players=[];this.isHost=false;
+    this.on(this.ref('lobby/'+rid),'value',x=>this.onLobby(x.val()));
+    this.on(this.ref(`rooms/${rid}/players`),'value',x=>this.onPlayers(x.val()||{}));
+    this.on(this.ref(`rooms/${rid}/views/${me}`),'value',x=>this.onView(x.val()));
+    this.on(this.ref(`rooms/${rid}/chat`).limitToLast(40),'child_added',x=>{const m=x.val();if(!m)return;this.chat.push(m);if(this.chat.length>60)this.chat.shift();if(S.screen==='room')roomChatLine(m,true)});
+    S.roomNo=L.no;S.roomName=L.name;showRoom();
+  },
+  onLobby(L){
+    if(!this.rid)return;if(!L)return this.exit('房間已經關閉了');
+    this.lob=L;S.roomNo=L.no;S.roomName=L.name;const me=this.me();
+    if(L.host===me&&!this.isHost)this.becomeHost();else if(L.host!==me&&this.isHost)this.dropHost();
+    if(L.st==='wait'&&S.screen==='game'){S.mode=null;S.game=null;S.view=null;$('#mEnd').hidden=true;showRoom()}
+    if(S.screen==='room')renderRoom();
+    this.checkHost();
+  },
+  onPlayers(v){
+    const me=this.me();
+    this.players=Object.entries(v).map(([uid,p])=>({uid,n:String((p&&p.n)||'玩家').slice(0,10),av:clampAv(p&&p.av),t:+(p&&p.t)||0})).sort((a,b)=>a.t-b.t);
+    if(!v[me]&&!this.leaving&&this.rid)return this.exit('你已被房主移出房間');
+    if(this.isHost){this.ref(`lobby/${this.rid}/count`).set(this.players.length).catch(()=>{});
+      if(S.game&&S.mode==='host')for(const u in S.seatOf){if(u!==me&&!v[u]){S.game.toBot(S.seatOf[u]);delete S.seatOf[u]}}}
+    this.checkHost();if(S.screen==='room')renderRoom();
+  },
+  onView(v){if(this.isHost||typeof v!=='string'||!this.lob||this.lob.st!=='play')return;let o;try{o=JSON.parse(v)}catch(e){return}if(S.mode!=='client'){S.mode='client';enterGame()}render(o)},
+  checkHost(){
+    const L=this.lob;if(!L||!this.rid||!this.players.length||this.players.some(p=>p.uid===L.host))return;
+    const cand=pick(this.players).uid;
+    this.ref(`lobby/${this.rid}/host`).transaction(cur=>{if(cur&&this.players.some(p=>p.uid===cur))return;return cand}).catch(()=>{});
+  },
+  async becomeHost(){
+    this.isHost=true;const rid=this.rid,me=this.me();
+    const beat=()=>this.ref(`lobby/${rid}/hb`).set(this.TS()).catch(()=>{});beat();clearInterval(this.hbT);this.hbT=setInterval(beat,15000);
+    const ar=this.ref(`rooms/${rid}/actions`),fn=snap=>{const d=snap.val()||{};snap.ref.remove().catch(()=>{});const seat=S.seatOf[d.u];if(seat&&S.game&&S.mode==='host')S.game.act(seat,d.a||{})};
+    ar.on('child_added',fn);this.actOff=()=>ar.off('child_added',fn);
+    this.ref(`lobby/${rid}/count`).set(this.players.length).catch(()=>{});
+    if(this.lob.st==='play'&&!S.game){
+      const s=(await this.ref(`rooms/${rid}/state`).get()).val();
+      if(typeof s==='string'){try{const g=Game.load(s);S.game=g;S.seatOf={};g.P.forEach(p=>{if(!p.bot)S.seatOf[p.id]=p.seat});
+        const here=new Set(this.players.map(p=>p.uid));for(const u in S.seatOf){if(!here.has(u)){g.toBot(S.seatOf[u]);delete S.seatOf[u]}}
+        S.seat=S.seatOf[me]||0;S.mode='host';if(S.screen!=='game')enterGame();g.dirty=true;toast('原房主離開了，你成為新房主，遊戲繼續！');return}catch(e){}}
+      this.ref(`lobby/${rid}/st`).set('wait');
+    }else if(S.screen==='room'){toast('你成為了房主');renderRoom()}
+  },
+  dropHost(){this.isHost=false;clearInterval(this.hbT);if(this.actOff){this.actOff();this.actOff=null}if(S.mode==='host'){S.mode='client';S.game=null}},
+  async start(){
+    if(!this.isHost||!this.lob)return;const rid=this.rid,size=+this.lob.size,me=this.me();
+    const humans=this.players.slice(0,size),names=shuffle([...BOT_NAMES]),slots=shuffle(Array.from({length:size},(_,i)=>i)),arr=Array(size);
+    humans.forEach((h,i)=>arr[slots[i]]={id:h.uid,name:h.n,av:h.av});
+    for(let i=0;i<size;i++)if(!arr[i])arr[i]={id:'bot'+i,name:names.pop(),av:randAv(),bot:true};
+    await this.ref(`rooms/${rid}/views`).remove().catch(()=>{});
+    S.game=new Game(arr);S.seatOf={};arr.forEach((p,i)=>{if(!p.bot)S.seatOf[p.id]=i+1});S.seat=S.seatOf[me];S.mode='host';
+    await this.ref(`lobby/${rid}/st`).set('play');S.game.start();enterGame();
+  },
+  pushViews(){
+    const now=Date.now();if(now-this.lastPush<250){clearTimeout(this.pushT);this.pushT=setTimeout(()=>this.pushViews(),260);return}
+    this.lastPush=now;const g=S.game,rid=this.rid,me=this.me();if(!g||!rid||!this.isHost)return;
+    for(const u in S.seatOf){if(u!==me)this.ref(`rooms/${rid}/views/${u}`).set(JSON.stringify(g.view(S.seatOf[u]))).catch(()=>{})}
+    const save=()=>{this.lastState=Date.now();if(S.game&&this.isHost&&this.rid)this.ref(`rooms/${this.rid}/state`).set(S.game.save()).catch(()=>{})};
+    clearTimeout(this.stateT);if(now-this.lastState>2000)save();else this.stateT=setTimeout(save,2100);
+  },
+  async backToRoom(){if(!this.isHost)return;const rid=this.rid;S.game=null;S.mode=null;S.view=null;
+    await Promise.all([this.ref(`rooms/${rid}/views`).remove(),this.ref(`rooms/${rid}/state`).remove()]).catch(()=>{});
+    await this.ref(`lobby/${rid}/st`).set('wait');$('#mEnd').hidden=true;showRoom()},
+  sendAction(a){if(this.rid)this.ref(`rooms/${this.rid}/actions`).push({u:this.me(),a}).catch(()=>{})},
+  chatSend(x){if(this.rid)this.ref(`rooms/${this.rid}/chat`).push({u:this.me(),n:PROF.data.name,x:String(x).slice(0,80),t:this.TS()}).catch(()=>toast('訊息送出失敗'))},
+  async kick(u){if(!this.isHost)return;await this.ref(`rooms/${this.rid}/banned/${u}`).set(true);await this.ref(`rooms/${this.rid}/players/${u}`).remove();toast('已將玩家移出房間')},
+  async setPw(pw){if(!this.isHost)return;const rid=this.rid;
+    if(pw){await this.ref(`rooms/${rid}/secret`).set(pw);await this.ref(`lobby/${rid}/lock`).set(true);toast('已設定房間密碼')}
+    else{await this.ref(`rooms/${rid}/secret`).remove();await this.ref(`lobby/${rid}/lock`).set(false);toast('已取消房間密碼')}},
+  updateMe(){if(this.rid&&this.lob&&this.lob.st==='wait')this.ref(`rooms/${this.rid}/players/${this.me()}`).update({n:PROF.data.name,av:PROF.data.av}).catch(()=>{})},
+  async leave(){
+    if(!this.rid)return;const rid=this.rid,me=this.me();this.leaving=true;
+    try{
+      if(this.isHost){const others=this.players.filter(p=>p.uid!==me);
+        if(S.game){await this.ref(`rooms/${rid}/state`).set(S.game.save()).catch(()=>{})}
+        if(!others.length){this.dropHost();this.detach();await this.ref('rooms/'+rid).remove();await this.ref('lobby/'+rid).remove();return}
+        await this.ref(`lobby/${rid}/host`).set(pick(others).uid);
+        await this.ref(`lobby/${rid}/count`).set(others.length).catch(()=>{});
+      }
+      this.dropHost();this.detach();const pr=this.ref(`rooms/${rid}/players/${me}`);await pr.onDisconnect().cancel();await pr.remove();
+    }catch(e){this.detach()}
+  },
+  detach(){this.offs.forEach(f=>f());this.offs=[];this.rid=null;this.lob=null;this.players=[];this.chat=[];clearInterval(this.hbT);if(this.actOff){this.actOff();this.actOff=null}this.isHost=false},
+  exit(msg){this.leaving=true;this.dropHost();this.detach();S.mode=null;S.game=null;S.view=null;$('#mEnd').hidden=true;closeModal();toast(msg);showHome()}
+};
+
+/* ---------- 房間（遊戲開始前：空房間） ---------- */
+const stage=$('#stage'),seatsEl=$('#seats'),log=$('#log');
+function showRoom(){
+  S.screen='room';show('game');stage.classList.add('inroom');stage.classList.remove('night');
+  $('#banner').classList.remove('on');$('#lw').hidden=true;$('#roomTag').hidden=false;S.view=null;S.seatsKey='';S.lastPh='';S.lastMsg=0;
+  log.innerHTML='';log.className='log';document.querySelectorAll('#tabs button').forEach((b,i)=>b.classList.toggle('on',i===0));
+  roomChatLine({sys:1,x:'歡迎進入房間！房主按下「開始遊戲」後，空位會由 AI 補上。'});NET.chat.forEach(m=>roomChatLine(m,false));
+  renderRoom();
+}
+function roomChatLine(m,live){
+  const d=document.createElement('div');
+  if(m.sys){d.className='m sys';d.textContent='【系統】'+m.x}
+  else{d.className='m'+(m.u===NET.me()?' mine':'');const w=document.createElement('b');w.className='who';w.textContent=(m.n||'玩家')+'：';d.append(w,document.createTextNode(String(m.x||'')));
+    if(live){const el=seatsEl.querySelector(`.seat[data-u="${CSS.escape(String(m.u||''))}"] .bub`);if(el){el.textContent=String(m.x||'');el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),4500)}if(m.u!==NET.me())SND.msg()}}
+  log.append(d);log.scrollTop=log.scrollHeight;
+}
+function renderRoom(){
+  const L=NET.lob;if(!L||S.screen!=='room')return;const size=+L.size||9,me=NET.me(),host=L.host===me,ps=NET.players;
+  $('#rNo').textContent=L.no;$('#rName').textContent=L.name;$('#phName').textContent='等待開始';$('#sec').textContent='';$('#barI').style.width='0%';
+  ['#cW','#cG','#cV'].forEach(x=>$(x).textContent='-');$('#bRole').hidden=true;
+  $('#roomTagS').textContent=`房號 ${L.no}｜${ps.length}/${size} 人`;
+  const{pos,w}=layout(size);const key='room|'+size+'|'+L.host+'|'+ps.map(p=>p.uid+p.n+JSON.stringify(p.av)).join('|');
+  if(key!==S.seatsKey){S.seatsKey=key;
+    seatsEl.innerHTML=pos.map((q,i)=>{const p=ps[i],st=`left:${q.x}%;top:${q.y}%;--w:${(w*q.sc).toFixed(2)}cqw;z-index:${q.y>60?3:2}`;
+      if(!p)return`<div class="seat empty" style="${st}"><div class="nm">空位</div><div class="av">${emptySpot()}</div><div class="num">${i+1}</div></div>`;
+      return`<div class="seat ${p.uid===me?'me':''}" data-u="${esc(p.uid)}" style="${st}"><div class="bub"></div><div class="nm"></div><div class="av">${avSvg(p.av)}${p.uid===L.host?`<span class="crown" title="房主">${CROWN}</span>`:''}${host&&p.uid!==me?`<button class="kick" data-kick="${esc(p.uid)}" aria-label="把玩家移出房間">×</button>`:''}</div><div class="num">${i+1}</div></div>`}).join('');
+    seatsEl.querySelectorAll('.seat[data-u]').forEach(el=>{const p=ps.find(x=>x.uid===el.dataset.u);if(p)el.querySelector('.nm').textContent=p.n})}
+  $('#roleMini').innerHTML=`<div class="glyph" style="background:#2a76d2">房</div><div><b></b><small>房號 ${esc(L.no)}・${ps.length}/${size} 人・${L.lock?'已上鎖':'公開房間'}</small></div>`;$('#roleMini b').textContent=L.name;
+  const hostName=(ps.find(p=>p.uid===L.host)||{}).n||'';
+  $('#tip').innerHTML=host?'你是房主（頭上有皇冠）：可以設定密碼、點頭像旁的 × 把人移出，按「開始遊戲」後空位由 AI 補上。':`等待房主 <em></em> 開始遊戲……`;if(!host)$('#tip em').textContent=hostName;
+  $('#acts').innerHTML=(host?`<button class="btn g" data-r="start">開始遊戲</button><button class="btn b" data-r="pw">${L.lock?'修改密碼':'設定密碼'}</button>`:'')+'<button class="btn k" data-r="leave">離開房間</button>';
+  const inp=$('#sayI');inp.disabled=false;$('#sayB').disabled=false;inp.placeholder='和房間裡的人聊天';
+}
+function emptySpot(){return'<svg viewBox="0 -16 100 146" aria-hidden="true"><ellipse cx="50" cy="122" rx="28" ry="6" fill="#000" opacity=".2"/><ellipse cx="50" cy="120" rx="26" ry="5" fill="none" stroke="#7a6a50" stroke-width="2.5" stroke-dasharray="6 5"/><text x="50" y="100" text-anchor="middle" font-size="26" font-weight="900" fill="#8a7a5e" font-family="Noto Sans TC,sans-serif">＋</text></svg>'}
+function openSetPw(){openModal(`<h2>房間密碼</h2><p style="color:var(--mute)">設定後，其他人要輸入密碼才能進房。</p><input type="password" id="spI" maxlength="12" autocomplete="new-password" placeholder="輸入新密碼"><div class="row" style="justify-content:center;margin-top:14px"><button class="btn g" data-do="setpw">設定密碼</button>${NET.lob&&NET.lob.lock?'<button class="btn r" data-do="clearpw">取消密碼</button>':''}<button class="btn k" data-close>關閉</button></div>`);$('#spI').focus()}
+
+/* ================= 單機 ================= */
 function startBot(size){
-  S.mode='bot';const mine=ri(1,size);const names=shuffle([...BOT_NAMES]);const ps=[];
-  for(let i=1;i<=size;i++)ps.push(i===mine?{id:'me',name:myName(),av:me.av}:{id:'bot'+i,name:names.pop(),av:randAv(),bot:true});
+  S.mode='bot';const mine=ri(1,size),names=shuffle([...BOT_NAMES]),ps=[];
+  for(let i=1;i<=size;i++)ps.push(i===mine?{id:'me',name:PROF.data.name,av:PROF.data.av}:{id:'bot'+i,name:names.pop(),av:randAv(),bot:true});
   S.game=new Game(ps);S.seat=mine;S.roomNo=String(ri(100,999));S.roomName='練習房・'+size+'人';S.game.start();enterGame();
 }
 function enterGame(){
-  S.seatsKey='';S.lastMsg=0;S.lastPh='';S.bnKey='';S.poison=false;$('#log').innerHTML='';$('#mEnd').hidden=true;$('#mRole').hidden=true;
-  $('#rNo').textContent=S.roomNo;$('#rName').textContent=S.roomName;show('game');
-  if(S.game){S.game.dirty=false;publish()}
+  S.screen='game';S.seatsKey='';S.lastMsg=0;S.lastPh='';S.bnKey='';S.poison=false;S.aliveN=0;
+  log.innerHTML='';log.className='log';$('#mEnd').hidden=true;$('#mRole').hidden=true;$('#roomTag').hidden=true;$('#bRole').hidden=false;
+  stage.classList.remove('inroom');$('#rNo').textContent=S.roomNo;$('#rName').textContent=S.roomName;show('game');
+  if(S.game&&S.mode!=='client'){S.game.dirty=false;publish()}
 }
-
-/* ---------- 主迴圈 ---------- */
-setInterval(()=>{const g=S.game;if(!g||S.mode==='client')return;g.tick(Date.now());if(g.dirty){g.dirty=false;publish()}},250);
+setInterval(()=>{const g=S.game;if(!g||S.mode==='client'||S.screen!=='game')return;g.tick(Date.now());if(g.dirty){g.dirty=false;publish()}},250);
 function publish(){const g=S.game;if(!g)return;render(g.view(S.seat));if(S.mode==='host')NET.pushViews()}
-function send(a){
-  if(S.mode==='client')return NET.sendAction(a);
-  if(!S.game)return;S.game.act(S.seat,a);S.game.dirty=false;publish();
-}
+function send(a){if(S.mode==='client')return NET.sendAction(a);if(!S.game)return;S.game.act(S.seat,a);S.game.dirty=false;publish()}
 function tickClock(){
   const v=S.view;
-  if(v&&!$('#game').hidden){
+  if(v&&S.screen==='game'){
     if(v.ph==='end'){$('#sec').textContent='—';$('#barI').style.width='0%';$('#sec').classList.remove('hot')}
-    else{const rem=Math.max(0,v.pe-(Date.now()+S.off));const sec=Math.ceil(rem/1000);$('#sec').textContent=sec;$('#barI').style.width=Math.min(100,rem/S.ptot*100)+'%';
-      const hot=sec<=5&&sec>0&&['day','vote','night_wolf','night_witch','night_seer','night_guard','hunter'].includes(v.ph)&&!!v.act;$('#sec').classList.toggle('hot',hot);
-      if(hot&&sec!==S.lastTick){S.lastTick=sec;SND.tick()}}
+    else{const rem=Math.max(0,v.pe-(Date.now()+S.off)),sec=Math.ceil(rem/1000);$('#sec').textContent=sec;$('#barI').style.width=Math.min(100,rem/S.ptot*100)+'%';
+      const hot=sec<=5&&sec>0&&!!v.act&&['day','vote','night_wolf','night_witch','night_seer','night_guard','hunter'].includes(v.ph);$('#sec').classList.toggle('hot',hot);if(hot&&sec!==S.lastTick){S.lastTick=sec;SND.tick()}}
   }
   requestAnimationFrame(tickClock);
 }
 requestAnimationFrame(tickClock);
 
-/* ---------- 繪製 ---------- */
-const stage=$('#stage'),seatsEl=$('#seats'),log=$('#log');
+/* ================= 遊戲畫面繪製 ================= */
 function layout(n){
   const t=Math.ceil(n/2),b=n-t,w=n>9?8.2:n>6?9.4:11,pos=[];
   const xs=(k,a,z)=>Array.from({length:k},(_,i)=>k===1?50:a+i*(z-a)/(k-1));
   xs(t,8,92).forEach(x=>pos.push({x,y:57,sc:.84}));xs(b,11,89).reverse().forEach(x=>pos.push({x,y:98,sc:1}));
   return{pos,w};
 }
-function normalize(v){
-  v.pl=(v.pl||[]).filter(Boolean);v.msgs=(v.msgs||[]).filter(Boolean);v.cnt=v.cnt||{w:0,g:0,v:0};
-  if(v.act){v.act.tg=(v.act.tg||[]).map(Number)}
-  return v;
-}
+function normalize(v){v.pl=(v.pl||[]).filter(Boolean);v.msgs=(v.msgs||[]).filter(Boolean);v.cnt=v.cnt||{w:0,g:0,v:0};if(v.act)v.act.tg=(v.act.tg||[]).map(Number);return v}
 function render(v){
+  if(S.screen!=='game')return;
   v=normalize(v);S.view=v;S.off=v.now-Date.now();
   const night=v.ph==='nightfall'||v.ph.startsWith('night_');stage.classList.toggle('night',night);
-  if(v.ph!==S.lastPh){onPhase(v,S.lastPh);S.lastPh=v.ph}
-  const bk=v.ph+'|'+v.bn+'|'+v.sb+'|'+v.day;
+  if(v.ph!==S.lastPh){onPhase(v);S.lastPh=v.ph}
   if(v.ph==='lastwords')$('#banner').classList.remove('on');
+  const bk=v.ph+'|'+v.bn+'|'+v.sb+'|'+v.day;
   if(bk!==S.bnKey&&v.bn&&v.ph!=='lastwords'){S.bnKey=bk;$('#bnT').textContent=v.bn;$('#bnS').textContent=v.sb||'';const b=$('#banner');b.classList.remove('on');void b.offsetWidth;b.classList.add('on')}
-  $('#phName').textContent=(v.day&&v.ph!=='end'?`第${v.day}${v.ph==='day'||v.ph==='vote'||v.ph==='voteResult'||v.ph==='lastwords'||v.ph==='dawn'?'天':'夜'}・`:'')+(PH[v.ph]||'');
+  $('#phName').textContent=(v.day&&v.ph!=='end'?`第${v.day}${['day','vote','voteResult','lastwords','dawn'].includes(v.ph)?'天':'夜'}・`:'')+(PH[v.ph]||'');
   $('#cW').textContent=v.cnt.w;$('#cG').textContent=v.cnt.g;$('#cV').textContent=v.cnt.v;
   renderSeats(v);renderChat(v);renderAction(v);renderLW(v);
   const aliveN=v.pl.filter(p=>p.a).length;if(S.aliveN&&aliveN<S.aliveN)SND.death();S.aliveN=aliveN;
-  if(v.ph==='end'&&$('#mEnd').hidden)showEnd(v);
-  if(v.ph!=='end')$('#mEnd').hidden=true;
+  if(v.ph==='end'){award(v);if($('#mEnd').hidden&&!S.endShown){S.endShown=v.gid;showEnd(v)}}else{$('#mEnd').hidden=true;S.endShown=null}
 }
-function onPhase(v,prev){
+function onPhase(v){
   S.ptot=Math.max(1000,v.pe-v.ps);S.poison=false;
   if(v.ph==='deal'){S.aliveN=0;showRole(v)}
-  if(v.ph==='nightfall')SND.night();
-  if(v.ph==='dawn')SND.day();
-  if(v.ph==='vote')SND.click();
-  if(v.ph==='end')SND.win();
+  if(v.ph==='nightfall')SND.night();if(v.ph==='dawn')SND.day();if(v.ph==='vote')SND.click();if(v.ph==='end')SND.win();
   if(v.ph!=='deal')$('#mRole').hidden=true;
 }
 function renderSeats(v){
   const key=v.pl.map(p=>p.s+':'+p.n+':'+JSON.stringify(p.av)).join('|');
   if(key!==S.seatsKey){S.seatsKey=key;const{pos,w}=layout(v.pl.length);
-    seatsEl.innerHTML=v.pl.map((p,i)=>`<div class="seat" data-s="${+p.s}" style="left:${pos[i].x}%;top:${pos[i].y}%;--w:${(w*pos[i].sc).toFixed(2)}cqw;z-index:${pos[i].y>60?3:2}"><div class="bub"></div><div class="nm"></div><div class="av">${avSvg(p.av)}<span class="rt" hidden></span><span class="vc" hidden></span><span class="kn" hidden></span></div><div class="num">${+p.s}</div></div>`).join('');}
+    seatsEl.innerHTML=v.pl.map((p,i)=>`<div class="seat" data-s="${+p.s}" style="left:${pos[i].x}%;top:${pos[i].y}%;--w:${(w*pos[i].sc).toFixed(2)}cqw;z-index:${pos[i].y>60?3:2}"><div class="bub"></div><div class="nm"></div><div class="av">${avSvg(p.av)}<span class="rt" hidden></span><span class="vc" hidden></span><span class="kn" hidden></span></div><div class="num">${+p.s}</div></div>`).join('')}
   const a=v.act,tg=new Set(a?a.tg:[]),pickable=a&&(a.k==='pick'||(a.k==='witch'&&S.poison));
   const vc={};if(v.votes)Object.values(v.votes).forEach(t=>{if(t>0)vc[t]=(vc[t]||0)+1});
   const kn={};if(v.wp)Object.values(v.wp).forEach(t=>{if(t)kn[t]=(kn[t]||0)+1});
@@ -781,223 +1112,96 @@ function renderSeats(v){
     el.querySelector('.nm').textContent=p.n;
     const rt=el.querySelector('.rt'),R=p.r&&ROLES[p.r];if(R){rt.textContent=R.g;rt.style.background=R.c;rt.hidden=false}else rt.hidden=true;
     const c=el.querySelector('.vc');c.textContent=vc[s]||'';c.hidden=!vc[s];
-    const k=el.querySelector('.kn');k.textContent=kn[s]?'刀'+(kn[s]>1?'×'+kn[s]:''):'';k.hidden=!kn[s];
-  }
+    const k=el.querySelector('.kn');k.textContent=kn[s]?'刀'+(kn[s]>1?'×'+kn[s]:''):'';k.hidden=!kn[s]}
 }
 seatsEl.addEventListener('click',e=>{
-  const el=e.target.closest('.seat');const v=S.view;if(!el||!v||!v.act||!el.classList.contains('tgt'))return;
+  const k=e.target.closest('[data-kick]');
+  if(k&&S.screen==='room'){const u=k.dataset.kick,p=NET.players.find(x=>x.uid===u);return confirmBox(`要把「${p?p.n:'這位玩家'}」移出房間嗎？他將無法再加入這一間。`,()=>NET.kick(u),'移出房間')}
+  const el=e.target.closest('.seat');const v=S.view;if(!el||!v||!v.act||!el.classList.contains('tgt')||S.screen!=='game')return;
   send({t:'pick',s:+el.dataset.s});S.poison=false;SND.click();
 });
 function bubble(s,text){const el=seatsEl.querySelector(`.seat[data-s="${+s}"] .bub`);if(!el)return;el.textContent=text;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),4500)}
 function renderChat(v){
-  const last=v.msgs.length?v.msgs[v.msgs.length-1].id:0;
-  if(last<S.lastMsg){S.lastMsg=0;log.innerHTML=''}
+  const last=v.msgs.length?v.msgs[v.msgs.length-1].id:0;if(last<S.lastMsg){S.lastMsg=0;log.innerHTML=''}
   const add=v.msgs.filter(m=>m.id>S.lastMsg);if(!add.length)return;
-  const fresh=S.lastMsg>0;const atBottom=log.scrollHeight-log.scrollTop-log.clientHeight<50;
+  const fresh=S.lastMsg>0,atBottom=log.scrollHeight-log.scrollTop-log.clientHeight<50;
   for(const m of add){S.lastMsg=m.id;const d=document.createElement('div');d.className='m '+m.ch+(m.from===v.me?' mine':'');
     if(m.ch==='sys')d.textContent='【系統】'+m.text;
-    else{const p=v.pl.find(x=>x.s===m.from);const tag=m.ch==='wolf'?'［狼隊］':m.ch==='dead'?'［亡者］':'';const w=document.createElement('b');w.className='who';w.textContent=`${tag}${m.from}號 ${p?p.n:''}：`;d.append(w,document.createTextNode(m.text));
-      if(fresh&&m.ch!=='dead')bubble(m.from,m.text)}
+    else{const p=v.pl.find(x=>x.s===m.from),tag=m.ch==='wolf'?'［狼隊］':m.ch==='dead'?'［亡者］':'',w=document.createElement('b');w.className='who';w.textContent=`${tag}${m.from}號 ${p?p.n:''}：`;d.append(w,document.createTextNode(m.text));if(fresh&&m.ch!=='dead')bubble(m.from,m.text)}
     log.append(d)}
   while(log.children.length>220)log.firstChild.remove();
   if(atBottom||add.some(m=>m.from===v.me)||!fresh)log.scrollTop=log.scrollHeight;
   if(fresh&&add.some(m=>m.ch!=='sys'&&m.from!==v.me))SND.msg();
 }
 $('#tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));log.className='log'+(b.dataset.f?' f-'+b.dataset.f:'');log.scrollTop=log.scrollHeight});
+function endButtons(){return S.mode==='bot'?'<button class="btn g" data-a="again">再來一局</button><button class="btn k" data-a="home">回大廳</button>'
+  :S.mode==='host'?'<button class="btn g" data-a="again">再來一局</button><button class="btn b" data-a="room">回到房間</button><button class="btn k" data-a="leave">離開房間</button>'
+  :'<span style="color:var(--mute)">等待房主決定下一局……</span><button class="btn k" data-a="leave">離開房間</button>'}
 function renderAction(v){
   const R=v.role&&ROLES[v.role];
   $('#roleMini').innerHTML=R?`<div class="glyph" style="background:${R.c}">${R.g}</div><div><b>${R.n}</b>${v.alive?'':' <span style="color:#ff8a80">（已出局）</span>'}<small>${R.d}</small></div>`:'';
   const a=v.act;let tip='',btns='';
-  if(!a){tip=v.ph==='end'?'遊戲結束！':v.ph==='deal'?'確認你的身份，夜晚即將來臨……':!v.alive?(v.ph==='lastwords'&&v.lw===v.me?'請在聊天框發表你的遺言':'你已出局：可以在亡者頻道聊天，並看到所有人的身份。'):(v.ph.startsWith('night')?'天黑請閉眼，等待其他角色行動……':v.ph==='lastwords'?'聆聽遺言中……':'請稍候……')}
+  if(!a)tip=v.ph==='end'?'遊戲結束！':v.ph==='deal'?'確認你的身份，夜晚即將來臨……':!v.alive?(v.ph==='lastwords'&&v.lw===v.me?'請在聊天框發表你的遺言':'你已出局：可以在亡者頻道聊天，並看到所有人的身份。'):(v.ph.startsWith('night')?'天黑請閉眼，等待其他角色行動……':v.ph==='lastwords'?'聆聽遺言中……':'請稍候……');
   else if(a.k==='pick'){tip=esc(a.tip);if(a.sel)tip+=`　<em>已選擇：${+a.sel}號</em>`;if(a.abst)tip+='　<em>已棄票</em>';if(a.skip)btns+=`<button class="btn k" data-a="skip">${esc(a.skip)}</button>`}
-  else if(a.k==='witch'){
-    tip=S.poison?'<em>點擊舞台上的玩家下毒（不能毒自己）</em>':(+a.victim>0?`今晚 <em>${+a.victim}號</em> 被狼人襲擊了。`:+a.victim===0?'今晚狼人沒有殺人。':'解藥已用完，無法得知今晚刀口。')+'要使用藥水嗎？';
-    if(a.save)btns+=`<button class="btn g" data-a="save">解藥救 ${+a.victim}號</button>`;
-    if(a.poison)btns+=`<button class="btn r" data-a="poison">${S.poison?'取消下毒':'使用毒藥'}</button>`;
-    btns+=`<button class="btn k" data-a="skip">${esc(a.skip||'不使用')}</button>`;
-  }
+  else if(a.k==='witch'){tip=S.poison?'<em>點擊舞台上的玩家下毒（不能毒自己）</em>':(+a.victim>0?`今晚 <em>${+a.victim}號</em> 被狼人襲擊了。`:+a.victim===0?'今晚狼人沒有殺人。':'解藥已用完，無法得知今晚刀口。')+'要使用藥水嗎？';
+    if(a.save)btns+=`<button class="btn g" data-a="save">解藥救 ${+a.victim}號</button>`;if(a.poison)btns+=`<button class="btn r" data-a="poison">${S.poison?'取消下毒':'使用毒藥'}</button>`;btns+=`<button class="btn k" data-a="skip">${esc(a.skip||'不使用')}</button>`}
   else if(a.k==='talk'){tip=esc(a.tip);if(!a.done)btns+='<button class="btn b" data-a="done">結束發言</button>'}
-  if(v.ph==='end')btns+=(S.mode!=='client'?'<button class="btn g" data-a="again">再來一局</button>':'')+'<button class="btn k" data-a="lobby">回大廳</button>';
+  if(v.ph==='end')btns+=endButtons();
   $('#tip').innerHTML=tip;$('#acts').innerHTML=btns;
   const ch=v.ch,inp=$('#sayI');inp.disabled=!ch;$('#sayB').disabled=!ch;
   inp.placeholder=!ch?'現在不能發言':ch==='wolf'?'狼隊頻道（只有狼人看得到）':ch==='dead'?'亡者頻道（只有出局玩家看得到）':(v.ph==='lastwords'?'發表你的遺言…':'輸入訊息，按 Enter 送出');
 }
-$('#acts').addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const k=b.dataset.a;SND.click();
-  if(k==='poison'){S.poison=!S.poison;render(S.view);return}
-  if(k==='again')return again();if(k==='lobby')return leave();
-  send({t:k});
-});
-$('#sayF').addEventListener('submit',e=>{e.preventDefault();const t=$('#sayI').value.trim();if(!t)return;send({t:'chat',x:t});$('#sayI').value=''});
-function renderLW(v){
-  const on=v.ph==='lastwords'&&v.lw;$('#lw').hidden=!on;if(!on)return;
-  const p=v.pl.find(x=>x.s===v.lw);$('#lwWho').textContent=`${v.lw}號 ${p?p.n:''}`;
-  const m=[...v.msgs].reverse().find(x=>x.from===v.lw&&x.ch==='all');$('#lwSay').textContent=m?m.text:'……';
+function endAct(k){
+  if(k==='again'){if(S.mode==='bot')return startBot(S.game.n);if(S.mode==='host')return NET.start()}
+  if(k==='room')return NET.backToRoom();
+  if(k==='home'){S.game=null;S.view=null;S.mode=null;$('#mEnd').hidden=true;return showHome()}
+  if(k==='leave')return leaveRoom();
 }
+$('#acts').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;SND.click();
+  if(b.dataset.r==='start')return NET.start();if(b.dataset.r==='pw')return openSetPw();if(b.dataset.r==='leave')return leaveRoom(true);
+  const k=b.dataset.a;if(!k)return;if(k==='poison'){S.poison=!S.poison;return render(S.view)}
+  if(['again','room','home','leave'].includes(k))return endAct(k);send({t:k});
+});
+$('#mEndC').addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b){$('#mEnd').hidden=true;endAct(b.dataset.a)}});
+async function leaveRoom(ask){
+  if(ask)return confirmBox('確定要離開房間嗎？',()=>leaveRoom(false),'離開');
+  await NET.leave();S.game=null;S.view=null;S.mode=null;$('#mEnd').hidden=true;showHome();
+}
+$('#sayF').addEventListener('submit',e=>{e.preventDefault();const t=$('#sayI').value.trim();if(!t)return;$('#sayI').value='';if(S.screen==='room')NET.chatSend(t);else send({t:'chat',x:t})});
+function renderLW(v){const on=v.ph==='lastwords'&&v.lw;$('#lw').hidden=!on;if(!on)return;const p=v.pl.find(x=>x.s===v.lw);$('#lwWho').textContent=`${v.lw}號 ${p?p.n:''}`;const m=[...v.msgs].reverse().find(x=>x.from===v.lw&&x.ch==='all');$('#lwSay').textContent=m?m.text:'……'}
 function showRole(v){
   const R=v.role&&ROLES[v.role];if(!R)return;
-  const mates=v.role==='wolf'?v.pl.filter(p=>p.r==='wolf'&&p.s!==v.me).map(p=>`${p.s}號 ${esc(p.n)}`).join('、'):'';
+  const mates=v.role==='wolf'?v.pl.filter(p=>p.r==='wolf'&&p.s!==v.me).map(p=>`${+p.s}號 ${esc(p.n)}`).join('、'):'';
   $('#mRoleC').innerHTML=`<div style="color:var(--mute);font-weight:700">你的身份是</div><div class="glyph bigglyph" style="background:${R.c}">${R.g}</div><h2>${R.n}</h2>
   <p style="color:${R.team==='wolf'?'#ff8a80':'#8fd0ff'};font-weight:900;margin:0">${R.team==='wolf'?'狼人陣營':'好人陣營'}</p><p>${R.d}</p>${mates?`<p style="color:#ff8a80;font-weight:700">你的狼隊友：${mates}</p>`:''}<button class="btn big" data-close>我知道了</button>`;
   $('#mRole').hidden=false;
 }
+function myResult(v){if(!v.role)return null;const good=v.winner==='good',won=(ROLES[v.role].team==='wolf')!==good;return{won,amt:S.mode==='bot'?(won?30:10):(won?100:40)}}
+const awarded=new Set();
+function award(v){
+  const r=myResult(v);if(!r||!v.gid||awarded.has(v.gid)||!PROF.data)return;awarded.add(v.gid);
+  PROF.update(d=>{if(d.rewarded===v.gid)return false;d.rewarded=v.gid;d.coins+=r.amt;d.games+=1;if(r.won)d.wins+=1}).then(ok=>{if(ok){SND.coin();toast(`獲得 ${r.amt} 金幣！`)}}).catch(()=>{});
+}
 function showEnd(v){
-  const good=v.winner==='good';
+  const good=v.winner==='good',r=myResult(v);
   $('#mEndC').innerHTML=`<h2 style="color:${good?'#8fd0ff':'#ff8a80'}">${good?'好人陣營勝利！':'狼人陣營勝利！'}</h2>
-  <p style="margin:0;color:var(--mute)">${(()=>{const mine=v.role&&ROLES[v.role];if(!mine)return'';const won=(mine.team==='wolf')!==good;return won?'恭喜，你贏了！':'可惜，你輸了，再接再厲！'})()}</p>
-  <div class="endgrid">${v.pl.map(p=>{const R=ROLES[p.r]||ROLES.villager;const win=(R.team==='wolf')!==good;return`<div class="endp ${win?'win':''} ${p.a?'':'x'}"><div class="av">${avSvg(p.av)}</div><b>${+p.s}號 ${esc(p.n)}</b><div style="color:${R.c};font-weight:900">${R.n}</div><div style="color:var(--mute)">${p.a?'存活':'出局'}</div></div>`}).join('')}</div>
-  <div class="row" style="justify-content:center">${S.mode!=='client'?'<button class="btn g big" data-a2="again">再來一局</button>':'<span style="color:var(--mute)">等待房主開新局……</span>'}<button class="btn k big" data-a2="lobby">回大廳</button><button class="btn b big" data-close>看聊天紀錄</button></div>`;
+  <p style="margin:0;color:var(--mute)">${r?(r.won?'恭喜，你贏了！':'可惜，你輸了，再接再厲！'):''}</p>
+  ${r?`<p class="row" style="justify-content:center;margin:8px 0 0"><span class="coins"><span class="coin">$</span><b>+${r.amt}</b></span></p>`:''}
+  <div class="endgrid">${v.pl.map(p=>{const R=ROLES[p.r]||ROLES.villager,win=(R.team==='wolf')!==good;return`<div class="endp ${win?'win':''} ${p.a?'':'x'}"><div class="av">${avSvg(p.av)}</div><b>${+p.s}號 ${esc(p.n)}</b><div style="color:${R.c};font-weight:900">${R.n}</div><div style="color:var(--mute)">${p.a?'存活':'出局'}</div></div>`}).join('')}</div>
+  <div class="row" style="justify-content:center">${endButtons()}<button class="btn b" data-close>看聊天紀錄</button></div>`;
   $('#mEnd').hidden=false;
 }
-$('#mEndC').addEventListener('click',e=>{const b=e.target.closest('[data-a2]');if(!b)return;b.dataset.a2==='again'?again():leave()});
-document.addEventListener('click',e=>{if(e.target.closest('[data-close]'))e.target.closest('.modal').hidden=true});
 $('#bRole').addEventListener('click',()=>S.view&&showRole(S.view));
 $('#bRule').addEventListener('click',()=>$('#mRule').hidden=false);
-const sndBtn=$('#bSnd');const sndLbl=()=>sndBtn.textContent=SND.on?'音效：開':'音效：關';sndLbl();
+const sndBtn=$('#bSnd'),sndLbl=()=>sndBtn.textContent=SND.on?'音效：開':'音效：關';sndLbl();
 sndBtn.addEventListener('click',()=>{SND.on=!SND.on;store.set('wolf_snd',SND.on);sndLbl();SND.click()});
-$('#bExit').addEventListener('click',()=>{const b=$('#bExit');if(S.view&&S.view.ph==='end')return leave();
-  if(Date.now()-S.exitArm<3000)return leave();S.exitArm=Date.now();b.textContent='再按一次離開';setTimeout(()=>b.textContent='離開',3000)});
-function again(){if(S.mode==='bot')startBot(S.game.n);else if(S.mode==='host')NET.start()}
-function leave(){if(S.mode==='host'||S.mode==='client'||NET.room)NET.leave();S.game=null;S.view=null;S.mode=null;$('#bExit').textContent='離開';show('lobby')}
+$('#bExit').addEventListener('click',()=>{
+  if(S.mode==='bot'&&S.screen==='game'){if(S.view&&S.view.ph==='end')return endAct('home');return confirmBox('確定要離開這局練習嗎？',()=>endAct('home'),'離開')}
+  leaveRoom(true);
+});
 
-/* ================= 線上模式（Firebase Realtime Database） ================= */
-const NET={ok:false,db:null,uid:null,room:null,offs:[],lastPush:0,pushT:0,
-  async init(){
-    if(!FIREBASE_CONFIG.apiKey||!FIREBASE_CONFIG.databaseURL)return false;if(this.ok)return true;
-    const base='https://www.gstatic.com/firebasejs/10.12.2/';
-    for(const f of['firebase-app-compat.js','firebase-auth-compat.js','firebase-database-compat.js'])await new Promise((res,rej)=>{const s=document.createElement('script');s.src=base+f;s.onload=res;s.onerror=rej;document.head.append(s)});
-    firebase.initializeApp(FIREBASE_CONFIG);const cred=await firebase.auth().signInAnonymously();this.uid=cred.user.uid;this.db=firebase.database();this.ok=true;return true;
-  },
-  ref(p){return this.db.ref(p)},
-  on(p,ev,fn){const r=this.ref(p);r.on(ev,fn);this.offs.push(()=>r.off(ev,fn))},
-  TS(){return firebase.database.ServerValue.TIMESTAMP},
-  async create(size){
-    const id=this.ref('lobby').push().key,no=String(ri(100,999)),name=myName()+' 的房間';
-    this.room={id,host:true,size,no,name,players:[],auto:Date.now()+60000};
-    await this.ref('lobby/'+id).set({no,name,host:this.uid,size,count:1,st:'wait',t:this.TS()});
-    await this.ref('rooms/'+id).onDisconnect().remove();await this.ref('lobby/'+id).onDisconnect().remove();
-    await this.joinSelf();this.watchPlayers();showWait();
-    this.autoT=setInterval(()=>{if(!this.room||S.game)return;renderWait();if(Date.now()>=this.room.auto)this.start()},1000);
-  },
-  async joinSelf(){const r=this.ref(`rooms/${this.room.id}/players/${this.uid}`);await r.onDisconnect().remove();await r.set({n:myName(),av:me.av,t:this.TS()})},
-  watchPlayers(){
-    this.on(`rooms/${this.room.id}/players`,'value',snap=>{
-      const v=snap.val()||{};this.room.players=Object.entries(v).map(([uid,p])=>({uid,n:String(p.n||'玩家').slice(0,10),av:p.av||{},t:p.t||0})).sort((a,b)=>a.t-b.t);
-      if(this.room.host){
-        if(S.game){for(const uid in S.seatOf){if(uid!==this.uid&&!v[uid]){S.game.toBot(S.seatOf[uid]);delete S.seatOf[uid]}}}
-        else{this.ref('lobby/'+this.room.id+'/count').set(this.room.players.length);if(this.room.players.length>=this.room.size)this.start()}
-      }
-      if(!S.game&&S.mode!=='client')renderWait();
-    });
-  },
-  start(){
-    const R=this.room;if(!R||!R.host)return;
-    const humans=R.players.slice(0,R.size),names=shuffle([...BOT_NAMES]),slots=shuffle(Array.from({length:R.size},(_,i)=>i)),arr=Array(R.size);
-    humans.forEach((h,i)=>arr[slots[i]]={id:h.uid,name:h.n,av:h.av});
-    for(let i=0;i<R.size;i++)if(!arr[i])arr[i]={id:'bot'+i,name:names.pop(),av:randAv(),bot:true};
-    S.game=new Game(arr);S.seatOf={};arr.forEach((p,i)=>{if(!p.bot)S.seatOf[p.id]=i+1});
-    S.seat=S.seatOf[this.uid];S.mode='host';S.roomNo=R.no;S.roomName=R.name;
-    this.ref('lobby/'+R.id+'/st').set('play');
-    if(!this.actOn){this.actOn=true;this.on(`rooms/${R.id}/actions`,'child_added',snap=>{const d=snap.val()||{};snap.ref.remove();const seat=S.seatOf[d.u];if(seat&&S.game){S.game.act(seat,d.a||{})}})}
-    S.game.start();enterGame();
-  },
-  pushViews(){
-    const now=Date.now();if(now-this.lastPush<250){clearTimeout(this.pushT);this.pushT=setTimeout(()=>this.pushViews(),260);return}
-    this.lastPush=now;const g=S.game,R=this.room;if(!g||!R)return;
-    for(const uid in S.seatOf){if(uid===this.uid)continue;this.ref(`rooms/${R.id}/views/${uid}`).set(g.view(S.seatOf[uid]))}
-  },
-  async join(id){
-    const L=(await this.ref('lobby/'+id).get()).val();
-    if(!L||L.st!=='wait'||L.count>=L.size)return toast('房間已滿或已經開始了');
-    this.room={id,host:false,size:L.size,no:L.no,name:L.name,players:[]};
-    await this.joinSelf();this.watchPlayers();
-    this.on('lobby/'+id,'value',x=>{if(!x.exists()&&this.room){toast('房主已離開，房間關閉');leave()}});
-    this.on(`rooms/${id}/views/${this.uid}`,'value',x=>{const v=x.val();if(!v)return;if(S.mode!=='client'){S.mode='client';S.roomNo=L.no;S.roomName=L.name;enterGame()}render(v)});
-    showWait();
-  },
-  sendAction(a){if(this.room)this.ref(`rooms/${this.room.id}/actions`).push({u:this.uid,a})},
-  async quick(){
-    const snap=await this.ref('lobby').orderByChild('st').equalTo('wait').get();const list=[];
-    snap.forEach(c=>{const v=c.val();if(v&&v.count<v.size)list.push({id:c.key,...v})});
-    list.sort((a,b)=>b.count-a.count);if(list[0])return this.join(list[0].id);return this.create(S.size);
-  },
-  leave(){
-    this.offs.forEach(f=>f());this.offs=[];this.actOn=false;clearInterval(this.autoT);
-    const R=this.room;this.room=null;if(!R||!this.ok)return;
-    if(R.host){this.ref('lobby/'+R.id).remove();this.ref('rooms/'+R.id).remove()}else this.ref(`rooms/${R.id}/players/${this.uid}`).remove();
-  },
-  listRooms(){
-    this.ref('lobby').on('value',snap=>{const box=$('#rooms');if(!box)return;const list=[];snap.forEach(c=>{const v=c.val();if(v)list.push({id:c.key,...v})});
-      box.innerHTML=list.length?'':'<div style="color:var(--mute)">目前沒有房間，建立一個吧！</div>';
-      list.sort((a,b)=>(a.st==='wait'?0:1)-(b.st==='wait'?0:1)).forEach(r=>{const d=document.createElement('div');d.className='room';
-        d.innerHTML=`<b>${esc(r.no)}</b><span></span><small>${+r.count}/${+r.size}</small>`;d.querySelector('span').textContent=r.name;
-        const b=document.createElement('button');b.className='btn '+(r.st==='wait'?'g':'k');b.textContent=r.st==='wait'?'加入':'遊戲中';b.disabled=r.st!=='wait'||r.count>=r.size;b.onclick=()=>this.join(r.id);d.append(b);box.append(d)})});
-  }
-};
-function showWait(){show('wait');renderWait()}
-function renderWait(){
-  const R=NET.room;if(!R)return;
-  $('#wTitle').textContent=`房號 ${R.no}｜${R.name}`;
-  const left=R.host?Math.max(0,Math.ceil((R.auto-Date.now())/1000)):0;
-  $('#wInfo').textContent=`等待玩家加入（${R.players.length}/${R.size}）`+(R.host?`，${left} 秒後自動開始，空位由 AI 補上`:'，等待房主開始……');
-  $('#wSeats').innerHTML=Array.from({length:R.size},(_,i)=>{const p=R.players[i];return p?`<div class="wseat f"><div class="av">${avSvg(p.av)}</div><b></b></div>`:'<div class="wseat">空位</div>'}).join('');
-  [...$('#wSeats').children].forEach((el,i)=>{const p=R.players[i];if(p)el.querySelector('b').textContent=p.n});
-  $('#wStart').hidden=!R.host;
-}
-$('#wStart').addEventListener('click',()=>NET.start());
-$('#wLeave').addEventListener('click',()=>leave());
-
-const RULES=`{
-  "rules": {
-    "lobby": {
-      ".read": "auth != null",
-      ".indexOn": ["st"],
-      "$r": { ".write": "auth != null && (!data.exists() || data.child('host').val() === auth.uid)" }
-    },
-    "rooms": {
-      "$r": {
-        ".write": "root.child('lobby/'+$r+'/host').val() === auth.uid",
-        "players": {
-          ".read": "auth != null",
-          "$u": { ".write": "auth != null && auth.uid === $u" }
-        },
-        "actions": {
-          ".read": "root.child('lobby/'+$r+'/host').val() === auth.uid",
-          "$a": { ".write": "auth != null && (!newData.exists() || newData.child('u').val() === auth.uid)" }
-        },
-        "views": {
-          "$u": {
-            ".read": "auth != null && auth.uid === $u",
-            ".write": "root.child('lobby/'+$r+'/host').val() === auth.uid"
-          }
-        }
-      }
-    }
-  }
-}`;
-async function setupOnline(){
-  const box=$('#online');
-  if(!FIREBASE_CONFIG.apiKey){
-    box.innerHTML=`<div class="note">線上配對需要把這個檔案放到你自己的網站（例如 GitHub Pages），並在檔案開頭的 <b>FIREBASE_CONFIG</b> 填入 Firebase 專案設定。目前可以先玩單機練習。</div>
-    <details><summary>架設步驟（約 10 分鐘）</summary><ol style="padding-left:1.2em">
-    <li>到 Firebase 主控台建立專案 → 新增「網頁應用程式」，複製設定值。</li>
-    <li>Authentication → 登入方式 → 啟用「匿名」。</li>
-    <li>Realtime Database → 建立資料庫 → 規則頁貼上下方規則並發布。</li>
-    <li>把設定填進 HTML 裡的 FIREBASE_CONFIG（含 databaseURL），上傳到 GitHub Pages。</li>
-    <li>把網址分享出去，大家按「快速配對」就會進同一間房。</li></ol>
-    <div class="row" style="justify-content:space-between"><b>資料庫規則</b><button class="btn k" id="cpRules" type="button">複製規則</button></div><pre id="rulesPre"></pre></details>`;
-    $('#rulesPre').textContent=RULES;
-    $('#cpRules').onclick=async()=>{try{await navigator.clipboard.writeText(RULES);toast('已複製規則')}catch(e){toast('無法複製，請手動選取')}};
-    return;
-  }
-  box.innerHTML='<p>連線中……</p>';
-  try{await NET.init()}catch(e){box.innerHTML='<div class="note">連不上 Firebase，請檢查 FIREBASE_CONFIG 與網路。</div>';return}
-  box.innerHTML=`<p>用上方選的人數建立房間，或直接快速配對。等待 60 秒後空位會由 AI 補上。</p><div class="row"><button class="btn g big" id="qm">快速配對</button><button class="btn b" id="mk">建立房間</button></div><div class="rooms" id="rooms"></div>`;
-  $('#qm').onclick=()=>NET.quick().catch(()=>toast('配對失敗，請再試一次'));
-  $('#mk').onclick=()=>NET.create(S.size).catch(()=>toast('建立房間失敗'));
-  NET.listRooms();
-}
-setupOnline();
-window.__wolf={S,startBot};
+window.__wolf={S,NET,PROF,startBot,avSvg,CAT};
+boot();
 }
 </script>
 </body>
