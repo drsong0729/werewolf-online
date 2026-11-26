@@ -140,6 +140,9 @@ label.f{display:block;font-weight:700;font-size:13px;color:var(--mute);margin:10
 .bub{position:absolute;bottom:calc(100% + 2px);left:50%;transform:translate(-50%,6px) scale(.9);background:#fff;color:#222;border:2px solid #222;border-radius:12px;padding:3px 8px;font-size:max(11px,1.05cqw);font-weight:700;width:max-content;max-width:max(130px,16cqw);opacity:0;transition:.2s;pointer-events:none;z-index:9;line-height:1.35}
 .bub::after{content:"";position:absolute;left:50%;top:100%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#222}
 .bub.on{opacity:1;transform:translate(-50%,0) scale(1)}
+.seat.eL .bub{left:-12%;transform:translate(0,6px) scale(.9)}.seat.eL .bub.on{transform:translate(0,0) scale(1)}.seat.eL .bub::after{left:28%}
+.seat.eR .bub{left:auto;right:-12%;transform:translate(0,6px) scale(.9)}.seat.eR .bub.on{transform:translate(0,0) scale(1)}.seat.eR .bub::after{left:72%}
+.nm .crw{display:inline-block;width:1.25em;vertical-align:-.15em;margin-right:2px}.nm .crw svg{width:100%;height:auto}
 .banner{position:absolute;left:0;right:0;top:44%;transform:translateY(-50%);text-align:center;pointer-events:none;z-index:20;opacity:0}
 .banner.on{animation:pop 3.8s ease forwards}
 .banner h3{margin:0;font-size:clamp(20px,3.8cqw,52px);font-weight:900;color:#fff;-webkit-text-stroke:clamp(5px,.7cqw,9px) #15172a;paint-order:stroke fill;text-shadow:0 4px 0 #0007;line-height:1.15;padding:0 4%}
@@ -201,10 +204,83 @@ button.item{cursor:pointer}
 @keyframes beat{to{transform:scale(1.15)}}
 @keyframes rise{from{transform:translateY(20px);opacity:0}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}.banner.on{opacity:1;animation:none}}
-@media(max-width:860px){.hgrid{grid-template-columns:minmax(0,1fr)}.pedestal{aspect-ratio:16/10}.pedestal .av{width:min(34%,200px)}}
-@media(max-width:700px){.bottom{grid-template-columns:minmax(0,1fr)}.chat{border-right:0;border-bottom:2px solid #2a2e3a}.log{height:150px}.stage{aspect-ratio:4/3;--k:1.3}.hex>span{width:32px;height:30px;font-size:13px}.rno span{display:none}
- .rhead{display:none}.rrow{grid-template-columns:50px minmax(0,1fr) 54px 28px;grid-template-areas:"no nm cnt lk" "st st bt bt"}.rrow .no{grid-area:no}.rrow .nm{grid-area:nm}.rrow .cnt{grid-area:cnt}.rrow .lk{grid-area:lk}.rrow .st{grid-area:st;justify-self:start}.rrow .btn{grid-area:bt}
- .wgrid{grid-template-columns:minmax(0,1fr)}.pedestal.small{height:200px}.pedestal.small .av{width:110px}}
+#bMenu{display:none}
+.menu{display:grid;gap:8px;margin-top:10px}.menu .btn{width:100%}
+.stepper{display:inline-flex;align-items:center;gap:6px;background:#0a0b10;border:1px solid #2a2e3a;border-radius:10px;padding:3px}
+.stepper b{min-width:4.6em;text-align:center;font-weight:900;color:var(--gold)}
+.stepper .btn{min-height:36px;min-width:40px;padding:2px 8px;font-size:18px}
+.comp{display:block;color:var(--mute);font-size:12.5px;font-weight:500;margin-top:2px}
+.sizes{flex-wrap:wrap}
+.acts:empty{display:none}
+.mcard{max-height:calc(100dvh - 32px);overflow:auto}
+#game{container-type:inline-size}
+@container (max-width:1000px){.hud{flex-wrap:nowrap}.rno span,.tools{display:none}#bMenu{display:inline-flex;align-items:center}.clock{min-width:0}}
+/* 桌機：整個遊戲畫面塞進一個螢幕高度 */
+@media(min-width:701px) and (min-height:541px){#game{max-width:min(1240px,max(760px,calc((100dvh - 400px)*2)))}}
+@media(max-width:860px){.hgrid{grid-template-columns:minmax(0,1fr)}}
+/* ===== 手機直式：一個螢幕看完全部資訊，不用捲動 ===== */
+@media(max-width:700px) and (orientation:portrait){
+ body[data-screen=home],body[data-screen=game]{overflow:hidden;height:100dvh}
+ #login{padding:10px}.hero{height:150px}.lbox{margin-top:10px;padding:14px}
+ #home{height:100dvh;display:flex;flex-direction:column;padding:8px;gap:8px}
+ .topbar{flex:none;padding:6px 8px;gap:6px;flex-wrap:nowrap}.brand{font-size:18px;-webkit-text-stroke:4px #2a0f40}.uname{display:none}
+ .topbar .btn{min-height:34px;padding:2px 8px;font-size:13px}.coins{padding:2px 8px 2px 3px;font-size:14px}
+ .hgrid{display:flex;flex-direction:column;flex:1;min-height:0;margin:0;gap:8px}
+ .charp{flex:none;display:grid;grid-template-columns:104px minmax(0,1fr);gap:6px 10px;padding:10px}
+ .charp .pedestal{grid-row:span 3;aspect-ratio:auto;height:100%;min-height:126px}.charp .pedestal .av{width:84%;bottom:3%}
+ .cname b{font-size:17px}.cname .chip{min-height:32px;padding:2px 10px;font-size:12.5px}
+ .stats{gap:4px}.stats div{padding:2px}.stats b{font-size:15px}.stats small{font-size:11px}
+ .cbtns{gap:6px}.cbtns .btn.big{font-size:15px;padding:6px 10px;min-height:40px}
+ .roomcard{flex:1;min-height:0;display:flex;flex-direction:column;padding:10px}.roomcard h2{font-size:16px}
+ .rbtns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%}.rbtns .btn{padding:6px 4px;font-size:14px;min-height:40px}
+ .rhead{display:none}.rlist{flex:1;min-height:0;max-height:none;margin-top:8px}
+ .rrow{grid-template-columns:42px minmax(0,1fr) 42px 22px 62px;gap:6px;padding:6px 8px}.rrow .st{display:none}.rrow .btn{min-height:36px;padding:4px 6px;font-size:13px}.rrow .lk svg{width:20px;height:20px}
+ #game{height:100dvh;display:flex;flex-direction:column;padding:0;max-width:none}
+ .hud{flex:none;flex-wrap:nowrap;gap:6px;padding:5px 8px;border-radius:0;border-width:0 0 2px;position:relative}
+ .rno span,.tools{display:none}.rno b{font-size:13px}#bMenu{display:inline-flex;align-items:center;min-height:34px;padding:2px 10px;font-size:13px}
+ .clock{min-width:0;gap:6px}.clock .ph{font-size:13.5px;overflow:hidden;text-overflow:ellipsis}.clock .sec{font-size:18px;min-width:1.6em}
+ .bar{position:absolute;left:0;right:0;bottom:-2px;height:3px;border:0;border-radius:0;background:#0007}
+ .hex{gap:3px}.hex>span{width:28px;height:26px;font-size:12px}.hex small{font-size:9px}
+ .stage{flex:none;aspect-ratio:5/4;border-width:0;--k:1.45}
+ .bottom{flex:1;min-height:0;display:flex;flex-direction:column;border:0;border-radius:0}
+ .act{order:-1;flex:none;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;padding:6px 8px;gap:6px;border-bottom:2px solid #2a2e3a}
+ .rolemini{gap:6px}.rolemini small{display:none}.rolemini .glyph{width:30px;height:30px;font-size:15px;border-width:2px}.rolemini b{font-size:14px;white-space:nowrap}.rolemini b+span{display:none}
+ .tip{font-size:13px;min-height:0;padding:5px 8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ .acts{grid-column:1/-1;gap:6px;flex-wrap:nowrap}.acts .btn{min-height:38px;padding:4px 12px;font-size:14px}.dtext,.mhide{display:none}.comp{display:inline;color:var(--ink);font-size:13px;margin:0}
+ .stepper .btn{min-width:34px;padding:2px 4px}.stepper b{min-width:3.8em;font-size:14px}
+ .seat .kick{width:22px;height:22px;font-size:13px;right:-14%;top:2%}
+ .hgrid{align-items:stretch}
+ .chat{flex:1;min-height:0;border:0}.tabs{display:none}.log{flex:1;height:auto;min-height:0;font-size:13.5px}
+ .say{flex:none;padding:6px 8px}
+ .modal{padding:8px}.mcard{padding:14px}.mcard h2{font-size:22px}
+ .items{grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:6px;max-height:none}.item .av{width:64px}.item b{font-size:12.5px}
+ .wgrid{grid-template-columns:minmax(0,1fr)}.pedestal.small{height:150px}.pedestal.small .av{width:96px}
+ .endgrid{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))}.endp .av{width:44px}
+}
+/* ===== 手機橫式：左舞台、右資訊 ===== */
+@media(max-height:540px) and (orientation:landscape){
+ body[data-screen=home],body[data-screen=game]{overflow:hidden;height:100dvh}
+ .hero{height:150px}
+ #game{height:100dvh;display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,34%);grid-template-rows:auto minmax(0,1fr);padding:0;max-width:none}
+ .hud{grid-column:1/-1;flex-wrap:nowrap;padding:4px 8px;border-radius:0;border-width:0 0 2px;position:relative}
+ .rno span,.tools{display:none}#bMenu{display:inline-flex;align-items:center;min-height:32px;padding:2px 10px;font-size:13px}
+ .bar{position:absolute;left:0;right:0;bottom:-2px;height:3px;border:0;border-radius:0}
+ .hex>span{width:28px;height:26px;font-size:12px}.hex small{font-size:9px}
+ .stage{aspect-ratio:auto;height:100%;border-width:0}
+ .bottom{display:flex;flex-direction:column;min-height:0;border-radius:0;border-width:0 0 0 2px}
+ .act{order:-1;flex:none;padding:6px;gap:6px}.rolemini small{display:none}.rolemini .glyph{width:30px;height:30px;font-size:15px;border-width:2px}.rolemini b{font-size:14px}
+ .tip{font-size:13px;padding:5px 8px;min-height:0}.acts .btn{min-height:34px;padding:3px 10px;font-size:13px}.dtext,.mhide{display:none}.comp{display:inline;color:var(--ink);font-size:13px;margin:0}
+ .seat .kick{width:22px;height:22px;font-size:13px}
+ .chat{flex:1;min-height:0;border:0}.tabs{display:none}.log{flex:1;height:auto;min-height:0;font-size:13px}.say{padding:4px 6px}
+ #home{height:100dvh;display:flex;flex-direction:column;padding:6px;gap:6px}
+ .topbar{flex:none;padding:4px 8px}.uname{display:none}.brand{font-size:18px}
+ .hgrid{display:grid;grid-template-columns:230px minmax(0,1fr);flex:1;min-height:0;margin:0;gap:6px;align-items:stretch}
+ .charp{padding:8px;gap:6px;min-height:0;overflow:hidden;display:flex;flex-direction:column}.charp .pedestal{flex:1;min-height:0;aspect-ratio:auto}.charp .pedestal .av{width:46%}
+ .cname b{font-size:16px}.stats b{font-size:14px}.stats small{font-size:11px}.cbtns .btn.big{font-size:14px;min-height:38px;padding:4px}
+ .roomcard{display:flex;flex-direction:column;min-height:0;padding:8px}.rlist{flex:1;min-height:0;max-height:none}.rhead{display:none}
+ .rrow{grid-template-columns:42px minmax(0,1fr) 42px 22px 62px;gap:6px;padding:5px 8px}.rrow .st{display:none}.rrow .btn{min-height:34px;padding:3px 6px;font-size:13px}
+ .mcard{padding:12px}.items{max-height:none}
+}
 </style>
 </head>
 <body>
@@ -236,9 +312,9 @@ button.item{cursor:pointer}
       <div class="stats" id="myStats"></div>
       <div class="cbtns"><button class="btn big" id="openShop">商城</button><button class="btn b big" id="openWard">更衣室</button></div>
     </div>
-    <div class="card">
+    <div class="card roomcard">
       <div class="row" style="justify-content:space-between"><h2 style="margin:0">房間列表</h2>
-        <div class="row"><button class="btn g" id="mkRoom">建立房間</button><button class="btn b" id="quick">快速加入</button><button class="btn k" id="practice">單機練習</button></div></div>
+        <div class="row rbtns"><button class="btn g" id="mkRoom">建立房間</button><button class="btn b" id="quick">快速加入</button><button class="btn k" id="practice">單機練習</button></div></div>
       <div class="rhead"><span>房號</span><span>房名</span><span style="text-align:center">人數</span><span style="text-align:center">鎖</span><span style="text-align:center">狀態</span><span></span></div>
       <div class="rlist" id="rlist"></div>
     </div>
@@ -251,6 +327,7 @@ button.item{cursor:pointer}
     <div class="clock"><span class="ph" id="phName">—</span><span class="sec" id="sec"></span><div class="bar"><i id="barI"></i></div></div>
     <div class="hex" title="存活人數"><span class="w"><span><small>狼</small><b id="cW">-</b></span></span><span class="g"><span><small>神</small><b id="cG">-</b></span></span><span class="v"><span><small>民</small><b id="cV">-</b></span></span></div>
     <div class="tools"><button class="btn b" id="bRole">身份</button><button class="btn k" id="bRule">規則</button><button class="btn k bgmBtn" type="button">音樂：開</button><button class="btn k" id="bSnd">音效</button><button class="btn r" id="bExit">離開</button></div>
+    <button class="btn k" id="bMenu" type="button">選單</button>
   </div>
   <div class="stage" id="stage">
     <div id="bgHost"></div>
@@ -277,7 +354,7 @@ button.item{cursor:pointer}
   <p><b>勝利條件</b>：好人陣營要投出所有狼人；狼人陣營要殺光所有神職，<b>或</b>殺光所有平民（屠邊），或狼人數量不少於好人。</p>
   <p><b>夜晚</b>：守衛守人 → 狼人討論並選擇獵殺目標 → 女巫決定救人或毒人 → 預言家查驗身份。</p>
   <p><b>白天</b>：公布昨晚死者 → 自由發言 → 投票放逐（平票則無人出局）→ 被放逐者發表遺言。</p>
-  <p><b>角色</b>：6 人局 狼×2、預言家、女巫、平民×2；9 人局 狼×3、預言家、女巫、獵人、平民×3；12 人局 再加狼、守衛、平民。</p>
+  <p><b>角色配置</b>（房主可設定 6～12 人）：</p><ul id="ruleComp" style="margin-top:0"></ul>
   <p><b>金幣</b>：線上對戰贏 100、輸 40；單機練習贏 30、輸 10。金幣可以到商城買髮型、服裝、表情、配件。</p>
   <div style="text-align:center"><button class="btn" data-close>知道了</button></div>
 </div></div>
@@ -295,7 +372,11 @@ const ROLES={
 };
 const SETUPS={
   6:['wolf','wolf','seer','witch','villager','villager'],
+  7:['wolf','wolf','seer','hunter','villager','villager','villager'],
+  8:['wolf','wolf','wolf','seer','witch','guard','villager','villager'],
   9:['wolf','wolf','wolf','seer','witch','hunter','villager','villager','villager'],
+  10:['wolf','wolf','wolf','seer','witch','hunter','villager','villager','villager','villager'],
+  11:['wolf','wolf','wolf','seer','witch','hunter','villager','villager','villager','villager','villager'],
   12:['wolf','wolf','wolf','wolf','seer','witch','hunter','guard','villager','villager','villager','villager']
 };
 const PH={init:'準備',deal:'發牌',nightfall:'入夜',night_guard:'守衛行動',night_wolf:'狼人行動',night_witch:'女巫行動',night_seer:'預言家行動',dawn:'天亮了',hunter:'技能發動',shot:'獵人開槍',day:'白天討論',vote:'投票放逐',voteResult:'開票',lastwords:'遺言',end:'遊戲結束'};
@@ -635,7 +716,9 @@ G.WolfEngine={Game,ROLES,SETUPS,PH,shuffle,pick,tune(r,b){READ=r;BAND=b}};
 /* ================= Firebase 設定 ================= */
 const FIREBASE_CONFIG={apiKey:"AIzaSyC7ZYD4DPNyOZxAvGPetC1hK0QRdb2NfWs",authDomain:"werewolf-online-b76ac.firebaseapp.com",databaseURL:"https://werewolf-online-b76ac-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"werewolf-online-b76ac",appId:"1:800470510403:web:32106f38e0b96440781df6"};
 
-const {Game,ROLES,PH,shuffle,pick}=window.WolfEngine;
+const {Game,ROLES,SETUPS,PH,shuffle,pick}=window.WolfEngine;
+const SIZES=[6,7,8,9,10,11,12];
+const comp=n=>{const c={};(SETUPS[n]||[]).forEach(r=>c[r]=(c[r]||0)+1);return Object.keys(ROLES).filter(r=>c[r]).map(r=>ROLES[r].n+(c[r]>1?'×'+c[r]:'')).join('、')};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
@@ -835,7 +918,7 @@ document.addEventListener('click',e=>{if(e.target.closest('.bgmBtn')){unlockAudi
 
 /* ================= 狀態 ================= */
 const S={screen:'',mode:null,game:null,seat:0,view:null,off:0,poison:false,seatsKey:'',lastMsg:0,lastPh:'',bnKey:'',ptot:1,lastTick:-1,aliveN:0,exitArm:0,seatOf:{},roomNo:'',roomName:'',guest:false,modalRefresh:null,draft:null};
-function show(id){S.screen=id==='game'?S.screen:id;['login','home','game'].forEach(x=>$('#'+x).hidden=x!==id);window.scrollTo(0,0);BGM.auto()}
+function show(id){S.screen=id==='game'?S.screen:id;document.body.dataset.screen=id;['login','home','game'].forEach(x=>$('#'+x).hidden=x!==id);window.scrollTo(0,0);BGM.auto()}
 function toast(t){let box=$('#toasts');if(!box){box=document.createElement('div');box.id='toasts';box.setAttribute('aria-live','polite');document.body.append(box)}const d=document.createElement('div');d.className='toast';d.textContent=t;box.append(d);while(box.children.length>3)box.firstChild.remove();setTimeout(()=>d.remove(),3200)}
 
 /* ================= Firebase ================= */
@@ -908,10 +991,10 @@ $('#rename').addEventListener('click',()=>{
   openModal(`<h2>修改暱稱</h2><label class="f" for="rnI">新的暱稱（最多 10 字）</label><input type="text" id="rnI" maxlength="10"><div class="row" style="justify-content:center;margin-top:14px"><button class="btn g" data-do="rn">儲存</button><button class="btn k" data-close>取消</button></div>`);
   const i=$('#rnI');i.value=PROF.data.name;i.focus();i.select();
 });
-$('#practice').addEventListener('click',()=>openModal(`<h2>單機練習</h2><p style="color:var(--mute)">和 AI 玩家對戰：贏 30、輸 10 金幣。</p><div class="sizes"><button class="btn" data-bot="6">6 人局</button><button class="btn" data-bot="9">9 人局</button><button class="btn" data-bot="12">12 人局</button></div><div style="margin-top:12px"><button class="btn k" data-close>取消</button></div>`));
+$('#practice').addEventListener('click',()=>openModal(`<h2>單機練習</h2><p style="color:var(--mute)">和 AI 玩家對戰：贏 30、輸 10 金幣。</p><div class="sizes">${SIZES.map(n=>`<button class="btn" data-bot="${n}">${n} 人</button>`).join('')}</div><div style="margin-top:12px"><button class="btn k" data-close>取消</button></div>`));
 $('#mkRoom').addEventListener('click',()=>{
   openModal(`<h2>建立房間</h2><label class="f" for="crN">房間名稱</label><input type="text" id="crN" maxlength="16">
-  <label class="f">人數</label><div class="sizes" id="crS"><button class="chip" data-n="6">6 人</button><button class="chip on" data-n="9">9 人</button><button class="chip" data-n="12">12 人</button></div>
+  <label class="f">人數（之後在房間裡也能調整）</label><div class="sizes" id="crS">${SIZES.map(n=>`<button class="chip ${n===9?'on':''}" data-n="${n}">${n} 人</button>`).join('')}</div><div class="comp" id="crComp" style="display:block;margin-top:6px">${comp(9)}</div>
   <label class="f" for="crP">房間密碼（選填，留空就是公開房）</label><input type="password" id="crP" maxlength="12" autocomplete="new-password">
   <div class="row" style="justify-content:center;margin-top:14px"><button class="btn g big" data-do="create">建立</button><button class="btn k" data-close>取消</button></div>`);
   $('#crN').value=PROF.data.name+' 的房間';
@@ -929,17 +1012,18 @@ $('#modal').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches(
 $('#modalC').addEventListener('click',async e=>{
   const t=e.target.closest('button');if(!t)return;const D=t.dataset;
   if(D.bot){closeModal();return startBot(+D.bot)}
+  if(D.m){closeModal();if(D.m==='role')return $('#bRole').click();if(D.m==='rule')return $('#bRule').click();if(D.m==='exit')return $('#bExit').click();if(D.m==='snd'){$('#bSnd').click();return openMenu()}}
   if(D.tab){S.shopTab=D.tab;return renderShop()}
   if(D.wt){S.wardTab=D.wt;return renderWard()}
   if(D.buy!==undefined)return buy(+D.buy);
   if(D.sw!==undefined){S.draft[S.wardTab]=+D.sw;return renderWard()}
   if(D.pick!==undefined){S.draft[S.wardTab]=+D.pick;return renderWard()}
   if(D.go==='ward')return openWard();if(D.go==='shop')return openShop();
-  if(t.parentElement&&t.parentElement.id==='crS'){document.querySelectorAll('#crS .chip').forEach(x=>x.classList.toggle('on',x===t));return}
+  if(t.parentElement&&t.parentElement.id==='crS'){document.querySelectorAll('#crS .chip').forEach(x=>x.classList.toggle('on',x===t));$('#crComp').textContent=comp(+t.dataset.n);return}
   switch(D.do){
     case 'save':{const a=clampAv(S.draft);const ok=await PROF.update(d=>{for(const k in OWN0)if(!d.owned[k].includes(a[k]))return false;d.av=a});toast(ok?'新造型已儲存！':'有沒擁有的單品，無法儲存');if(ok){closeModal();NET.updateMe()}return}
     case 'rn':{const v=$('#rnI').value.trim().slice(0,10);if(!v)return toast('暱稱不能是空白');await PROF.update(d=>{d.name=v});closeModal();NET.updateMe();return}
-    case 'create':{const name=$('#crN').value.trim().slice(0,16)||PROF.data.name+' 的房間',size=+(document.querySelector('#crS .on')||{}).dataset.n||9,pw=$('#crP').value.trim().slice(0,12);closeModal();return NET.create(name,size,pw).catch(err=>toast('建立房間失敗：'+(err.code||err.message)))}
+    case 'create':{const name=$('#crN').value.trim().slice(0,16)||PROF.data.name+' 的房間',size=+((document.querySelector('#crS .on')||{}).dataset||{}).n||9,pw=$('#crP').value.trim().slice(0,12);closeModal();return NET.create(name,size,pw).catch(err=>toast('建立房間失敗：'+(err.code||err.message)))}
     case 'pw':{const rid=$('#pwI').dataset.rid,pw=$('#pwI').value.trim();closeModal();return NET.join(rid,pw)}
     case 'setpw':{const pw=$('#spI').value.trim().slice(0,12);closeModal();return NET.setPw(pw)}
     case 'clearpw':closeModal();return NET.setPw('');
@@ -1059,6 +1143,7 @@ const NET={rid:null,lob:null,players:[],offs:[],isHost:false,leaving:false,list:
     await this.ref(`lobby/${rid}/st`).set('wait');$('#mEnd').hidden=true;showRoom()},
   sendAction(a){if(this.rid)this.ref(`rooms/${this.rid}/actions`).push({u:this.me(),a}).catch(()=>{})},
   chatSend(x){if(this.rid)this.ref(`rooms/${this.rid}/chat`).push({u:this.me(),n:PROF.data.name,x:String(x).slice(0,80),t:this.TS()}).catch(()=>toast('訊息送出失敗'))},
+  setSize(n){if(!this.isHost||!this.lob||this.lob.st!=='wait')return;n=Math.max(6,this.players.length,Math.min(12,n));this.ref(`lobby/${this.rid}/size`).set(n).catch(()=>toast('調整人數失敗'))},
   async kick(u){if(!this.isHost)return;await this.ref(`rooms/${this.rid}/banned/${u}`).set(true);await this.ref(`rooms/${this.rid}/players/${u}`).remove();toast('已將玩家移出房間')},
   async setPw(pw){if(!this.isHost)return;const rid=this.rid;
     if(pw){await this.ref(`rooms/${rid}/secret`).set(pw);await this.ref(`lobby/${rid}/lock`).set(true);toast('已設定房間密碼')}
@@ -1093,7 +1178,7 @@ function roomChatLine(m,live){
   const d=document.createElement('div');
   if(m.sys){d.className='m sys';d.textContent='【系統】'+m.x}
   else{d.className='m'+(m.u===NET.me()?' mine':'');const w=document.createElement('b');w.className='who';w.textContent=(m.n||'玩家')+'：';d.append(w,document.createTextNode(String(m.x||'')));
-    if(live){const el=seatsEl.querySelector(`.seat[data-u="${CSS.escape(String(m.u||''))}"] .bub`);if(el){el.textContent=String(m.x||'');el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),4500)}if(m.u!==NET.me())SND.msg()}}
+    if(live){showBub(seatsEl.querySelector(`.seat[data-u="${CSS.escape(String(m.u||''))}"] .bub`),m.x||'');if(m.u!==NET.me())SND.msg()}}
   log.append(d);log.scrollTop=log.scrollHeight;
 }
 function renderRoom(){
@@ -1104,13 +1189,14 @@ function renderRoom(){
   const{pos,w}=layout(size);const key='room|'+size+'|'+L.host+'|'+ps.map(p=>p.uid+p.n+JSON.stringify(p.av)).join('|');
   if(key!==S.seatsKey){S.seatsKey=key;
     seatsEl.innerHTML=pos.map((q,i)=>{const p=ps[i],st=`left:${q.x}%;top:${q.y}%;--w:${(w*q.sc).toFixed(2)}cqw;z-index:${q.y>60?3:2}`;
-      if(!p)return`<div class="seat empty" style="${st}"><div class="nm">空位</div><div class="av">${emptySpot()}</div><div class="num">${i+1}</div></div>`;
-      return`<div class="seat ${p.uid===me?'me':''}" data-u="${esc(p.uid)}" style="${st}"><div class="bub"></div><div class="nm"></div><div class="av">${avSvg(p.av)}${p.uid===L.host?`<span class="crown" title="房主">${CROWN}</span>`:''}${host&&p.uid!==me?`<button class="kick" data-kick="${esc(p.uid)}" aria-label="把玩家移出房間">×</button>`:''}</div><div class="num">${i+1}</div></div>`}).join('');
-    seatsEl.querySelectorAll('.seat[data-u]').forEach(el=>{const p=ps.find(x=>x.uid===el.dataset.u);if(p)el.querySelector('.nm').textContent=p.n})}
+      const eg=q.x<20?'eL':q.x>80?'eR':'';if(!p)return`<div class="seat empty" style="${st}"><div class="nm">空位</div><div class="av">${emptySpot()}</div><div class="num">${i+1}</div></div>`;
+      return`<div class="seat ${eg} ${p.uid===me?'me':''}" data-u="${esc(p.uid)}" style="${st}"><div class="bub"></div><div class="nm"></div><div class="av">${avSvg(p.av)}${host&&p.uid!==me?`<button class="kick" data-kick="${esc(p.uid)}" aria-label="把玩家移出房間">×</button>`:''}</div><div class="num">${i+1}</div></div>`}).join('');
+    seatsEl.querySelectorAll('.seat[data-u]').forEach(el=>{const p=ps.find(x=>x.uid===el.dataset.u);if(!p)return;const nm=el.querySelector('.nm');nm.textContent=p.n;if(p.uid===L.host)nm.insertAdjacentHTML('afterbegin',`<span class="crw" title="房主">${CROWN}</span>`)})}
   $('#roleMini').innerHTML=`<div class="glyph" style="background:#2a76d2">房</div><div><b></b><small>房號 ${esc(L.no)}・${ps.length}/${size} 人・${L.lock?'已上鎖':'公開房間'}</small></div>`;$('#roleMini b').textContent=L.name;
   const hostName=(ps.find(p=>p.uid===L.host)||{}).n||'';
-  $('#tip').innerHTML=host?'你是房主（頭上有皇冠）：可以設定密碼、點頭像旁的 × 把人移出，按「開始遊戲」後空位由 AI 補上。':`等待房主 <em></em> 開始遊戲……`;if(!host)$('#tip em').textContent=hostName;
-  $('#acts').innerHTML=(host?`<button class="btn g" data-r="start">開始遊戲</button><button class="btn b" data-r="pw">${L.lock?'修改密碼':'設定密碼'}</button>`:'')+'<button class="btn k" data-r="leave">離開房間</button>';
+  $('#tip').innerHTML=(host?'<span class="dtext">你是房主：可調整人數、設定密碼、點頭像旁的 × 移出玩家，開始後空位由 AI 補上。</span>':'等待房主 <em></em> 開始遊戲…… ')+`<span class="comp"><b>${size} 人：</b>${esc(comp(size))}</span>`;if(!host)$('#tip em').textContent=hostName;
+  const minS=Math.max(6,ps.length);
+  $('#acts').innerHTML=(host?`<span class="stepper"><button class="btn k" data-r="sz-" aria-label="減少人數" ${size<=minS?'disabled':''}>－</button><b>${size} 人房</b><button class="btn k" data-r="sz+" aria-label="增加人數" ${size>=12?'disabled':''}>＋</button></span><button class="btn g" data-r="start">開始遊戲</button><button class="btn b" data-r="pw">${L.lock?'改密碼':'設密碼'}</button>`:'')+'<button class="btn k mhide" data-r="leave">離開</button>';
   const inp=$('#sayI');inp.disabled=false;$('#sayB').disabled=false;inp.placeholder='和房間裡的人聊天';
 }
 function emptySpot(){return'<svg viewBox="0 -16 100 146" aria-hidden="true"><ellipse cx="50" cy="122" rx="28" ry="6" fill="#000" opacity=".2"/><ellipse cx="50" cy="120" rx="26" ry="5" fill="none" stroke="#7a6a50" stroke-width="2.5" stroke-dasharray="6 5"/><text x="50" y="100" text-anchor="middle" font-size="26" font-weight="900" fill="#8a7a5e" font-family="Noto Sans TC,sans-serif">＋</text></svg>'}
@@ -1174,7 +1260,7 @@ function onPhase(v){
 function renderSeats(v){
   const key=v.pl.map(p=>p.s+':'+p.n+':'+JSON.stringify(p.av)).join('|');
   if(key!==S.seatsKey){S.seatsKey=key;const{pos,w}=layout(v.pl.length);
-    seatsEl.innerHTML=v.pl.map((p,i)=>`<div class="seat" data-s="${+p.s}" style="left:${pos[i].x}%;top:${pos[i].y}%;--w:${(w*pos[i].sc).toFixed(2)}cqw;z-index:${pos[i].y>60?3:2}"><div class="bub"></div><div class="nm"></div><div class="av">${avSvg(p.av)}<span class="rt" hidden></span><span class="vc" hidden></span><span class="kn" hidden></span></div><div class="num">${+p.s}</div></div>`).join('')}
+    seatsEl.innerHTML=v.pl.map((p,i)=>`<div class="seat ${pos[i].x<20?'eL':pos[i].x>80?'eR':''}" data-s="${+p.s}" style="left:${pos[i].x}%;top:${pos[i].y}%;--w:${(w*pos[i].sc).toFixed(2)}cqw;z-index:${pos[i].y>60?3:2}"><div class="bub"></div><div class="nm"></div><div class="av">${avSvg(p.av)}<span class="rt" hidden></span><span class="vc" hidden></span><span class="kn" hidden></span></div><div class="num">${+p.s}</div></div>`).join('')}
   const a=v.act,tg=new Set(a?a.tg:[]),pickable=a&&(a.k==='pick'||(a.k==='witch'&&S.poison));
   const vc={};if(v.votes)Object.values(v.votes).forEach(t=>{if(t>0)vc[t]=(vc[t]||0)+1});
   const kn={};if(v.wp)Object.values(v.wp).forEach(t=>{if(t)kn[t]=(kn[t]||0)+1});
@@ -1192,7 +1278,11 @@ seatsEl.addEventListener('click',e=>{
   const el=e.target.closest('.seat');const v=S.view;if(!el||!v||!v.act||!el.classList.contains('tgt')||S.screen!=='game')return;
   send({t:'pick',s:+el.dataset.s});S.poison=false;SND.click();
 });
-function bubble(s,text){const el=seatsEl.querySelector(`.seat[data-s="${+s}"] .bub`);if(!el)return;el.textContent=text;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),4500)}
+const BUBS=[],narrow=matchMedia('(max-width:700px)');
+function showBub(el,text){if(!el)return;text=String(text);const lim=narrow.matches?2:4,max=narrow.matches?24:40;el.textContent=text.length>max?text.slice(0,max-1)+'…':text;el.classList.add('on');clearTimeout(el._t);
+  const i=BUBS.indexOf(el);if(i>=0)BUBS.splice(i,1);BUBS.push(el);while(BUBS.filter(b=>b.classList.contains('on')).length>lim){const o=BUBS.shift();o.classList.remove('on')}
+  el._t=setTimeout(()=>el.classList.remove('on'),narrow.matches?3500:4500)}
+function bubble(s,text){showBub(seatsEl.querySelector(`.seat[data-s="${+s}"] .bub`),text)}
 function renderChat(v){
   const last=v.msgs.length?v.msgs[v.msgs.length-1].id:0;if(last<S.lastMsg){S.lastMsg=0;log.innerHTML=''}
   const add=v.msgs.filter(m=>m.id>S.lastMsg);if(!add.length)return;
@@ -1230,6 +1320,7 @@ function endAct(k){
   if(k==='leave')return leaveRoom();
 }
 $('#acts').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;SND.click();
+  if(b.dataset.r==='sz-'||b.dataset.r==='sz+'){const L=NET.lob;if(L)NET.setSize((+L.size||9)+(b.dataset.r==='sz+'?1:-1));return}
   if(b.dataset.r==='start')return NET.start();if(b.dataset.r==='pw')return openSetPw();if(b.dataset.r==='leave')return leaveRoom(true);
   const k=b.dataset.a;if(!k)return;if(k==='poison'){S.poison=!S.poison;return render(S.view)}
   if(['again','room','home','leave'].includes(k))return endAct(k);send({t:k});
@@ -1264,7 +1355,9 @@ function showEnd(v){
   $('#mEnd').hidden=false;
 }
 $('#bRole').addEventListener('click',()=>S.view&&showRole(S.view));
-$('#bRule').addEventListener('click',()=>$('#mRule').hidden=false);
+$('#bRule').addEventListener('click',()=>{$('#ruleComp').innerHTML=SIZES.map(n=>`<li>${n} 人：${comp(n)}</li>`).join('');$('#mRule').hidden=false});
+function openMenu(){openModal(`<h2>選單</h2><div class="menu">${S.screen==='game'?'<button class="btn b" data-m="role">查看身份</button>':''}<button class="btn k" data-m="rule">遊戲規則</button><button class="btn k bgmBtn" type="button"></button><button class="btn k" data-m="snd">${SND.on?'音效：開':'音效：關'}</button><button class="btn r" data-m="exit">${S.screen==='room'?'離開房間':'離開遊戲'}</button><button class="btn" data-close>返回</button></div>`);bgmLabels()}
+$('#bMenu').addEventListener('click',openMenu);
 const sndBtn=$('#bSnd'),sndLbl=()=>sndBtn.textContent=SND.on?'音效：開':'音效：關';sndLbl();
 sndBtn.addEventListener('click',()=>{SND.on=!SND.on;store.set('wolf_snd',SND.on);sndLbl();SND.click()});
 $('#bExit').addEventListener('click',()=>{
@@ -1273,7 +1366,7 @@ $('#bExit').addEventListener('click',()=>{
 });
 
 bgmLabels();
-window.__wolf={S,NET,PROF,startBot,avSvg,CAT,BGM,TRACKS};
+window.__wolf={S,NET,PROF,FB,startBot,avSvg,CAT,BGM,TRACKS,showRoom,renderRoom,SETUPS};
 boot();
 }
 </script>
