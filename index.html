@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>夜狼派對 Online</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&family=Noto+Serif+TC:wght@900&display=swap" rel="stylesheet">
+<style>
+/* VOICE: 2010 年代台港網頁派對遊戲——熱鬧、俏皮，夜裡帶點懸疑
+   IDEA: 奇樂式教室殺局：Q 版角色兩排站位、中央描邊大字公告、底部黑色聊天框
+   PICTURE: 舞台本身就是畫面：教室背景、夜晚藍色濾鏡、倒地的出局者、紅色遺言橫幅
+   COLOUR and TYPE: 深夜藍、亮橘／綠的光澤按鈕、金色號碼牌；Noto Sans TC 900 描邊字、Noto Serif TC 寫遺言
+   LAYOUT: 上方 HUD、16:8 舞台、下方聊天＋行動面板；手機改直排 */
+:root{color-scheme:dark;--bg:#0c1022;--panel:#141419;--edge:#3a3f4c;--ink:#f4f1e8;--mute:#a9adb8;--gold:#ffd34d;--org:#ff9d1c;--grn:#35c159;--red:#e2453c;--blu:#2f7de1}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;background:var(--bg) radial-gradient(1200px 600px at 50% -10%,#24306a 0,transparent 70%);color:var(--ink);font:15px/1.55 "Noto Sans TC",system-ui,sans-serif;overflow-x:clip;min-height:100vh}
+button{font:inherit;cursor:pointer}
+[hidden]{display:none!important}
+.btn{border:2px solid #7a3d00;border-radius:10px;background:linear-gradient(#ffbe55,#f07c00);color:#fff;font-weight:900;padding:8px 16px;min-height:40px;text-shadow:0 1px 0 #00000070;box-shadow:inset 0 2px 0 #ffffff80,0 3px 0 #00000080;transition:transform .08s,filter .15s;white-space:nowrap}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:translateY(2px);box-shadow:inset 0 2px 0 #ffffff60,0 1px 0 #00000080}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.btn.g{background:linear-gradient(#6ee08a,#22a447);border-color:#0d5a24}
+.btn.b{background:linear-gradient(#6fb1ff,#1f66d1);border-color:#0b3a85}
+.btn.r{background:linear-gradient(#ff8076,#cc2a22);border-color:#6e0d08}
+.btn.k{background:linear-gradient(#8d93a1,#555b68);border-color:#2a2d35}
+.btn.big{font-size:18px;padding:12px 28px;min-height:52px}
+.btn:disabled{filter:grayscale(1) brightness(.7);cursor:not-allowed}
+.chip{border:2px solid var(--edge);background:#1d2030;color:var(--ink);border-radius:999px;padding:6px 14px;min-height:38px;font-weight:700}
+.chip.on{background:linear-gradient(#ffd96b,#f0a800);color:#3a2600;border-color:#8a5a00}
+input[type=text]{font:inherit;font-size:16px;background:#0b0c10;color:var(--ink);border:2px solid var(--edge);border-radius:8px;padding:8px 10px;min-height:42px;width:100%}
+
+/* ---------- 共用背景 ---------- */
+.bg{position:absolute;inset:0;width:100%;height:100%}
+.bg .nsky,.bg .moon,.bg .stars{opacity:0;transition:opacity 1.2s}
+.bg .veil{opacity:0;transition:opacity 1.2s}
+.night .bg .nsky,.night .bg .moon,.night .bg .stars{opacity:1}
+.night .bg .veil{opacity:.55}
+
+/* ---------- 大廳 ---------- */
+#lobby{max-width:1180px;margin:0 auto;padding:16px max(3vw,12px) 40px}
+.hero{position:relative;height:clamp(220px,34vw,360px);border-radius:16px;overflow:hidden;border:3px solid #2b3150;box-shadow:0 10px 40px #0008}
+.hero .crowd{position:absolute;left:0;right:0;bottom:4%;display:flex;justify-content:center;gap:1.5%;padding:0 4%}
+.hero .crowd .av{width:clamp(48px,9vw,104px)}
+.hero .crowd .av:nth-child(odd){transform:translateY(-6%)}
+.logo{position:absolute;left:0;right:0;top:10%;text-align:center;pointer-events:none}
+.logo h1{margin:0;font-size:clamp(38px,7.5vw,84px);line-height:1.05;font-weight:900;color:#fff7d6;-webkit-text-stroke:clamp(6px,1vw,12px) #2a0f40;paint-order:stroke fill;text-shadow:0 6px 0 #1a0628;letter-spacing:.04em}
+.logo h1 em{font-style:normal;color:#ff6b5b}
+.logo p{margin:4px 0 0;font-weight:900;font-size:clamp(13px,1.8vw,18px);color:#fff;-webkit-text-stroke:4px #1b1f3a;paint-order:stroke fill;letter-spacing:.3em}
+.lgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:16px;margin-top:16px}
+.card{background:linear-gradient(#1b1e2c,#13151f);border:2px solid var(--edge);border-radius:14px;padding:16px;box-shadow:inset 0 1px 0 #ffffff14}
+.card h2{margin:0 0 10px;font-size:18px;font-weight:900;color:var(--gold);text-shadow:0 2px 0 #000}
+.card h2 small{color:var(--mute);font-weight:500;font-size:13px;margin-left:6px;text-shadow:none}
+.mebox{display:grid;grid-template-columns:120px minmax(0,1fr);gap:14px;align-items:start}
+.pv{background:radial-gradient(#3a4a8a,#1a1f3a);border-radius:12px;border:2px solid #2e3660;padding:6px 8px 0}
+.cust{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.cust .chip{padding:4px 10px;min-height:34px;font-size:13px}
+.modes{display:grid;gap:14px}
+.legend{display:grid;gap:8px}.legend div{display:flex;gap:10px;align-items:center;font-size:13.5px;color:var(--mute)}.legend .glyph{width:34px;height:34px;font-size:16px;border-width:2px}.legend b{color:var(--ink)}
+.mode{background:#0e1018;border:2px solid #262a38;border-radius:12px;padding:14px}
+.mode p{margin:0 0 10px;color:var(--mute)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.rooms{margin-top:10px;display:grid;gap:6px;max-height:220px;overflow:auto}
+.room{display:flex;gap:10px;align-items:center;background:#181b27;border:1px solid #2c3142;border-radius:10px;padding:8px 10px}
+.room b{color:var(--gold)}.room span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.note{background:#1d1a10;border:1px solid #5a4a1a;color:#f2e3b0;border-radius:10px;padding:10px 12px;font-size:14px}
+details{margin-top:8px}summary{cursor:pointer;color:var(--gold);font-weight:700}
+pre{background:#08090d;border:1px solid #2a2e3a;border-radius:8px;padding:10px;font-size:12px;overflow-x:auto;color:#cfe3ff}
+
+/* ---------- 等待室 ---------- */
+#wait{max-width:900px;margin:30px auto;padding:0 12px}
+.wseats{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;margin:14px 0}
+.wseat{background:#0e1018;border:2px dashed #30364a;border-radius:12px;text-align:center;padding:6px 4px 8px;font-size:13px;min-height:132px;color:var(--mute);display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+.wseat.f{border-style:solid;border-color:#3d4a7a;color:var(--ink)}
+.wseat .av{width:62px}
+
+/* ---------- 遊戲 ---------- */
+#game{max-width:1240px;margin:0 auto;padding:8px max(1.5vw,6px) 16px}
+.hud{display:flex;align-items:center;gap:10px;background:linear-gradient(#2b2f3c,#16181f);border:2px solid #3a3f4c;border-bottom:0;border-radius:12px 12px 0 0;padding:6px 10px;flex-wrap:wrap}
+.rno{display:flex;align-items:center;gap:6px;font-weight:900}
+.rno b{background:linear-gradient(#6fb1ff,#1f66d1);border:2px solid #0b3a85;border-radius:6px;padding:0 8px;color:#fff}
+.rno span{color:var(--mute);font-size:13px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.clock{flex:1;display:flex;align-items:center;gap:8px;min-width:200px}
+.clock .ph{font-weight:900;white-space:nowrap;color:#fff}
+.clock .sec{font-weight:900;font-size:20px;min-width:2.2em;text-align:center;color:var(--gold);font-variant-numeric:tabular-nums}
+.clock .sec.hot{color:#ff6b5b;animation:beat .5s infinite alternate}
+.bar{flex:1;height:12px;background:#0a0b10;border:2px solid #4a5060;border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(#8fd0ff,#2f7de1);border-radius:999px;transition:width .25s linear}
+.hex{display:flex;gap:6px}
+.hex span{width:38px;height:34px;display:grid;place-items:center;font-weight:900;color:#fff;clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);font-size:15px;line-height:1;text-shadow:0 1px 0 #000}
+.hex span small{display:block;font-size:10px;opacity:.85}
+.hex .w{background:linear-gradient(#ff6e64,#b3261e)}.hex .g{background:linear-gradient(#69a8ff,#1f5fcf)}.hex .v{background:linear-gradient(#a7acb6,#5c616c)}
+.tools{display:flex;gap:6px}
+.tools .btn{min-height:34px;padding:4px 10px;font-size:13px}
+
+.stage{position:relative;aspect-ratio:16/8;container-type:inline-size;overflow:hidden;border:2px solid #3a3f4c;background:#222;--k:1}
+.seats{position:absolute;inset:0;transition:filter 1.2s}
+.night .seats{filter:brightness(.7) saturate(.75) hue-rotate(-8deg)}
+.seat{position:absolute;transform:translate(-50%,-100%);width:calc(var(--w)*var(--k));display:flex;flex-direction:column;align-items:center}
+.seat .av{width:100%;position:relative}
+.av svg{display:block;width:100%;height:auto;overflow:visible}
+.seat .av svg{transition:transform .6s,filter .6s;transform-origin:50% 90%}
+.seat.dead .av svg{transform:translate(58%,4%) rotate(-86deg);filter:grayscale(.8) brightness(.7)}
+.seat .nm{font-weight:900;font-size:max(10px,1.15cqw);color:#fff;-webkit-text-stroke:3px #111;paint-order:stroke fill;white-space:nowrap;max-width:170%;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.seat.me .nm{color:var(--gold)}
+.seat.mate .nm{color:#ff8a80}
+.seat .num{margin-top:-.2cqw;min-width:max(20px,2.3cqw);height:max(20px,2.3cqw);padding:0 .3cqw;border-radius:999px;background:radial-gradient(circle at 40% 30%,#7db7ff,#1f5fcf);border:2px solid #fff;font-weight:900;font-size:max(11px,1.25cqw);display:grid;place-items:center;color:#fff;box-shadow:0 2px 3px #0009;line-height:1}
+.seat.dead .num{background:radial-gradient(circle at 40% 30%,#ff8a80,#b3261e)}
+.seat.me .num{background:radial-gradient(circle at 40% 30%,#ffe993,#e09b00);color:#3a2600}
+.seat .rt,.seat .vc,.seat .kn{position:absolute;display:grid;place-items:center;font-weight:900;color:#fff;border:2px solid #fff;box-shadow:0 2px 4px #0008;line-height:1}
+.seat .rt{left:-8%;top:18%;width:max(18px,2cqw);height:max(18px,2cqw);border-radius:50%;font-size:max(10px,1.05cqw)}
+.seat .vc{right:-10%;top:30%;min-width:max(22px,2.4cqw);height:max(22px,2.4cqw);border-radius:999px;background:#e2453c;font-size:max(12px,1.3cqw);padding:0 .3cqw}
+.seat .kn{right:-12%;top:8%;border-radius:6px;background:#7a0d0d;font-size:max(10px,1cqw);padding:2px 4px}
+.seat.tgt{cursor:pointer}
+.seat.tgt .av::before{content:"";position:absolute;left:8%;right:8%;bottom:-2%;height:16%;border-radius:50%;border:3px solid var(--gold);box-shadow:0 0 14px var(--gold),inset 0 0 10px var(--gold);animation:ring 1s ease-in-out infinite alternate}
+.seat.tgt:hover .av svg{transform:translateY(-4%)}
+.seat.sel .av::before{border-color:#ff4d4d;box-shadow:0 0 16px #ff4d4d,inset 0 0 10px #ff4d4d;animation:none}
+.night .seat.tgt{filter:brightness(1.4)}
+.bub{position:absolute;bottom:calc(100% + 2px);left:50%;transform:translate(-50%,6px) scale(.9);background:#fff;color:#222;border:2px solid #222;border-radius:12px;padding:3px 8px;font-size:max(11px,1.05cqw);font-weight:700;width:max-content;max-width:max(130px,16cqw);opacity:0;transition:.2s;pointer-events:none;z-index:9;line-height:1.35}
+.bub::after{content:"";position:absolute;left:50%;top:100%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#222}
+.bub.on{opacity:1;transform:translate(-50%,0) scale(1)}
+.banner{position:absolute;left:0;right:0;top:44%;transform:translateY(-50%);text-align:center;pointer-events:none;z-index:20;opacity:0}
+.banner.on{animation:pop 3.8s ease forwards}
+.banner h3{margin:0;font-size:clamp(20px,3.8cqw,52px);font-weight:900;color:#fff;-webkit-text-stroke:clamp(5px,.7cqw,9px) #15172a;paint-order:stroke fill;text-shadow:0 4px 0 #0007;line-height:1.15;padding:0 4%}
+.banner p{margin:.3em 0 0;font-size:clamp(13px,1.8cqw,24px);font-weight:900;color:var(--gold);-webkit-text-stroke:4px #15172a;paint-order:stroke fill}
+.lw{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:min(64%,560px);background:linear-gradient(90deg,#5c0707,#b71c1c 15%,#c62828 50%,#b71c1c 85%,#5c0707);border:3px solid #2a0303;border-radius:6px;padding:.6cqw 2cqw 1.2cqw;z-index:19;box-shadow:0 8px 24px #000a;text-align:center}
+.lw h4{margin:0;font-family:"Noto Serif TC",serif;font-size:clamp(22px,3.6cqw,46px);color:#fff;-webkit-text-stroke:4px #3a0000;paint-order:stroke fill;letter-spacing:.3em;line-height:1.2}
+.lw .who{font-weight:900;color:var(--gold);font-size:max(12px,1.3cqw)}
+.lw .say{margin-top:.4cqw;background:#00000055;border-radius:6px;padding:.4cqw 1cqw;min-height:2.6cqw;font-weight:700;font-size:max(12px,1.3cqw)}
+
+.bottom{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:0;background:#0a0a0d;border:2px solid #3a3f4c;border-top:0;border-radius:0 0 12px 12px}
+.chat{display:flex;flex-direction:column;border-right:2px solid #2a2e3a;min-height:0}
+.tabs{display:flex;gap:4px;padding:6px 6px 0;background:#15171e}
+.tabs button{border:2px solid #333846;border-bottom:0;background:#1f2230;color:var(--mute);border-radius:8px 8px 0 0;padding:4px 12px;font-weight:700;font-size:13px;min-height:32px}
+.tabs button.on{background:linear-gradient(#ffd96b,#f0a800);color:#3a2600;border-color:#8a5a00}
+.log{height:190px;overflow-y:auto;padding:6px 10px;font-size:14px;line-height:1.5;background:#060608;scrollbar-color:#444 #111}
+.m{padding:1px 0;overflow-wrap:anywhere}
+.m.sys{color:var(--gold)}
+.m.wolf{color:#ff9a90}.m.dead{color:#9aa0aa}
+.m .who{color:#7fc4ff;font-weight:700}.m.mine .who{color:#ffb347}
+.log.f-chat .m.sys{display:none}.log.f-sys .m:not(.sys){display:none}
+.say{display:flex;gap:6px;padding:6px;background:#15171e}
+.say input{min-height:40px}
+.act{padding:10px 12px;display:flex;flex-direction:column;gap:10px;background:linear-gradient(#171a24,#0f1016)}
+.rolemini{display:flex;align-items:center;gap:10px}
+.glyph{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;border:3px solid #fff;color:#fff;font-weight:900;font-size:22px;box-shadow:0 3px 0 #0008,inset 0 -4px 0 #0003;text-shadow:0 1px 0 #0006}
+.rolemini b{font-size:17px}.rolemini small{display:block;color:var(--mute);font-size:12.5px;line-height:1.4}
+.tip{background:#0a0b10;border:1px solid #2a2e3a;border-radius:10px;padding:8px 10px;font-weight:700;min-height:44px}
+.tip em{font-style:normal;color:var(--gold)}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+
+.modal{position:fixed;inset:0;background:#000b;display:grid;place-items:center;z-index:100;padding:16px}
+.mcard{width:min(440px,100%);background:linear-gradient(#262a3a,#14161f);border:3px solid #4a5068;border-radius:16px;padding:20px;text-align:center;box-shadow:0 20px 60px #000;animation:rise .35s ease}
+.mcard.wide{width:min(760px,100%)}
+.mcard h2{margin:0 0 6px;font-size:28px;font-weight:900;color:#fff;-webkit-text-stroke:6px #15172a;paint-order:stroke fill}
+.bigglyph{width:120px;height:120px;font-size:62px;margin:10px auto;border-width:5px}
+.endgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:14px 0;max-height:50vh;overflow:auto}
+.endp{background:#0e1018;border:2px solid #2b3042;border-radius:10px;padding:6px;font-size:13px}
+.endp.win{border-color:var(--gold)}
+.endp .av{width:56px;margin:0 auto}
+.endp.x .av{filter:grayscale(1) brightness(.6)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#222838;border:2px solid var(--gold);border-radius:10px;padding:10px 16px;z-index:200;font-weight:700}
+
+@keyframes pop{0%{opacity:0;transform:translateY(-50%) scale(.6)}10%{opacity:1;transform:translateY(-50%) scale(1.08)}16%{transform:translateY(-50%) scale(1)}82%{opacity:1}100%{opacity:0}}
+@keyframes ring{from{transform:scale(.92)}to{transform:scale(1.06)}}
+@keyframes beat{to{transform:scale(1.15)}}
+@keyframes rise{from{transform:translateY(20px);opacity:0}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}.banner.on{opacity:1;animation:none}}
+@media(max-width:820px){.lgrid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:700px){.bottom{grid-template-columns:minmax(0,1fr)}.chat{border-right:0;border-bottom:2px solid #2a2e3a}.log{height:150px}.stage{aspect-ratio:4/3;--k:1.3}.hex span{width:32px;height:30px;font-size:13px}.rno span{display:none}}
+</style>
+</head>
+<body>
+
+<section id="lobby">
+  <div class="hero night" id="hero"><div class="crowd" id="crowd"></div><div class="logo"><h1>夜<em>狼</em>派對</h1><p>ONLINE・線上狼人殺</p></div></div>
+  <div class="lgrid">
+    <div class="card">
+      <h2>我的角色<small>Q 版造型</small></h2>
+      <div class="mebox">
+        <div class="pv"><div class="av" id="pv"></div></div>
+        <div>
+          <label for="nick" style="font-weight:700;font-size:13px;color:var(--mute)">暱稱</label>
+          <input type="text" id="nick" maxlength="10" placeholder="輸入暱稱（最多 10 字）">
+          <div class="cust" id="cust">
+            <button class="chip" data-k="hs">髮型</button><button class="chip" data-k="h">髮色</button><button class="chip" data-k="c">服裝</button>
+            <button class="chip" data-k="e">瞳色</button><button class="chip" data-k="es">表情</button><button class="chip" data-k="a">配件</button>
+            <button class="chip" data-k="sk">膚色</button><button class="chip on" data-k="rand">隨機</button>
+          </div>
+        </div>
+      </div>
+      <h2 style="margin-top:18px">角色一覽</h2>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="card modes">
+      <div class="mode">
+        <h2>單機練習<small>和 AI 玩家對戰</small></h2>
+        <p>AI 會發言、跳預言家、悍跳、投票，適合熟悉規則或一個人殺時間。</p>
+        <div class="row" id="sizes"><span style="font-weight:700">人數</span><button class="chip" data-n="6">6 人</button><button class="chip on" data-n="9">9 人</button><button class="chip" data-n="12">12 人</button></div>
+        <div class="row" style="margin-top:12px"><button class="btn big" id="playBot">開始遊戲</button></div>
+      </div>
+      <div class="mode">
+        <h2>線上配對<small>和陌生人一起玩</small></h2>
+        <div id="online"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="wait" hidden>
+  <div class="card">
+    <h2 id="wTitle">等待室</h2>
+    <p id="wInfo" style="margin:0;color:var(--mute)"></p>
+    <div class="wseats" id="wSeats"></div>
+    <div class="row"><button class="btn g" id="wStart">立即開始（空位補 AI）</button><button class="btn k" id="wLeave">離開房間</button></div>
+  </div>
+</section>
+
+<section id="game" hidden>
+  <div class="hud">
+    <div class="rno"><b id="rNo">000</b><span id="rName">練習房</span></div>
+    <div class="clock"><span class="ph" id="phName">—</span><span class="sec" id="sec">0</span><div class="bar"><i id="barI"></i></div></div>
+    <div class="hex" title="存活人數"><span class="w"><span><small>狼</small><b id="cW">0</b></span></span><span class="g"><span><small>神</small><b id="cG">0</b></span></span><span class="v"><span><small>民</small><b id="cV">0</b></span></span></div>
+    <div class="tools"><button class="btn b" id="bRole">身份</button><button class="btn k" id="bRule">規則</button><button class="btn k" id="bSnd">音效</button><button class="btn r" id="bExit">離開</button></div>
+  </div>
+  <div class="stage" id="stage">
+    <div id="bgHost"></div>
+    <div class="seats" id="seats"></div>
+    <div class="banner" id="banner"><h3 id="bnT"></h3><p id="bnS"></p></div>
+    <div class="lw" id="lw" hidden><h4>遺言</h4><div class="who" id="lwWho"></div><div class="say" id="lwSay">……</div></div>
+  </div>
+  <div class="bottom">
+    <div class="chat">
+      <div class="tabs" id="tabs"><button class="on" data-f="">全部</button><button data-f="chat">聊天</button><button data-f="sys">系統</button></div>
+      <div class="log" id="log" aria-live="polite"></div>
+      <form class="say" id="sayF"><input type="text" id="sayI" maxlength="80" autocomplete="off" placeholder="輸入訊息，按 Enter 送出"><button class="btn" id="sayB">送出</button></form>
+    </div>
+    <div class="act">
+      <div class="rolemini" id="roleMini"></div>
+      <div class="tip" id="tip"></div>
+      <div class="acts" id="acts"></div>
+    </div>
+  </div>
+</section>
+
+<div class="modal" id="mRole" hidden><div class="mcard" id="mRoleC"></div></div>
+<div class="modal" id="mEnd" hidden><div class="mcard wide" id="mEndC"></div></div>
+<div class="modal" id="mRule" hidden><div class="mcard wide" style="text-align:left">
+  <h2 style="text-align:center">遊戲規則</h2>
+  <p><b>勝利條件</b>：好人陣營要投出所有狼人；狼人陣營要殺光所有神職，<b>或</b>殺光所有平民（屠邊），或狼人數量不少於好人。</p>
+  <p><b>夜晚</b>：守衛守人 → 狼人討論並選擇獵殺目標 → 女巫決定救人或毒人 → 預言家查驗身份。</p>
+  <p><b>白天</b>：公布昨晚死者 → 自由發言 → 投票放逐（平票則無人出局）→ 被放逐者發表遺言。</p>
+  <p><b>角色</b>：6 人局 狼×2、預言家、女巫、平民×2；9 人局 狼×3、預言家、女巫、獵人、平民×3；12 人局 再加狼、守衛、平民。</p>
+  <p><b>小技巧</b>：在聊天裡打「我是預言家，查殺 5 號」或「3 號很可疑」，AI 玩家會聽進去。出局後可在亡者頻道聊天並看到所有身份。</p>
+  <div style="text-align:center"><button class="btn" data-close>知道了</button></div>
+</div></div>
+
+<script id="engine">
+/* ================= 遊戲引擎（單機與線上房主共用） ================= */
+(function(G){
+const ROLES={
+  wolf:{n:'狼人',team:'wolf',c:'#d93a3a',g:'狼',d:'每晚和狼隊友商量並殺害一名玩家。白天隱藏身份、混淆視聽。'},
+  seer:{n:'預言家',team:'god',c:'#7b52d1',g:'預',d:'每晚可以查驗一名玩家是好人還是狼人。'},
+  witch:{n:'女巫',team:'god',c:'#1f9e8f',g:'巫',d:'擁有一瓶解藥、一瓶毒藥，每晚最多使用一瓶。'},
+  hunter:{n:'獵人',team:'god',c:'#e07a12',g:'獵',d:'死亡時可以開槍帶走一名玩家（被毒死則不能開槍）。'},
+  guard:{n:'守衛',team:'god',c:'#2a76d2',g:'守',d:'每晚守護一名玩家不被狼人殺害，不能連續兩晚守同一人。'},
+  villager:{n:'平民',team:'vil',c:'#8a6a52',g:'民',d:'沒有特殊能力，靠發言和推理把狼人投出去。'}
+};
+const SETUPS={
+  6:['wolf','wolf','seer','witch','villager','villager'],
+  9:['wolf','wolf','wolf','seer','witch','hunter','villager','villager','villager'],
+  12:['wolf','wolf','wolf','wolf','seer','witch','hunter','guard','villager','villager','villager','villager']
+};
+const PH={init:'準備',deal:'發牌',nightfall:'入夜',night_guard:'守衛行動',night_wolf:'狼人行動',night_witch:'女巫行動',night_seer:'預言家行動',dawn:'天亮了',hunter:'技能發動',shot:'獵人開槍',day:'白天討論',vote:'投票放逐',voteResult:'開票',lastwords:'遺言',end:'遊戲結束'};
+let READ=1.7,BAND=.45;
+const STEP_ROLE={night_guard:'guard',night_wolf:'wolf',night_witch:'witch',night_seer:'seer'};
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+class Game{
+  constructor(players){
+    this.P=players.map((p,i)=>({seat:i+1,id:p.id,name:p.name,av:p.av,bot:!!p.bot,alive:true,role:null,cause:null}));
+    this.n=this.P.length;this.msgs=[];this.mid=0;this.day=0;this.phase='init';this.phaseEnd=0;this.phaseStart=0;
+    this.banner='';this.sub='';this.claims=[];this.brain={};this.replies=[];this.witch={save:true,poison:true};
+    this.lastGuard=0;this.winner=null;this.night=null;this.votes={};this.done=new Set();this.dirty=true;
+    this.hunterPending=0;this.hunterSeat=0;this.shot=undefined;this.lw=0;this.exiled=0;this.fakeSeer=0;this.peace=false;this.steps=[];this.stepIdx=-1;
+  }
+  p(s){return this.P[s-1]}
+  alive(){return this.P.filter(p=>p.alive)}
+  roleAlive(r){return this.P.filter(p=>p.alive&&p.role===r)}
+  humansAlive(){return this.P.filter(p=>p.alive&&!p.bot)}
+  speed(){return this.humansAlive().length?1:.4}
+  sys(text,to){this.msgs.push({id:++this.mid,ch:'sys',text,to:to||0});this._trim()}
+  say(s,text,ch){this.msgs.push({id:++this.mid,ch,from:s,text});this._trim()}
+  _trim(){if(this.msgs.length>220)this.msgs.splice(0,this.msgs.length-220);this.dirty=true}
+  set(ph,sec,bn,sb){
+    const f=ph==='end'?1:this.speed(),now=Date.now();
+    this.phase=ph;this.phaseStart=now;this.phaseEnd=now+sec*1000*f;this.banner=bn||'';this.sub=sb||'';this.dirty=true;
+    for(const k in this.brain)this.brain[k].next=now+rnd(1200,3800)*f;
+  }
+  start(){
+    const roles=shuffle([...SETUPS[this.n]]);
+    this.P.forEach((p,i)=>{p.role=roles[i];p.alive=true;p.cause=null;this.brain[p.seat]={susp:{},read:{},checks:{},claimed:{},threat:{},spoke:0,max:1,next:0,wc:false,lw:false}});
+    this.P.forEach(p=>{const r=this.brain[p.seat].read;this.P.forEach(q=>{r[q.seat]=q.role==='wolf'?rnd(0,READ):rnd(0,1)})});
+    const cnt={};roles.forEach(r=>cnt[r]=(cnt[r]||0)+1);
+    this.sys(`遊戲開始！本局 ${this.n} 人：`+Object.keys(ROLES).filter(r=>cnt[r]).map(r=>ROLES[r].n+'×'+cnt[r]).join('、'));
+    const wolves=this.P.filter(p=>p.role==='wolf');
+    wolves.forEach(w=>this.sys('你的狼隊友：'+wolves.filter(x=>x!==w).map(x=>x.seat+'號 '+x.name).join('、'),w.seat));
+    this.steps=['night_guard','night_wolf','night_witch','night_seer'].filter(s=>roles.includes(STEP_ROLE[s]));
+    this.set('deal',7,'身份牌已發放','記住你的身份，不要告訴別人！');
+  }
+  toBot(s){const p=this.p(s);if(p&&!p.bot){p.bot=true;p.name=p.name+'(託管)';this.sys(`${s}號 已離線，由 AI 託管。`)}}
+  tick(now){
+    if(this.phase==='end'||this.phase==='init')return;
+    for(const p of this.P){if(!p.bot)continue;const b=this.brain[p.seat];if(now>=b.next){b.next=now+rnd(1500,4800)*this.speed();this.botAct(p,false)}}
+    this.replies=this.replies.filter(r=>{if(now<r.at)return true;const ch=r.ch||'all';if(this.chatCh(r.s)===ch)this.say(r.s,r.text,ch);return false});
+    if(now>=this.phaseEnd||(now-this.phaseStart>2200&&this.early()))this.next();
+  }
+  actorAlive(){const r=STEP_ROLE[this.phase];return r?this.roleAlive(r).length>0:false}
+  early(){
+    const n=this.night,ph=this.phase;
+    if(ph==='night_guard')return this.actorAlive()&&n.guard!==null;
+    if(ph==='night_wolf'){const w=this.roleAlive('wolf');return w.length>0&&w.every(p=>n.wolf[p.seat])}
+    if(ph==='night_witch')return this.actorAlive()&&n.witchDone;
+    if(ph==='night_seer')return this.actorAlive()&&n.check!==null;
+    if(ph==='day'){const h=this.humansAlive();return h.length>0&&h.every(p=>this.done.has(p.seat))&&this.alive().filter(p=>p.bot).every(p=>this.brain[p.seat].spoke>=1)}
+    if(ph==='vote')return this.alive().every(p=>this.votes[p.seat]!==undefined);
+    if(ph==='hunter')return this.shot!==undefined;
+    return false;
+  }
+  next(){
+    const ph=this.phase;
+    if(ph.startsWith('night_')||ph==='hunter'||ph==='vote')for(const p of this.P)if(p.bot)this.botAct(p,true);
+    switch(ph){
+      case 'deal':return this.nightStart();
+      case 'nightfall':case 'night_guard':case 'night_witch':case 'night_seer':return this.nextStep();
+      case 'night_wolf':this.resolveWolf();return this.nextStep();
+      case 'dawn':return this.afterDeaths(()=>this.dayStart());
+      case 'hunter':return this.resolveHunter();
+      case 'shot':{const w=this.checkWin();if(w)return this.end(w);const f=this.afterHunter;this.afterHunter=null;return f()}
+      case 'day':return this.voteStart();
+      case 'vote':return this.voteResolve();
+      case 'voteResult':
+        if(this.exiled){const e=this.exiled;this.kill(e,'vote');this.lw=e;this.brain[e].lw=false;return this.set('lastwords',this.p(e).bot?8:15,'遺言',`${e}號 ${this.p(e).name} 發表遺言`)}
+        return this.afterDeaths(()=>this.nightStart());
+      case 'lastwords':this.lw=0;return this.afterDeaths(()=>this.nightStart());
+    }
+  }
+  nightStart(){
+    this.day++;this.night={wolf:{},guard:null,save:false,poison:null,check:null,victim:0,witchDone:false};this.votes={};this.stepIdx=-1;
+    for(const k in this.brain)this.brain[k].wc=false;
+    this.sys(`—— 第 ${this.day} 夜 ——　天黑請閉眼。`);
+    this.set('nightfall',3,'天黑請閉眼','');
+  }
+  nextStep(){
+    this.stepIdx++;const st=this.steps[this.stepIdx];if(!st)return this.dawn();
+    const alive=this.roleAlive(STEP_ROLE[st]).length>0;
+    const T={night_guard:['守衛請睜眼',15],night_wolf:['狼人請睜眼',30],night_witch:['女巫請睜眼',15],night_seer:['預言家請睜眼',15]}[st];
+    if(st==='night_witch'&&alive&&this.witch.save){const wi=this.roleAlive('witch')[0];const v=this.night.victim;this.sys(v?`今晚被狼人襲擊的是 ${v}號 ${this.p(v).name}。`:'今晚狼人沒有殺人。',wi.seat)}
+    this.set(st,alive?T[1]:rnd(3,5),T[0],'');
+  }
+  resolveWolf(){
+    const v={};Object.values(this.night.wolf).forEach(t=>{if(t)v[t]=(v[t]||0)+1});
+    const m=Math.max(0,...Object.values(v));const top=Object.keys(v).filter(k=>v[k]===m).map(Number);
+    this.night.victim=top.length?pick(top):0;
+    if(this.night.victim){this.roleAlive('wolf').forEach(w=>this.sys(`狼隊決定今晚獵殺 ${this.night.victim}號。`,w.seat))}
+    const wi=this.roleAlive('witch')[0];
+    if(wi&&this.night.victim&&this.witch.save){const b=this.brain[wi.seat];b.susp[this.night.victim]=(b.susp[this.night.victim]||0)-3}
+  }
+  dawn(){
+    const n=this.night,d=[];
+    if(n.victim&&n.guard!==n.victim&&!n.save)d.push([n.victim,'wolf']);
+    if(n.poison&&!d.some(x=>x[0]===n.poison))d.push([n.poison,'poison']);
+    d.forEach(([s,c])=>this.kill(s,c));
+    this.lastGuard=n.guard||0;this.peace=!d.length;
+    const txt=d.length?`天亮了！昨晚 ${d.map(x=>x[0]).sort((a,b)=>a-b).map(s=>s+'號').join('、')} 死亡`:'天亮了，昨晚是平安夜';
+    this.sys(txt);this.set('dawn',5,txt,d.length?'願逝者安息……':'沒有人死亡');
+  }
+  kill(s,c){const p=this.p(s);if(!p||!p.alive)return;p.alive=false;p.cause=c;if(p.role==='hunter'&&c!=='poison')this.hunterPending=s}
+  afterDeaths(fn){
+    const w=this.checkWin();if(w)return this.end(w);
+    if(this.hunterPending){this.hunterSeat=this.hunterPending;this.hunterPending=0;this.shot=undefined;this.afterHunter=fn;return this.set('hunter',15,'等待技能發動…','倒下的人似乎握緊了什麼')}
+    fn();
+  }
+  resolveHunter(){
+    const h=this.hunterSeat,t=this.shot;this.hunterSeat=0;
+    if(t){this.kill(t,'shot');const txt=`砰！獵人 ${h}號 開槍帶走了 ${t}號！`;this.sys(txt);return this.set('shot',4,txt,'')}
+    this.sys('沒有人發動技能。');
+    const w=this.checkWin();if(w)return this.end(w);const f=this.afterHunter;this.afterHunter=null;f();
+  }
+  dayStart(){
+    this.done=new Set();for(const p of this.P){const b=this.brain[p.seat];b.spoke=0;b.max=Math.random()<.45?2:1}
+    this.sys(`—— 第 ${this.day} 天 ——　開始自由討論。`);
+    this.set('day',Math.min(30+this.alive().length*8,120),`第 ${this.day} 天`,'自由發言時間，找出狼人！');
+  }
+  voteStart(){this.votes={};this.sys('投票開始！點擊玩家頭像投票。');this.set('vote',20,'投票時間','點擊玩家頭像，投票放逐一名玩家')}
+  voteResolve(){
+    const v={},by={};
+    for(const p of this.alive()){const t=this.votes[p.seat]>0?this.votes[p.seat]:-1;(by[t]=by[t]||[]).push(p.seat);if(t>0)v[t]=(v[t]||0)+1}
+    this.sys('投票結果：'+Object.keys(by).map(Number).sort((a,b)=>b-a).map(t=>t>0?`${t}號←(${by[t].join(',')})`:`棄票(${by[t].join(',')})`).join('　'));
+    const m=Math.max(0,...Object.values(v));const top=Object.keys(v).filter(k=>v[k]===m).map(Number);
+    this.exiled=(m>0&&top.length===1)?top[0]:0;
+    const txt=this.exiled?`${this.exiled}號 ${this.p(this.exiled).name} 被放逐（${m} 票）`:(m>0?'平票！本輪無人出局':'無人投票，本輪無人出局');
+    this.sys(txt);this.set('voteResult',5,txt,'');
+  }
+  checkWin(){
+    const a=this.alive(),W=a.filter(p=>p.role==='wolf').length,Gd=a.filter(p=>ROLES[p.role].team==='god').length,V=a.filter(p=>p.role==='villager').length;
+    if(!W)return 'good';if(!Gd||!V||W>=Gd+V)return 'wolf';return null;
+  }
+  end(w){
+    this.winner=w;this.hunterSeat=0;this.lw=0;
+    this.sys(w==='good'?'好人陣營獲勝！':'狼人陣營獲勝！');
+    this.sys('身份公開：'+this.P.map(p=>`${p.seat}號${ROLES[p.role].n}`).join('、'));
+    this.set('end',99999,w==='good'?'好人陣營勝利！':'狼人陣營勝利！','');
+  }
+  chatCh(s){
+    const p=this.p(s),ph=this.phase;if(!p)return null;
+    if(ph==='end'||ph==='init')return 'all';
+    if(ph==='lastwords'&&s===this.lw)return 'all';
+    if(!p.alive)return 'dead';
+    if(ph==='night_wolf')return p.role==='wolf'?'wolf':null;
+    if(ph.startsWith('night')||ph==='lastwords')return null;
+    return 'all';
+  }
+  act(s,a){
+    const p=this.p(s);if(!p||!a)return;const n=this.night,ph=this.phase;
+    if(a.t==='chat'){const ch=this.chatCh(s),txt=String(a.x||'').replace(/\s+/g,' ').trim().slice(0,80);if(!ch||!txt)return;this.say(s,txt,ch);if(!p.bot)this.hear(s,txt,ch);return}
+    if(a.t==='done'){if(ph==='day'&&p.alive){this.done.add(s);this.dirty=true}return}
+    if(a.t==='skip'){
+      if(ph==='night_guard'&&p.role==='guard'&&p.alive&&n.guard===null)n.guard=0;
+      else if(ph==='night_witch'&&p.role==='witch'&&p.alive&&!n.witchDone)n.witchDone=true;
+      else if(ph==='vote'&&p.alive)this.votes[s]=-1;
+      else if(ph==='hunter'&&s===this.hunterSeat&&this.shot===undefined)this.shot=0;
+      this.dirty=true;return;
+    }
+    if(a.t==='save'){if(ph==='night_witch'&&p.role==='witch'&&p.alive&&!n.witchDone&&this.witch.save&&n.victim){n.save=true;this.witch.save=false;n.witchDone=true;this.dirty=true}return}
+    const t=Math.floor(+a.s)||0,tp=t?this.p(t):null;
+    if(a.t!=='pick'||!tp||!tp.alive)return;
+    if(ph==='night_guard'&&p.role==='guard'&&p.alive&&n.guard===null&&t!==this.lastGuard)n.guard=t;
+    else if(ph==='night_wolf'&&p.role==='wolf'&&p.alive&&tp.role!=='wolf')n.wolf[s]=t;
+    else if(ph==='night_witch'&&p.role==='witch'&&p.alive&&!n.witchDone&&this.witch.poison&&t!==s){n.poison=t;this.witch.poison=false;n.witchDone=true}
+    else if(ph==='night_seer'&&p.role==='seer'&&p.alive&&n.check===null&&t!==s){n.check=t;const r=tp.role==='wolf'?'wolf':'good';this.brain[s].checks[t]=r;this.sys(`查驗結果：${t}號 ${tp.name} 是【${r==='wolf'?'狼人':'好人'}】`,s)}
+    else if(ph==='vote'&&p.alive&&t!==s)this.votes[s]=t;
+    else if(ph==='hunter'&&s===this.hunterSeat&&this.shot===undefined)this.shot=t;
+    else return;
+    this.dirty=true;
+  }
+  /* ---- AI ---- */
+  hear(s,txt,ch){
+    const nums=[...txt.matchAll(/(\d{1,2})\s*號?/g)].map(m=>+m[1]).filter(x=>x>=1&&x<=this.n&&x!==s);
+    const t=nums[0];
+    if(ch==='wolf'){
+      if(t&&this.p(t).role!=='wolf'&&this.p(t).alive&&this.night){
+        const bots=this.roleAlive('wolf').filter(w=>w.bot);bots.forEach(w=>{this.night.wolf[w.seat]=t});
+        if(bots[0])this.replies.push({s:bots[0].seat,ch:'wolf',at:Date.now()+rnd(900,2000),text:pick(['收到，跟刀','OK，刀他',`好，今晚 ${t}號`])});
+      }
+      return;
+    }
+    if(ch!=='all')return;
+    if(t&&/預言家|查驗|驗了|驗他|驗出|金水|查殺/.test(txt)){
+      const res=/金水|好人|是好/.test(txt)?'good':(/狼|查殺/.test(txt)?'wolf':null);
+      if(res){this.claim(s,t,res);return}
+    }
+    if(t&&/狼|可疑|踩|出|投|票|怪|假|悍跳/.test(txt)){this.accuse(s,t,1.3);if(this.p(t).bot&&this.p(t).alive&&Math.random()<.75)this.queueDefend(t,s);return}
+    if(Math.random()<.35&&!this.replies.length){const b=pick(this.alive().filter(p=>p.bot));if(b)this.replies.push({s:b.seat,ch:'all',at:Date.now()+rnd(1500,3500),text:pick([`${s}號 說得有道理`,'嗯嗯，再聽聽看','有點牽強喔','+1','我同意','先過，等投票再說'])})}
+  }
+  claim(by,t,res){
+    this.claims.push({by,t,res,day:this.day});if(this.brain[by])this.brain[by].claimed[t]=1;
+    for(const w of this.roleAlive('wolf')){const b=this.brain[w.seat];b.threat[by]=(b.threat[by]||0)+(res==='wolf'&&this.p(t).role==='wolf'?5:2)}
+    const tp=this.p(t);if(res==='wolf'&&tp.bot&&tp.alive&&t!==by)this.queueDefend(t,by);
+    this.dirty=true;
+  }
+  accuse(by,t,w){
+    for(const p of this.alive()){if(p.seat===by)continue;const b=this.brain[p.seat];
+      if(p.role==='wolf'){if(this.p(t).role==='wolf')b.threat[by]=(b.threat[by]||0)+1.5}
+      else b.susp[t]=(b.susp[t]||0)+w*.5}
+  }
+  queueDefend(t,by){
+    if(this.replies.some(r=>r.s===t))return;
+    this.replies.push({s:t,ch:'all',at:Date.now()+rnd(1500,3500),text:pick([`我是好人啦！${by}號 你才可疑吧？`,`${by}號 你踩我沒道理喔`,`我真的是好人，${by}號 在帶節奏`,'冤枉啊～我是好人'])});
+    if(this.p(t).role!=='wolf')this.brain[t].susp[by]=(this.brain[t].susp[by]||0)+2;
+  }
+  score(bs,t){
+    const me=this.p(bs),b=this.brain[bs],tp=this.p(t);if(t===bs)return -99;
+    if(me.role==='wolf'){if(tp.role==='wolf')return -99;let v=Math.random()*2+(b.threat[t]||0);if(this.claims.some(c=>c.by===t))v+=3;if(this.phase==='vote')v+=.5*Object.values(this.votes).filter(x=>x===t).length;return v}
+    if(b.checks[t])return b.checks[t]==='wolf'?50:-50;
+    let v=(b.susp[t]||0)+(b.read[t]||0)+Math.random()*1.2;
+    const cl=[...new Set(this.claims.map(c=>c.by))];
+    const real=cl.find(x=>{const q=this.p(x);return!q.alive&&(q.cause==='wolf'||q.cause==='poison')});
+    const greedy=new Set(),cnt={};for(const c of this.claims){const k=c.by+'_'+c.day;cnt[k]=(cnt[k]||0)+1;if(cnt[k]>1)greedy.add(c.by)}
+    const trust=x=>greedy.has(x)?0:real?(x===real?1:0):cl.length>1?(x===cl[0]?.8:.35):1;
+    if(cl.includes(t)){if(greedy.has(t))v+=4;if(real&&t!==real)v+=6;v-=trust(t)*1.2}
+    for(const c of this.claims){
+      if(c.by===bs)continue;
+      if(c.t===bs&&c.res==='wolf'){if(t===c.by)v+=7;continue}
+      if(me.role==='seer'){if(t===c.by)v+=7;continue}
+      if(c.t===t)v+=c.res==='wolf'?4*trust(c.by):-2.5*trust(c.by);
+    }
+    if(this.phase==='vote')v+=BAND*Object.values(this.votes).filter(x=>x===t).length;
+    return v;
+  }
+  top(bs,pool){pool=pool||this.alive().filter(p=>p.seat!==bs).map(p=>p.seat);let best=0,bv=-1e9;for(const t of pool){const v=this.score(bs,t);if(v>bv){bv=v;best=t}}return[best,bv]}
+  botAct(p,force){
+    const s=p.seat,b=this.brain[s],ph=this.phase,n=this.night,go=force||Math.random()<.65;
+    switch(ph){
+      case 'night_guard':if(p.role==='guard'&&p.alive&&n.guard===null&&go){
+        const pool=this.alive().map(x=>x.seat).filter(x=>x!==this.lastGuard);const cl=[...new Set(this.claims.map(c=>c.by))];
+        const t=cl.length===1&&pool.includes(cl[0])&&cl[0]!==s&&Math.random()<.7?cl[0]:pick(pool);if(t)this.act(s,{t:'pick',s:t});else this.act(s,{t:'skip'})}break;
+      case 'night_wolf':if(p.role==='wolf'&&p.alive&&!n.wolf[s]&&go){
+        const mates=Object.values(n.wolf).filter(Boolean);
+        const t=mates.length&&Math.random()<.85?pick(mates):this.top(s,this.alive().filter(x=>x.role!=='wolf').map(x=>x.seat))[0];
+        if(t){this.act(s,{t:'pick',s:t});if(!b.wc&&Math.random()<.6){b.wc=true;this.say(s,pick([`刀 ${t}號？`,`我想刀 ${t}號，他像神職`,`${t}號 白天很會帶節奏，先處理掉`,'跟刀就好']),'wolf')}}}break;
+      case 'night_witch':if(p.role==='witch'&&p.alive&&!n.witchDone&&go){
+        if(this.witch.save&&n.victim&&(n.victim===s||Math.random()<(this.day===1?.9:.45)))this.act(s,{t:'save'});
+        else{const[t,v]=this.top(s);if(this.witch.poison&&this.day>=2&&t&&v>=3.5&&Math.random()<.65)this.act(s,{t:'pick',s:t});else this.act(s,{t:'skip'})}}break;
+      case 'night_seer':if(p.role==='seer'&&p.alive&&n.check===null&&go){const pool=this.alive().map(x=>x.seat).filter(x=>x!==s&&!b.checks[x]);if(pool.length)this.act(s,{t:'pick',s:this.top(s,pool)[0]})}break;
+      case 'day':if(p.alive&&!force&&b.spoke<b.max&&Math.random()<.55){b.spoke++;this.speak(p)}break;
+      case 'vote':if(p.alive&&this.votes[s]===undefined&&(force||Math.random()<.45)){const[t]=this.top(s);if(t)this.act(s,{t:'pick',s:t});else this.act(s,{t:'skip'})}break;
+      case 'hunter':if(s===this.hunterSeat&&this.shot===undefined&&(force||Math.random()<.6)){const[t,v]=this.top(s);if(t&&(v>=1.5||Math.random()<.5))this.act(s,{t:'pick',s:t});else this.act(s,{t:'skip'})}break;
+      case 'lastwords':if(s===this.lw&&!b.lw&&!force){b.lw=true;this.lastWords(p)}break;
+    }
+  }
+  speak(p){
+    const s=p.seat,b=this.brain[s],r=p.role;
+    if(r==='seer'){
+      const un=Object.entries(b.checks).filter(([t])=>!b.claimed[t]).map(([t,res])=>[+t,res]);
+      const c=un.find(x=>x[1]==='wolf')||(un.length&&Math.random()<.9?un[un.length-1]:null);
+      if(c){const other=this.claims.find(x=>x.by!==s&&this.p(x.by).alive);
+        this.say(s,(c[1]==='wolf'?`我是預言家！昨晚查驗 ${c[0]}號，是查殺！大家跟我出 ${c[0]}號。`:`我是預言家，${c[0]}號 是我的金水（好人）。`)+(other?` ${other.by}號 是悍跳狼！`:''),'all');
+        this.claim(s,c[0],c[1]);return}
+    }
+    if(r==='wolf'){
+      if(this.fakeSeer===s&&b.fakeDay!==this.day){b.fakeDay=this.day;
+        const mate=this.roleAlive('wolf').find(x=>x.seat!==s&&!b.claimed[x.seat]);
+        const good=this.alive().filter(x=>x.role!=='wolf'&&x.seat!==s&&!b.claimed[x.seat]).map(x=>x.seat);
+        if(mate&&Math.random()<.5){this.say(s,`昨晚我驗了 ${mate.seat}號，是金水。`,'all');this.claim(s,mate.seat,'good');return}
+        if(good.length){const t=this.top(s,good)[0];this.say(s,`昨晚查驗 ${t}號，查殺！今天出他。`,'all');this.claim(s,t,'wolf');return}
+      }else if(!this.fakeSeer&&this.day<=2){
+        const real=this.claims.find(c=>this.p(c.by).role!=='wolf');const hit=real&&this.p(real.t).role==='wolf';
+        if((hit&&Math.random()<.5)||(!real&&Math.random()<.07)){
+          this.fakeSeer=s;b.fakeDay=this.day;const t=real&&this.p(real.by).alive?real.by:this.top(s)[0];
+          if(t){this.say(s,real?`${real.by}號 是悍跳狼！我才是真預言家，昨晚驗了 ${t}號，查殺！`:`我是預言家，昨晚查驗 ${t}號，是狼人！`,'all');this.claim(s,t,'wolf');return}
+        }
+      }
+    }
+    const[t,v]=this.top(s);
+    const cw=this.claims.filter(c=>c.res==='wolf'&&this.p(c.t).alive&&c.t!==s);
+    const multi=new Set(this.claims.map(c=>c.by)).size>1;
+    const L=[];
+    if(cw.length){const c=pick(cw);if(multi)L.push(`預言家對跳了，我覺得 ${t}號 比較有問題。`,`兩個預言家我先站邊，出 ${t}號。`);else L.push(`跟預言家走，出 ${c.t}號。`,`預言家都報查殺了，好人不要分票，投 ${c.t}號。`)}
+    else if(!this.claims.length)L.push('預言家可以跳出來帶隊了吧？','沒有人起跳預言家嗎？');
+    if(this.peace&&this.day>1&&Math.random()<.5)L.push('昨晚平安夜，女巫應該開了解藥。');
+    if(t&&v>1.5)L.push(`${t}號 剛剛的發言很飄，我會投他。`,`我覺得 ${t}號 有狼味。`,`${t}號 一直在划水，很可疑。`);
+    L.push('我是好人，沒什麼資訊，先聽後面。',r==='villager'?'單純民，過。':'我有身份，但先不跳，過。','好人要團結，不要亂分票！');
+    if(t)L.push(`${t}號 你等一下解釋一下你的立場。`);
+    if(r==='wolf'&&t)L.push(`我是好人，大家別被帶節奏了，${t}號 比較怪。`);
+    const line=pick(L);this.say(s,line,'all');
+    const m=line.match(/(\d+)號/);if(m&&/投|狼|飄|划水|出|怪|問題|可疑/.test(line))this.accuse(s,+m[1],.8);
+  }
+  lastWords(p){
+    const[t]=this.top(p.seat),b=this.brain[p.seat];let line;
+    if(p.role==='wolf')line=pick(['我是好人啊……你們投錯了。',t?`唉，我是平民，${t}號 才是狼，加油。`:'我是好人，加油。']);
+    else if(p.role==='villager')line=t?`我是平民，${t}號 很可疑，大家注意。`:'我是平民，好人加油。';
+    else if(p.role==='seer'){const ck=Object.entries(b.checks).map(([x,r])=>`${x}號${r==='wolf'?'狼':'好人'}`).join('、');line=`我是預言家！查驗紀錄：${ck||'無'}。相信我！`}
+    else line=`我是${ROLES[p.role].n}，${t?`我覺得 ${t}號 是狼`:'好人加油'}，相信我！`;
+    this.say(p.seat,line,'all');
+  }
+  /* ---- 視角 ---- */
+  actFor(s){
+    const p=this.p(s),ph=this.phase,n=this.night;if(!p)return null;const al=this.alive().map(x=>x.seat);
+    if(ph==='hunter'&&s===this.hunterSeat&&this.shot===undefined)return{k:'pick',tg:al,tip:'你是獵人！選擇要開槍帶走的人',skip:'不開槍'};
+    if(!p.alive)return null;
+    if(ph==='night_guard'&&p.role==='guard'&&n.guard===null)return{k:'pick',tg:al.filter(x=>x!==this.lastGuard),tip:'選擇今晚要守護的玩家'+(this.lastGuard?`（不能連守 ${this.lastGuard}號）`:''),skip:'今晚不守護'};
+    if(ph==='night_wolf'&&p.role==='wolf')return{k:'pick',tg:al.filter(x=>this.p(x).role!=='wolf'),tip:'和狼隊友討論，選擇今晚的獵殺目標（可更改）',sel:n.wolf[s]||0};
+    if(ph==='night_witch'&&p.role==='witch'&&!n.witchDone)return{k:'witch',victim:this.witch.save?n.victim:-1,save:this.witch.save&&!!n.victim,poison:this.witch.poison,tg:al.filter(x=>x!==s),skip:'不使用'};
+    if(ph==='night_seer'&&p.role==='seer'&&n.check===null)return{k:'pick',tg:al.filter(x=>x!==s),tip:'選擇今晚要查驗的玩家'};
+    if(ph==='day')return{k:'talk',done:this.done.has(s),tip:this.done.has(s)?'你已結束發言，等待其他玩家……':'自由發言，討論誰是狼人'};
+    if(ph==='vote')return{k:'pick',tg:al.filter(x=>x!==s),tip:'點擊頭像投票（可更改）',skip:'棄票',sel:this.votes[s]>0?this.votes[s]:0,abst:this.votes[s]===-1};
+    return null;
+  }
+  view(s){
+    const me=this.p(s),ph=this.phase,end=ph==='end',n=this.night;
+    const seeAll=end||(me&&!me.alive),iw=me&&me.role==='wolf';
+    const pl=this.P.map(p=>({s:p.seat,n:p.name,av:p.av,a:p.alive,b:p.bot,r:(seeAll||p.seat===s||(iw&&p.role==='wolf'))?p.role:null}));
+    const vis=m=>m.ch==='sys'?(!m.to||m.to===s):m.ch==='all'?true:m.ch==='wolf'?(iw||seeAll):m.ch==='dead'?seeAll:false;
+    const al=this.alive();
+    const v={now:Date.now(),ph,pe:this.phaseEnd,ps:this.phaseStart,day:this.day,n:this.n,me:s,role:me?me.role:null,alive:me?me.alive:false,pl,
+      msgs:this.msgs.filter(vis).slice(-90),bn:this.banner,sb:this.sub,ch:this.chatCh(s),winner:this.winner,lw:this.lw,
+      cnt:{w:al.filter(p=>p.role==='wolf').length,g:al.filter(p=>ROLES[p.role].team==='god').length,v:al.filter(p=>p.role==='villager').length}};
+    if(ph==='vote'||ph==='voteResult')v.votes=this.votes;
+    if(iw&&ph==='night_wolf')v.wp=n.wolf;
+    v.act=this.actFor(s);
+    if(ph.startsWith('night_'))v.sb=v.act?'晚上來臨，請選擇行動目標！':'天黑請閉眼……';
+    return JSON.parse(JSON.stringify(v));
+  }
+}
+G.WolfEngine={Game,ROLES,SETUPS,PH,shuffle,pick,tune(r,b){READ=r;BAND=b}};
+})(typeof window!=='undefined'?window:globalThis);
+</script>
+
+<script>
+{
+/* ================= 線上設定：部署到 GitHub Pages 時填入 ================= */
+const FIREBASE_CONFIG={apiKey:"AIzaSyC7ZYD4DPNyOZxAvGPetC1hK0QRdb2NfWs",authDomain:"werewolf-online-b76ac.firebaseapp.com",databaseURL:"https://werewolf-online-b76ac-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"werewolf-online-b76ac",appId:"1:800470510403:web:32106f38e0b96440781df6"};
+
+const {Game,ROLES,PH,shuffle,pick}=window.WolfEngine;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const BOT_NAMES=['小熊軟糖','阿Ken','月光喵','咖哩飯','黑糖珍奶','小雨','霸氣阿伯','草莓牛奶','夜貓子','阿宅','鹹酥雞','雷神索爾','Momo','小綠','芒果冰','阿翔','Yuki','奶茶控','包子','蘿蔔糕','大俠','飛天豬','檸檬塔','阿嬤的滷肉','布丁','Leo','小魚乾','天然呆'];
+
+/* ---------- Q 版角色 ---------- */
+const AVP={sk:['#ffe3cf','#fcd5b8','#f3c39e','#e0a57c'],h:['#2b2b3a','#5a3825','#c9853b','#f2d36b','#e86a8a','#6a8cff','#9b6ad8','#e9eef5','#d64545','#3aa58a'],c:['#e85a5a','#4a7fe0','#46b37a','#f0a83a','#8f63d6','#2f3a4f','#ff8fb1','#36b5c9'],e:['#4a2f1a','#2e6fd8','#c0392b','#2e9e5e','#8e44ad','#d4a017']};
+const AVN={sk:4,h:10,hs:6,c:8,e:6,es:3,a:7};
+const randAv=()=>({sk:ri(0,3),h:ri(0,9),hs:ri(0,5),c:ri(0,7),e:ri(0,5),es:ri(0,2),a:ri(0,6)});
+const ix=(o,k)=>((Math.floor(+((o||{})[k]))||0)%AVN[k]+AVN[k])%AVN[k];
+function shade(hex,f){const n=parseInt(hex.slice(1),16);const c=[n>>16,n>>8&255,n&255].map(x=>Math.max(0,Math.min(255,Math.round(x*f))));return'#'+c.map(x=>x.toString(16).padStart(2,'0')).join('')}
+function avSvg(o){
+  const sk=AVP.sk[ix(o,'sk')],h=AVP.h[ix(o,'h')],hs=ix(o,'hs'),c=AVP.c[ix(o,'c')],e=AVP.e[ix(o,'e')],es=ix(o,'es'),a=ix(o,'a');
+  const hd=shade(h,.72),cd=shade(c,.75);
+  const backs=['<path d="M17 62Q13 13 50 13Q87 13 83 62Z"/>','<path d="M16 52Q14 11 50 11Q86 11 84 52L90 106Q73 113 61 104L50 110L39 104Q27 113 10 106Z"/>','<path d="M17 62Q13 13 50 13Q87 13 83 62Z"/><ellipse cx="12" cy="76" rx="9" ry="25"/><ellipse cx="88" cy="76" rx="9" ry="25"/>','<path d="M17 62Q13 13 50 13Q87 13 83 62Z"/>','<path d="M15 54Q12 13 50 13Q88 13 85 54L86 76Q78 82 72 74L72 54H28V74Q22 82 14 76Z"/>','<path d="M17 62Q13 13 50 13Q87 13 83 62Z"/><circle cx="50" cy="11" r="12"/>'];
+  const bangs=hs===3?'<path d="M18 56L20 30L28 34L30 15L40 28L48 8L56 26L66 11L68 30L78 23L82 56Q76 39 62 37Q52 45 46 37Q34 43 24 41Z"/>':hs===4?'<path d="M19 54Q17 15 52 15Q83 17 81 54Q75 35 58 31Q44 43 25 45Z"/>':'<path d="M19 52Q19 17 50 17Q81 17 81 52Q77 39 69 36Q64 45 56 34Q50 45 42 34Q36 45 30 38Q23 41 19 52Z"/>';
+  const ears={1:`<path d="M22 32L24 6L42 22Z" fill="${h}"/><path d="M78 32L76 6L58 22Z" fill="${h}"/><path d="M26 25L27 13L35 21Z M74 25L73 13L65 21Z" fill="#ffb3c4"/>`,2:`<path d="M20 34L18 2L44 22Z" fill="#f08a3c"/><path d="M80 34L82 2L56 22Z" fill="#f08a3c"/><path d="M19 10L18 2L26 8Z M81 10L82 2L74 8Z" fill="#fff"/>`}[a]||'';
+  const tops={3:'<path d="M71 22L58 13L60 31Z M71 22L84 13L82 31Z" fill="#ff4d7a"/><circle cx="71" cy="22" r="4" fill="#ff86a2"/>',4:'<ellipse cx="50" cy="27" rx="38" ry="7" fill="#2e2147"/><path d="M28 26L57 -14L72 25Z" fill="#4a3570"/><path d="M33 22Q50 17 69 21L70 26Q50 21 31 27Z" fill="#e0b84a"/>',5:`<path d="M19 38Q19 11 50 11Q81 11 81 38Z" fill="${c}"/><path d="M46 36Q70 31 93 40L89 44Q68 37 46 40Z" fill="${cd}"/>`,6:'<ellipse cx="50" cy="1" rx="19" ry="5" fill="none" stroke="#ffd84d" stroke-width="3.5"/>'}[a]||'';
+  const eye=x=>es===1?`<path d="M${x-5.5} 60Q${x} 53 ${x+5.5} 60" stroke="#3a2a22" stroke-width="2.4" fill="none" stroke-linecap="round"/>`
+    :es===2?`<ellipse cx="${x}" cy="60" rx="5.6" ry="5.5" fill="#fff"/><ellipse cx="${x}" cy="61" rx="4.3" ry="4.6" fill="${e}"/><circle cx="${x}" cy="61.5" r="2.1" fill="#111"/><path d="M${x-6.5} 56.5H${x+6.5}" stroke="#2a1f1a" stroke-width="2.4" stroke-linecap="round"/>`
+    :`<ellipse cx="${x}" cy="59" rx="6.2" ry="7.8" fill="#fff"/><ellipse cx="${x}" cy="60" rx="4.9" ry="6.4" fill="${e}"/><ellipse cx="${x}" cy="61" rx="2.5" ry="3.3" fill="#111"/><circle cx="${x-1.9}" cy="56.6" r="1.9" fill="#fff"/><circle cx="${x+1.8}" cy="63" r=".9" fill="#fff"/><path d="M${x-7} 53.5Q${x} 49 ${x+7} 53.5" stroke="#2a1f1a" stroke-width="1.8" fill="none" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 -16 100 146" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<ellipse cx="50" cy="126" rx="25" ry="4.5" fill="#000" opacity=".28"/>
+<g fill="${h}">${backs[hs]}</g>${ears}
+<rect x="39" y="108" width="8.5" height="13" rx="2" fill="#363a52"/><rect x="52.5" y="108" width="8.5" height="13" rx="2" fill="#363a52"/>
+<ellipse cx="43" cy="122" rx="6.5" ry="3.4" fill="#2a1f1a"/><ellipse cx="57" cy="122" rx="6.5" ry="3.4" fill="#2a1f1a"/>
+<ellipse cx="28" cy="94" rx="5" ry="11.5" transform="rotate(14 28 94)" fill="${cd}"/><ellipse cx="72" cy="94" rx="5" ry="11.5" transform="rotate(-14 72 94)" fill="${cd}"/>
+<circle cx="25.5" cy="104.5" r="4.3" fill="${sk}"/><circle cx="74.5" cy="104.5" r="4.3" fill="${sk}"/>
+<path d="M32 80Q50 75 68 80L73 111Q50 117 27 111Z" fill="${c}"/><path d="M41 79L50 89L59 79Z" fill="#fff"/><path d="M47 86H53L51 96H49Z" fill="${cd}"/>
+<circle cx="22" cy="57" r="5" fill="${sk}"/><circle cx="78" cy="57" r="5" fill="${sk}"/>
+<circle cx="50" cy="54" r="28.5" fill="${sk}"/>
+${eye(39)}${eye(61)}
+<ellipse cx="30" cy="68" rx="4.6" ry="2.6" fill="#ff7f93" opacity=".5"/><ellipse cx="70" cy="68" rx="4.6" ry="2.6" fill="#ff7f93" opacity=".5"/>
+<path d="M46 71Q50 74.5 54 71" stroke="#b3473f" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+<g fill="${h}">${bangs}</g><path d="M32 27Q44 20 60 22" stroke="#fff" stroke-width="2.5" opacity=".35" fill="none" stroke-linecap="round"/>
+${hs===2?`<circle cx="17" cy="51" r="3.5" fill="${c}"/><circle cx="83" cy="51" r="3.5" fill="${c}"/>`:''}${tops}
+</svg>`;
+}
+
+/* ---------- 教室背景 ---------- */
+function backdrop(){
+  const win=(x,moon)=>`<g transform="translate(${x} 78)"><rect width="150" height="212" rx="4" fill="#3d6fa8"/><rect x="10" y="10" width="130" height="192" fill="url(#gsky)"/><path d="M24 70q14-10 28 0q12-8 22 2q-14 6-50-2Z" fill="#fff" opacity=".8"/><rect class="nsky" x="10" y="10" width="130" height="192" fill="url(#gnsky)"/><g class="stars" fill="#fff"><circle cx="30" cy="40" r="1.6"/><circle cx="112" cy="58" r="1.3"/><circle cx="62" cy="150" r="1.2"/><circle cx="120" cy="170" r="1.5"/></g>${moon?'<g class="moon"><circle cx="98" cy="52" r="20" fill="#fff4c2"/><circle cx="108" cy="46" r="17" fill="#1a2659"/></g>':''}<path d="M75 10V202M10 106H140" stroke="#3d6fa8" stroke-width="8"/><rect x="-8" y="208" width="166" height="10" fill="#e9e4d6"/></g>`;
+  const desk=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 40L18 0H142L160 40Z" fill="#c8945a"/><path d="M0 40H160V50H0Z" fill="#8a5a2e"/><rect x="8" y="50" width="8" height="58" fill="#5a5f6b"/><rect x="144" y="50" width="8" height="58" fill="#5a5f6b"/><rect x="40" y="-30" width="80" height="34" rx="4" fill="#d9a066" opacity=".0"/></g>`;
+  const papers=[[690,560,-18],[760,590,12],[840,555,-6],[905,600,24],[720,625,30],[820,640,-28],[880,570,40],[650,610,6]].map(([x,y,r])=>`<g transform="translate(${x} ${y}) rotate(${r})"><rect x="-26" y="-18" width="52" height="36" fill="#f4f6fb" stroke="#c9cfdd"/><path d="M-18 -8H18M-18 0H14M-18 8H8" stroke="#9aa3b8" stroke-width="2"/></g>`).join('');
+  return `<svg class="bg" viewBox="0 0 1600 850" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+<defs><linearGradient id="gw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6dcc8"/><stop offset="1" stop-color="#b5bfa6"/></linearGradient>
+<linearGradient id="gsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6cbcff"/><stop offset="1" stop-color="#d8f1ff"/></linearGradient>
+<linearGradient id="gnsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1238"/><stop offset="1" stop-color="#26397a"/></linearGradient>
+<pattern id="pl" width="200" height="56" patternUnits="userSpaceOnUse"><rect width="200" height="56" fill="#b07a45"/><rect width="200" height="27" fill="#a6703d"/><path d="M0 27.5H200M0 55.5H200M70 0V27M150 28V56M20 28V56" stroke="#7e5128" stroke-width="2"/></pattern>
+<linearGradient id="gfl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".4"/><stop offset=".35" stop-color="#000" stop-opacity="0"/></linearGradient>
+<radialGradient id="grug"><stop offset="0" stop-color="#7c3b3b"/><stop offset="1" stop-color="#5a2626"/></radialGradient></defs>
+<rect width="1600" height="430" fill="url(#gw)"/><rect width="1600" height="34" fill="#98a689"/>
+${win(60,0)}${win(270,0)}${win(1180,1)}${win(1390,0)}
+<circle cx="800" cy="44" r="24" fill="#fff" stroke="#5c3d22" stroke-width="5"/><path d="M800 44V30M800 44L810 50" stroke="#222" stroke-width="3" stroke-linecap="round"/>
+<rect x="545" y="80" width="510" height="236" rx="6" fill="#7a5230"/><rect x="559" y="94" width="482" height="208" fill="#2f5b45"/>
+<text x="800" y="180" text-anchor="middle" fill="#eaf2ec" opacity=".75" font-size="44" font-weight="900" font-family="Noto Sans TC,sans-serif">今晚，誰是狼？</text>
+<path d="M610 240q30-16 60 0t60 0M900 230l60 20M930 220l-10 40" stroke="#eaf2ec" stroke-width="4" opacity=".45" fill="none"/>
+<rect x="545" y="314" width="510" height="12" fill="#5c3d22"/>
+<rect y="418" width="1600" height="16" fill="#5c3d22"/>
+<rect y="432" width="1600" height="418" fill="url(#pl)"/><rect y="432" width="1600" height="418" fill="url(#gfl)"/>
+${desk(30,436,1)}${desk(1410,436,1)}${desk(200,448,.8)}${desk(1270,448,.8)}
+<ellipse cx="800" cy="598" rx="300" ry="78" fill="url(#grug)" opacity=".55"/>${papers}
+<rect class="veil" width="1600" height="850" fill="#0a1650"/>
+</svg>`;
+}
+
+/* ---------- 音效 ---------- */
+const SND={ctx:null,on:store.get('wolf_snd',true),
+  tone(f,d,type,v,slide){if(!this.on)return;try{this.ctx=this.ctx||new AudioContext();const c=this.ctx,o=c.createOscillator(),g=c.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,c.currentTime);if(slide)o.frequency.exponentialRampToValueAtTime(slide,c.currentTime+d);g.gain.setValueAtTime(v||.06,c.currentTime);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+d);o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+d)}catch(e){}},
+  night(){this.tone(220,1.2,'triangle',.09,110);setTimeout(()=>this.tone(165,1.4,'triangle',.07,82),300)},
+  day(){[523,659,784].forEach((f,i)=>setTimeout(()=>this.tone(f,.35,'square',.035),i*120))},
+  click(){this.tone(880,.06,'square',.03)},tick(){this.tone(1300,.05,'square',.02)},
+  death(){this.tone(150,.7,'sawtooth',.05,55)},msg(){this.tone(700,.05,'sine',.03)},
+  win(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>this.tone(f,.32,'square',.045),i*140))}};
+
+/* ---------- 狀態 ---------- */
+const S={mode:null,game:null,seat:0,view:null,off:0,poison:false,seatsKey:'',lastMsg:0,lastPh:'',bnKey:'',size:9,roomNo:'',roomName:'',ptot:1,lastTick:-1,aliveN:0,exitArm:0};
+let me=store.get('wolf_me',null);if(!me||!me.av)me={name:'',av:randAv()};
+
+/* ---------- 大廳 ---------- */
+$('#crowd').innerHTML=Array.from({length:7},()=>`<div class="av">${avSvg(randAv())}</div>`).join('');
+$('#hero').insertAdjacentHTML('afterbegin',backdrop());
+$('#bgHost').outerHTML=backdrop();
+const nick=$('#nick');nick.value=me.name||'';
+nick.addEventListener('input',()=>{me.name=nick.value.trim().slice(0,10);store.set('wolf_me',me)});
+$('#legend').innerHTML=Object.values(ROLES).map(R=>`<div><span class="glyph" style="background:${R.c}">${R.g}</span><span><b>${R.n}</b>　${R.d}</span></div>`).join('');
+function drawMe(){$('#pv').innerHTML=avSvg(me.av)}drawMe();
+$('#cust').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;const k=b.dataset.k;
+  if(k==='rand')me.av=randAv();else me.av[k]=(ix(me.av,k)+1)%AVN[k];store.set('wolf_me',me);drawMe();SND.click()});
+$('#sizes').addEventListener('click',e=>{const b=e.target.closest('[data-n]');if(!b)return;S.size=+b.dataset.n;document.querySelectorAll('#sizes .chip').forEach(x=>x.classList.toggle('on',x===b))});
+function myName(){if(!me.name){me.name='玩家'+ri(100,999);nick.value=me.name;store.set('wolf_me',me)}return me.name}
+$('#playBot').addEventListener('click',()=>startBot(S.size));
+function show(id){['lobby','wait','game'].forEach(x=>$('#'+x).hidden=x!==id);window.scrollTo(0,0)}
+function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.append(d);setTimeout(()=>d.remove(),3000)}
+
+function startBot(size){
+  S.mode='bot';const mine=ri(1,size);const names=shuffle([...BOT_NAMES]);const ps=[];
+  for(let i=1;i<=size;i++)ps.push(i===mine?{id:'me',name:myName(),av:me.av}:{id:'bot'+i,name:names.pop(),av:randAv(),bot:true});
+  S.game=new Game(ps);S.seat=mine;S.roomNo=String(ri(100,999));S.roomName='練習房・'+size+'人';S.game.start();enterGame();
+}
+function enterGame(){
+  S.seatsKey='';S.lastMsg=0;S.lastPh='';S.bnKey='';S.poison=false;$('#log').innerHTML='';$('#mEnd').hidden=true;$('#mRole').hidden=true;
+  $('#rNo').textContent=S.roomNo;$('#rName').textContent=S.roomName;show('game');
+  if(S.game){S.game.dirty=false;publish()}
+}
+
+/* ---------- 主迴圈 ---------- */
+setInterval(()=>{const g=S.game;if(!g||S.mode==='client')return;g.tick(Date.now());if(g.dirty){g.dirty=false;publish()}},250);
+function publish(){const g=S.game;if(!g)return;render(g.view(S.seat));if(S.mode==='host')NET.pushViews()}
+function send(a){
+  if(S.mode==='client')return NET.sendAction(a);
+  if(!S.game)return;S.game.act(S.seat,a);S.game.dirty=false;publish();
+}
+function tickClock(){
+  const v=S.view;
+  if(v&&!$('#game').hidden){
+    if(v.ph==='end'){$('#sec').textContent='—';$('#barI').style.width='0%';$('#sec').classList.remove('hot')}
+    else{const rem=Math.max(0,v.pe-(Date.now()+S.off));const sec=Math.ceil(rem/1000);$('#sec').textContent=sec;$('#barI').style.width=Math.min(100,rem/S.ptot*100)+'%';
+      const hot=sec<=5&&sec>0&&['day','vote','night_wolf','night_witch','night_seer','night_guard','hunter'].includes(v.ph)&&!!v.act;$('#sec').classList.toggle('hot',hot);
+      if(hot&&sec!==S.lastTick){S.lastTick=sec;SND.tick()}}
+  }
+  requestAnimationFrame(tickClock);
+}
+requestAnimationFrame(tickClock);
+
+/* ---------- 繪製 ---------- */
+const stage=$('#stage'),seatsEl=$('#seats'),log=$('#log');
+function layout(n){
+  const t=Math.ceil(n/2),b=n-t,w=n>9?8.2:n>6?9.4:11,pos=[];
+  const xs=(k,a,z)=>Array.from({length:k},(_,i)=>k===1?50:a+i*(z-a)/(k-1));
+  xs(t,8,92).forEach(x=>pos.push({x,y:57,sc:.84}));xs(b,11,89).reverse().forEach(x=>pos.push({x,y:98,sc:1}));
+  return{pos,w};
+}
+function normalize(v){
+  v.pl=(v.pl||[]).filter(Boolean);v.msgs=(v.msgs||[]).filter(Boolean);v.cnt=v.cnt||{w:0,g:0,v:0};
+  if(v.act){v.act.tg=(v.act.tg||[]).map(Number)}
+  return v;
+}
+function render(v){
+  v=normalize(v);S.view=v;S.off=v.now-Date.now();
+  const night=v.ph==='nightfall'||v.ph.startsWith('night_');stage.classList.toggle('night',night);
+  if(v.ph!==S.lastPh){onPhase(v,S.lastPh);S.lastPh=v.ph}
+  const bk=v.ph+'|'+v.bn+'|'+v.sb+'|'+v.day;
+  if(v.ph==='lastwords')$('#banner').classList.remove('on');
+  if(bk!==S.bnKey&&v.bn&&v.ph!=='lastwords'){S.bnKey=bk;$('#bnT').textContent=v.bn;$('#bnS').textContent=v.sb||'';const b=$('#banner');b.classList.remove('on');void b.offsetWidth;b.classList.add('on')}
+  $('#phName').textContent=(v.day&&v.ph!=='end'?`第${v.day}${v.ph==='day'||v.ph==='vote'||v.ph==='voteResult'||v.ph==='lastwords'||v.ph==='dawn'?'天':'夜'}・`:'')+(PH[v.ph]||'');
+  $('#cW').textContent=v.cnt.w;$('#cG').textContent=v.cnt.g;$('#cV').textContent=v.cnt.v;
+  renderSeats(v);renderChat(v);renderAction(v);renderLW(v);
+  const aliveN=v.pl.filter(p=>p.a).length;if(S.aliveN&&aliveN<S.aliveN)SND.death();S.aliveN=aliveN;
+  if(v.ph==='end'&&$('#mEnd').hidden)showEnd(v);
+  if(v.ph!=='end')$('#mEnd').hidden=true;
+}
+function onPhase(v,prev){
+  S.ptot=Math.max(1000,v.pe-v.ps);S.poison=false;
+  if(v.ph==='deal'){S.aliveN=0;showRole(v)}
+  if(v.ph==='nightfall')SND.night();
+  if(v.ph==='dawn')SND.day();
+  if(v.ph==='vote')SND.click();
+  if(v.ph==='end')SND.win();
+  if(v.ph!=='deal')$('#mRole').hidden=true;
+}
+function renderSeats(v){
+  const key=v.pl.map(p=>p.s+':'+p.n+':'+JSON.stringify(p.av)).join('|');
+  if(key!==S.seatsKey){S.seatsKey=key;const{pos,w}=layout(v.pl.length);
+    seatsEl.innerHTML=v.pl.map((p,i)=>`<div class="seat" data-s="${+p.s}" style="left:${pos[i].x}%;top:${pos[i].y}%;--w:${(w*pos[i].sc).toFixed(2)}cqw;z-index:${pos[i].y>60?3:2}"><div class="bub"></div><div class="nm"></div><div class="av">${avSvg(p.av)}<span class="rt" hidden></span><span class="vc" hidden></span><span class="kn" hidden></span></div><div class="num">${+p.s}</div></div>`).join('');}
+  const a=v.act,tg=new Set(a?a.tg:[]),pickable=a&&(a.k==='pick'||(a.k==='witch'&&S.poison));
+  const vc={};if(v.votes)Object.values(v.votes).forEach(t=>{if(t>0)vc[t]=(vc[t]||0)+1});
+  const kn={};if(v.wp)Object.values(v.wp).forEach(t=>{if(t)kn[t]=(kn[t]||0)+1});
+  for(const el of seatsEl.children){const s=+el.dataset.s,p=v.pl.find(x=>x.s===s);if(!p)continue;
+    el.classList.toggle('dead',!p.a);el.classList.toggle('me',s===v.me);el.classList.toggle('tgt',!!pickable&&tg.has(s));
+    el.classList.toggle('sel',!!pickable&&a.sel===s);el.classList.toggle('mate',p.r==='wolf'&&v.role==='wolf'&&s!==v.me);
+    el.querySelector('.nm').textContent=p.n;
+    const rt=el.querySelector('.rt'),R=p.r&&ROLES[p.r];if(R){rt.textContent=R.g;rt.style.background=R.c;rt.hidden=false}else rt.hidden=true;
+    const c=el.querySelector('.vc');c.textContent=vc[s]||'';c.hidden=!vc[s];
+    const k=el.querySelector('.kn');k.textContent=kn[s]?'刀'+(kn[s]>1?'×'+kn[s]:''):'';k.hidden=!kn[s];
+  }
+}
+seatsEl.addEventListener('click',e=>{
+  const el=e.target.closest('.seat');const v=S.view;if(!el||!v||!v.act||!el.classList.contains('tgt'))return;
+  send({t:'pick',s:+el.dataset.s});S.poison=false;SND.click();
+});
+function bubble(s,text){const el=seatsEl.querySelector(`.seat[data-s="${+s}"] .bub`);if(!el)return;el.textContent=text;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),4500)}
+function renderChat(v){
+  const last=v.msgs.length?v.msgs[v.msgs.length-1].id:0;
+  if(last<S.lastMsg){S.lastMsg=0;log.innerHTML=''}
+  const add=v.msgs.filter(m=>m.id>S.lastMsg);if(!add.length)return;
+  const fresh=S.lastMsg>0;const atBottom=log.scrollHeight-log.scrollTop-log.clientHeight<50;
+  for(const m of add){S.lastMsg=m.id;const d=document.createElement('div');d.className='m '+m.ch+(m.from===v.me?' mine':'');
+    if(m.ch==='sys')d.textContent='【系統】'+m.text;
+    else{const p=v.pl.find(x=>x.s===m.from);const tag=m.ch==='wolf'?'［狼隊］':m.ch==='dead'?'［亡者］':'';const w=document.createElement('b');w.className='who';w.textContent=`${tag}${m.from}號 ${p?p.n:''}：`;d.append(w,document.createTextNode(m.text));
+      if(fresh&&m.ch!=='dead')bubble(m.from,m.text)}
+    log.append(d)}
+  while(log.children.length>220)log.firstChild.remove();
+  if(atBottom||add.some(m=>m.from===v.me)||!fresh)log.scrollTop=log.scrollHeight;
+  if(fresh&&add.some(m=>m.ch!=='sys'&&m.from!==v.me))SND.msg();
+}
+$('#tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));log.className='log'+(b.dataset.f?' f-'+b.dataset.f:'');log.scrollTop=log.scrollHeight});
+function renderAction(v){
+  const R=v.role&&ROLES[v.role];
+  $('#roleMini').innerHTML=R?`<div class="glyph" style="background:${R.c}">${R.g}</div><div><b>${R.n}</b>${v.alive?'':' <span style="color:#ff8a80">（已出局）</span>'}<small>${R.d}</small></div>`:'';
+  const a=v.act;let tip='',btns='';
+  if(!a){tip=v.ph==='end'?'遊戲結束！':v.ph==='deal'?'確認你的身份，夜晚即將來臨……':!v.alive?(v.ph==='lastwords'&&v.lw===v.me?'請在聊天框發表你的遺言':'你已出局：可以在亡者頻道聊天，並看到所有人的身份。'):(v.ph.startsWith('night')?'天黑請閉眼，等待其他角色行動……':v.ph==='lastwords'?'聆聽遺言中……':'請稍候……')}
+  else if(a.k==='pick'){tip=esc(a.tip);if(a.sel)tip+=`　<em>已選擇：${+a.sel}號</em>`;if(a.abst)tip+='　<em>已棄票</em>';if(a.skip)btns+=`<button class="btn k" data-a="skip">${esc(a.skip)}</button>`}
+  else if(a.k==='witch'){
+    tip=S.poison?'<em>點擊舞台上的玩家下毒（不能毒自己）</em>':(+a.victim>0?`今晚 <em>${+a.victim}號</em> 被狼人襲擊了。`:+a.victim===0?'今晚狼人沒有殺人。':'解藥已用完，無法得知今晚刀口。')+'要使用藥水嗎？';
+    if(a.save)btns+=`<button class="btn g" data-a="save">解藥救 ${+a.victim}號</button>`;
+    if(a.poison)btns+=`<button class="btn r" data-a="poison">${S.poison?'取消下毒':'使用毒藥'}</button>`;
+    btns+=`<button class="btn k" data-a="skip">${esc(a.skip||'不使用')}</button>`;
+  }
+  else if(a.k==='talk'){tip=esc(a.tip);if(!a.done)btns+='<button class="btn b" data-a="done">結束發言</button>'}
+  if(v.ph==='end')btns+=(S.mode!=='client'?'<button class="btn g" data-a="again">再來一局</button>':'')+'<button class="btn k" data-a="lobby">回大廳</button>';
+  $('#tip').innerHTML=tip;$('#acts').innerHTML=btns;
+  const ch=v.ch,inp=$('#sayI');inp.disabled=!ch;$('#sayB').disabled=!ch;
+  inp.placeholder=!ch?'現在不能發言':ch==='wolf'?'狼隊頻道（只有狼人看得到）':ch==='dead'?'亡者頻道（只有出局玩家看得到）':(v.ph==='lastwords'?'發表你的遺言…':'輸入訊息，按 Enter 送出');
+}
+$('#acts').addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const k=b.dataset.a;SND.click();
+  if(k==='poison'){S.poison=!S.poison;render(S.view);return}
+  if(k==='again')return again();if(k==='lobby')return leave();
+  send({t:k});
+});
+$('#sayF').addEventListener('submit',e=>{e.preventDefault();const t=$('#sayI').value.trim();if(!t)return;send({t:'chat',x:t});$('#sayI').value=''});
+function renderLW(v){
+  const on=v.ph==='lastwords'&&v.lw;$('#lw').hidden=!on;if(!on)return;
+  const p=v.pl.find(x=>x.s===v.lw);$('#lwWho').textContent=`${v.lw}號 ${p?p.n:''}`;
+  const m=[...v.msgs].reverse().find(x=>x.from===v.lw&&x.ch==='all');$('#lwSay').textContent=m?m.text:'……';
+}
+function showRole(v){
+  const R=v.role&&ROLES[v.role];if(!R)return;
+  const mates=v.role==='wolf'?v.pl.filter(p=>p.r==='wolf'&&p.s!==v.me).map(p=>`${p.s}號 ${esc(p.n)}`).join('、'):'';
+  $('#mRoleC').innerHTML=`<div style="color:var(--mute);font-weight:700">你的身份是</div><div class="glyph bigglyph" style="background:${R.c}">${R.g}</div><h2>${R.n}</h2>
+  <p style="color:${R.team==='wolf'?'#ff8a80':'#8fd0ff'};font-weight:900;margin:0">${R.team==='wolf'?'狼人陣營':'好人陣營'}</p><p>${R.d}</p>${mates?`<p style="color:#ff8a80;font-weight:700">你的狼隊友：${mates}</p>`:''}<button class="btn big" data-close>我知道了</button>`;
+  $('#mRole').hidden=false;
+}
+function showEnd(v){
+  const good=v.winner==='good';
+  $('#mEndC').innerHTML=`<h2 style="color:${good?'#8fd0ff':'#ff8a80'}">${good?'好人陣營勝利！':'狼人陣營勝利！'}</h2>
+  <p style="margin:0;color:var(--mute)">${(()=>{const mine=v.role&&ROLES[v.role];if(!mine)return'';const won=(mine.team==='wolf')!==good;return won?'恭喜，你贏了！':'可惜，你輸了，再接再厲！'})()}</p>
+  <div class="endgrid">${v.pl.map(p=>{const R=ROLES[p.r]||ROLES.villager;const win=(R.team==='wolf')!==good;return`<div class="endp ${win?'win':''} ${p.a?'':'x'}"><div class="av">${avSvg(p.av)}</div><b>${+p.s}號 ${esc(p.n)}</b><div style="color:${R.c};font-weight:900">${R.n}</div><div style="color:var(--mute)">${p.a?'存活':'出局'}</div></div>`}).join('')}</div>
+  <div class="row" style="justify-content:center">${S.mode!=='client'?'<button class="btn g big" data-a2="again">再來一局</button>':'<span style="color:var(--mute)">等待房主開新局……</span>'}<button class="btn k big" data-a2="lobby">回大廳</button><button class="btn b big" data-close>看聊天紀錄</button></div>`;
+  $('#mEnd').hidden=false;
+}
+$('#mEndC').addEventListener('click',e=>{const b=e.target.closest('[data-a2]');if(!b)return;b.dataset.a2==='again'?again():leave()});
+document.addEventListener('click',e=>{if(e.target.closest('[data-close]'))e.target.closest('.modal').hidden=true});
+$('#bRole').addEventListener('click',()=>S.view&&showRole(S.view));
+$('#bRule').addEventListener('click',()=>$('#mRule').hidden=false);
+const sndBtn=$('#bSnd');const sndLbl=()=>sndBtn.textContent=SND.on?'音效：開':'音效：關';sndLbl();
+sndBtn.addEventListener('click',()=>{SND.on=!SND.on;store.set('wolf_snd',SND.on);sndLbl();SND.click()});
+$('#bExit').addEventListener('click',()=>{const b=$('#bExit');if(S.view&&S.view.ph==='end')return leave();
+  if(Date.now()-S.exitArm<3000)return leave();S.exitArm=Date.now();b.textContent='再按一次離開';setTimeout(()=>b.textContent='離開',3000)});
+function again(){if(S.mode==='bot')startBot(S.game.n);else if(S.mode==='host')NET.start()}
+function leave(){if(S.mode==='host'||S.mode==='client'||NET.room)NET.leave();S.game=null;S.view=null;S.mode=null;$('#bExit').textContent='離開';show('lobby')}
+
+/* ================= 線上模式（Firebase Realtime Database） ================= */
+const NET={ok:false,db:null,uid:null,room:null,offs:[],lastPush:0,pushT:0,
+  async init(){
+    if(!FIREBASE_CONFIG.apiKey||!FIREBASE_CONFIG.databaseURL)return false;if(this.ok)return true;
+    const base='https://www.gstatic.com/firebasejs/10.12.2/';
+    for(const f of['firebase-app-compat.js','firebase-auth-compat.js','firebase-database-compat.js'])await new Promise((res,rej)=>{const s=document.createElement('script');s.src=base+f;s.onload=res;s.onerror=rej;document.head.append(s)});
+    firebase.initializeApp(FIREBASE_CONFIG);const cred=await firebase.auth().signInAnonymously();this.uid=cred.user.uid;this.db=firebase.database();this.ok=true;return true;
+  },
+  ref(p){return this.db.ref(p)},
+  on(p,ev,fn){const r=this.ref(p);r.on(ev,fn);this.offs.push(()=>r.off(ev,fn))},
+  TS(){return firebase.database.ServerValue.TIMESTAMP},
+  async create(size){
+    const id=this.ref('lobby').push().key,no=String(ri(100,999)),name=myName()+' 的房間';
+    this.room={id,host:true,size,no,name,players:[],auto:Date.now()+60000};
+    await this.ref('lobby/'+id).set({no,name,host:this.uid,size,count:1,st:'wait',t:this.TS()});
+    await this.ref('rooms/'+id).onDisconnect().remove();await this.ref('lobby/'+id).onDisconnect().remove();
+    await this.joinSelf();this.watchPlayers();showWait();
+    this.autoT=setInterval(()=>{if(!this.room||S.game)return;renderWait();if(Date.now()>=this.room.auto)this.start()},1000);
+  },
+  async joinSelf(){const r=this.ref(`rooms/${this.room.id}/players/${this.uid}`);await r.onDisconnect().remove();await r.set({n:myName(),av:me.av,t:this.TS()})},
+  watchPlayers(){
+    this.on(`rooms/${this.room.id}/players`,'value',snap=>{
+      const v=snap.val()||{};this.room.players=Object.entries(v).map(([uid,p])=>({uid,n:String(p.n||'玩家').slice(0,10),av:p.av||{},t:p.t||0})).sort((a,b)=>a.t-b.t);
+      if(this.room.host){
+        if(S.game){for(const uid in S.seatOf){if(uid!==this.uid&&!v[uid]){S.game.toBot(S.seatOf[uid]);delete S.seatOf[uid]}}}
+        else{this.ref('lobby/'+this.room.id+'/count').set(this.room.players.length);if(this.room.players.length>=this.room.size)this.start()}
+      }
+      if(!S.game&&S.mode!=='client')renderWait();
+    });
+  },
+  start(){
+    const R=this.room;if(!R||!R.host)return;
+    const humans=R.players.slice(0,R.size),names=shuffle([...BOT_NAMES]),slots=shuffle(Array.from({length:R.size},(_,i)=>i)),arr=Array(R.size);
+    humans.forEach((h,i)=>arr[slots[i]]={id:h.uid,name:h.n,av:h.av});
+    for(let i=0;i<R.size;i++)if(!arr[i])arr[i]={id:'bot'+i,name:names.pop(),av:randAv(),bot:true};
+    S.game=new Game(arr);S.seatOf={};arr.forEach((p,i)=>{if(!p.bot)S.seatOf[p.id]=i+1});
+    S.seat=S.seatOf[this.uid];S.mode='host';S.roomNo=R.no;S.roomName=R.name;
+    this.ref('lobby/'+R.id+'/st').set('play');
+    if(!this.actOn){this.actOn=true;this.on(`rooms/${R.id}/actions`,'child_added',snap=>{const d=snap.val()||{};snap.ref.remove();const seat=S.seatOf[d.u];if(seat&&S.game){S.game.act(seat,d.a||{})}})}
+    S.game.start();enterGame();
+  },
+  pushViews(){
+    const now=Date.now();if(now-this.lastPush<250){clearTimeout(this.pushT);this.pushT=setTimeout(()=>this.pushViews(),260);return}
+    this.lastPush=now;const g=S.game,R=this.room;if(!g||!R)return;
+    for(const uid in S.seatOf){if(uid===this.uid)continue;this.ref(`rooms/${R.id}/views/${uid}`).set(g.view(S.seatOf[uid]))}
+  },
+  async join(id){
+    const L=(await this.ref('lobby/'+id).get()).val();
+    if(!L||L.st!=='wait'||L.count>=L.size)return toast('房間已滿或已經開始了');
+    this.room={id,host:false,size:L.size,no:L.no,name:L.name,players:[]};
+    await this.joinSelf();this.watchPlayers();
+    this.on('lobby/'+id,'value',x=>{if(!x.exists()&&this.room){toast('房主已離開，房間關閉');leave()}});
+    this.on(`rooms/${id}/views/${this.uid}`,'value',x=>{const v=x.val();if(!v)return;if(S.mode!=='client'){S.mode='client';S.roomNo=L.no;S.roomName=L.name;enterGame()}render(v)});
+    showWait();
+  },
+  sendAction(a){if(this.room)this.ref(`rooms/${this.room.id}/actions`).push({u:this.uid,a})},
+  async quick(){
+    const snap=await this.ref('lobby').orderByChild('st').equalTo('wait').get();const list=[];
+    snap.forEach(c=>{const v=c.val();if(v&&v.count<v.size)list.push({id:c.key,...v})});
+    list.sort((a,b)=>b.count-a.count);if(list[0])return this.join(list[0].id);return this.create(S.size);
+  },
+  leave(){
+    this.offs.forEach(f=>f());this.offs=[];this.actOn=false;clearInterval(this.autoT);
+    const R=this.room;this.room=null;if(!R||!this.ok)return;
+    if(R.host){this.ref('lobby/'+R.id).remove();this.ref('rooms/'+R.id).remove()}else this.ref(`rooms/${R.id}/players/${this.uid}`).remove();
+  },
+  listRooms(){
+    this.ref('lobby').on('value',snap=>{const box=$('#rooms');if(!box)return;const list=[];snap.forEach(c=>{const v=c.val();if(v)list.push({id:c.key,...v})});
+      box.innerHTML=list.length?'':'<div style="color:var(--mute)">目前沒有房間，建立一個吧！</div>';
+      list.sort((a,b)=>(a.st==='wait'?0:1)-(b.st==='wait'?0:1)).forEach(r=>{const d=document.createElement('div');d.className='room';
+        d.innerHTML=`<b>${esc(r.no)}</b><span></span><small>${+r.count}/${+r.size}</small>`;d.querySelector('span').textContent=r.name;
+        const b=document.createElement('button');b.className='btn '+(r.st==='wait'?'g':'k');b.textContent=r.st==='wait'?'加入':'遊戲中';b.disabled=r.st!=='wait'||r.count>=r.size;b.onclick=()=>this.join(r.id);d.append(b);box.append(d)})});
+  }
+};
+function showWait(){show('wait');renderWait()}
+function renderWait(){
+  const R=NET.room;if(!R)return;
+  $('#wTitle').textContent=`房號 ${R.no}｜${R.name}`;
+  const left=R.host?Math.max(0,Math.ceil((R.auto-Date.now())/1000)):0;
+  $('#wInfo').textContent=`等待玩家加入（${R.players.length}/${R.size}）`+(R.host?`，${left} 秒後自動開始，空位由 AI 補上`:'，等待房主開始……');
+  $('#wSeats').innerHTML=Array.from({length:R.size},(_,i)=>{const p=R.players[i];return p?`<div class="wseat f"><div class="av">${avSvg(p.av)}</div><b></b></div>`:'<div class="wseat">空位</div>'}).join('');
+  [...$('#wSeats').children].forEach((el,i)=>{const p=R.players[i];if(p)el.querySelector('b').textContent=p.n});
+  $('#wStart').hidden=!R.host;
+}
+$('#wStart').addEventListener('click',()=>NET.start());
+$('#wLeave').addEventListener('click',()=>leave());
+
+const RULES=`{
+  "rules": {
+    "lobby": {
+      ".read": "auth != null",
+      ".indexOn": ["st"],
+      "$r": { ".write": "auth != null && (!data.exists() || data.child('host').val() === auth.uid)" }
+    },
+    "rooms": {
+      "$r": {
+        ".write": "root.child('lobby/'+$r+'/host').val() === auth.uid",
+        "players": {
+          ".read": "auth != null",
+          "$u": { ".write": "auth != null && auth.uid === $u" }
+        },
+        "actions": {
+          ".read": "root.child('lobby/'+$r+'/host').val() === auth.uid",
+          "$a": { ".write": "auth != null && (!newData.exists() || newData.child('u').val() === auth.uid)" }
+        },
+        "views": {
+          "$u": {
+            ".read": "auth != null && auth.uid === $u",
+            ".write": "root.child('lobby/'+$r+'/host').val() === auth.uid"
+          }
+        }
+      }
+    }
+  }
+}`;
+async function setupOnline(){
+  const box=$('#online');
+  if(!FIREBASE_CONFIG.apiKey){
+    box.innerHTML=`<div class="note">線上配對需要把這個檔案放到你自己的網站（例如 GitHub Pages），並在檔案開頭的 <b>FIREBASE_CONFIG</b> 填入 Firebase 專案設定。目前可以先玩單機練習。</div>
+    <details><summary>架設步驟（約 10 分鐘）</summary><ol style="padding-left:1.2em">
+    <li>到 Firebase 主控台建立專案 → 新增「網頁應用程式」，複製設定值。</li>
+    <li>Authentication → 登入方式 → 啟用「匿名」。</li>
+    <li>Realtime Database → 建立資料庫 → 規則頁貼上下方規則並發布。</li>
+    <li>把設定填進 HTML 裡的 FIREBASE_CONFIG（含 databaseURL），上傳到 GitHub Pages。</li>
+    <li>把網址分享出去，大家按「快速配對」就會進同一間房。</li></ol>
+    <div class="row" style="justify-content:space-between"><b>資料庫規則</b><button class="btn k" id="cpRules" type="button">複製規則</button></div><pre id="rulesPre"></pre></details>`;
+    $('#rulesPre').textContent=RULES;
+    $('#cpRules').onclick=async()=>{try{await navigator.clipboard.writeText(RULES);toast('已複製規則')}catch(e){toast('無法複製，請手動選取')}};
+    return;
+  }
+  box.innerHTML='<p>連線中……</p>';
+  try{await NET.init()}catch(e){box.innerHTML='<div class="note">連不上 Firebase，請檢查 FIREBASE_CONFIG 與網路。</div>';return}
+  box.innerHTML=`<p>用上方選的人數建立房間，或直接快速配對。等待 60 秒後空位會由 AI 補上。</p><div class="row"><button class="btn g big" id="qm">快速配對</button><button class="btn b" id="mk">建立房間</button></div><div class="rooms" id="rooms"></div>`;
+  $('#qm').onclick=()=>NET.quick().catch(()=>toast('配對失敗，請再試一次'));
+  $('#mk').onclick=()=>NET.create(S.size).catch(()=>toast('建立房間失敗'));
+  NET.listRooms();
+}
+setupOnline();
+window.__wolf={S,startBot};
+}
+</script>
+</body>
+</html>
